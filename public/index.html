@@ -771,6 +771,21 @@
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
         ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
+        
+        /* Statement section - positioned below output */
+        .statement-section { max-width: 1400px; margin: 20px auto 40px; padding: 0 25px; }
+        .shimmer-block { background: linear-gradient(120deg, rgba(212,175,55,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(212,175,55,0.06)); backdrop-filter: blur(12px); padding: 36px 44px; border-radius: 14px; border: 1px solid rgba(212,175,55,0.2); color: #f4e4ba; font-family: 'Cormorant Garamond', Georgia, serif; position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(212,175,55,0.08); }
+        .shimmer-block::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(212,175,55,0.12), rgba(255,255,255,0.06), transparent); animation: shimmer 8s infinite; pointer-events: none; }
+        @keyframes shimmer { 0% { transform: translateX(0); } 50% { transform: translateX(100%); } 100% { transform: translateX(100%); } }
+        .shimmer-block h2 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.2rem; letter-spacing: 3px; margin: 0 0 18px 0; text-transform: uppercase; text-shadow: 0 0 15px rgba(212,175,55,0.3); }
+        .shimmer-block p { font-size: 1.05rem; line-height: 1.8; margin-bottom: 18px; color: rgba(244,228,186,0.92); }
+        .shimmer-block p:last-of-type { margin-bottom: 0; }
+        .shimmer-block a { color: #d4af37; text-decoration: none; border-bottom: 1px solid rgba(212,175,55,0.4); transition: all 0.3s ease; }
+        .shimmer-block a:hover { color: #f4e4ba; border-bottom-color: #f4e4ba; text-shadow: 0 0 8px rgba(212,175,55,0.4); }
+        .shimmer-block .section-divider { text-align: center; color: #d4af37; font-size: 1rem; margin: 28px 0; opacity: 0.5; letter-spacing: 0.3em; }
+        .shimmer-block .contact-info { margin-top: 28px; padding-top: 22px; border-top: 1px solid rgba(212,175,55,0.15); }
+        .shimmer-block .contact-info p { margin-bottom: 8px; font-size: 0.95rem; }
+        .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -933,6 +948,30 @@
                         <img src="" alt="Captured still 6">
                         <button class="capture-btn" onclick="captureStill(6)">Capture Still</button>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statement Section with Iridescent Shimmer -->
+        <div class="statement-section">
+            <div class="shimmer-block">
+                <h2>⚜ Statement</h2>
+                <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses. It learns motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
+                
+                <p>French Revolutionary caricature was uniquely ferocious, more violent, more confrontational, and more visually ruthless than anything produced before it. It emerged during years when grotesque mockery and extravagant displays of wealth existed in the same rooms, and for a time no one blinked.</p>
+                
+                <div class="section-divider">⚜ ⚜ ⚜</div>
+                
+                <h2>⚜ About</h2>
+                <p>Historically, jesters entertained elites beneath gilded ceilings (see the <a href="https://www.vam.ac.uk/articles/court-fools-and-jesters" target="_blank">Victoria and Albert Museum's overview</a>). Later, caricature artists appeared at salons and masquerades, where exaggerated portraits were commissioned by the same people who might dismiss them as vulgar in public. Early traditions are richly documented in sources like the <a href="https://www.metmuseum.org/toah/hd/crrn/hd_crrn.htm" target="_blank">Met's survey of caricature</a> and the <a href="https://www.britishmuseum.org/collection/galleries/political-satire" target="_blank">British Museum's political satire collection</a>.</p>
+                
+                <p>Wealthy patrons often paid handsomely for grotesque works of art that the lowest rung of the hoi polloi would judge tacky at a carnival. Taste, ego, and humor have always been unstable companions. AI heightens this tension: fragile ego is still the best subject, and a robust sense of humor remains the only safe compass. In glamorous rooms, as in history, opulence and satire continue their strange partnership.</p>
+                
+                <p class="license-note">The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development. Exhibition licenses and institutional partnerships support the continued evolution of networked digital art practices.</p>
+                
+                <div class="contact-info">
+                    <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+                    <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
                 </div>
             </div>
         </div>
