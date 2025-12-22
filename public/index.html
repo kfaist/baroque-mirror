@@ -801,13 +801,12 @@
                     <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ■</button>
                 </div>
                 
-                <!-- Prompt Section - NEW -->
+                <!-- Prompt Section -->
                 <div class="prompt-section">
                     <h3>⚜ Prompt</h3>
                     <div class="prompt-container">
                         <button class="prompt-btn shuffle" id="shuffleBtn" title="Random Prompt">🎲</button>
                         <textarea class="prompt-input" id="promptInput" placeholder="Enter custom style prompt or shuffle for inspiration..." rows="2"></textarea>
-                        <button class="prompt-btn apply" id="applyPromptBtn" title="Apply Prompt">GO</button>
                     </div>
                 </div>
                 
@@ -1629,11 +1628,21 @@ function animate() {
 // ============================================
 
 // Prompt controls
+let promptDebounceTimer = null;
 document.getElementById('shuffleBtn').onclick = shufflePrompt;
-document.getElementById('applyPromptBtn').onclick = applyCustomPrompt;
+document.getElementById('promptInput').addEventListener('input', (e) => {
+    // Debounce: wait 800ms after user stops typing before applying
+    if (promptDebounceTimer) clearTimeout(promptDebounceTimer);
+    promptDebounceTimer = setTimeout(() => {
+        if (streamId) {
+            applyCustomPrompt();
+        }
+    }, 800);
+});
 document.getElementById('promptInput').addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
+        if (promptDebounceTimer) clearTimeout(promptDebounceTimer);
         applyCustomPrompt();
     }
 });
