@@ -308,39 +308,35 @@
             cursor: not-allowed;
         }
         
-        /* Partners Section */
+        /* Partners Section - Clean Dark Box Design */
         .partners-section {
             padding: 50px 0;
-            border-top: 1px solid rgba(212,175,55,0.2);
             margin-top: 40px;
         }
         
         .partners-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            max-width: 1000px;
+            gap: 20px;
+            max-width: 1100px;
             margin: 0 auto;
         }
         
         .partner-card {
-            background: rgba(15,10,12,0.7);
-            border: 1px solid rgba(212,175,55,0.3);
-            border-radius: 10px;
-            padding: 30px 25px;
+            background: rgba(0,0,0,0.85);
+            border: 1px solid #333;
+            padding: 35px 30px;
             text-align: center;
             transition: all 0.3s ease;
         }
         
         .partner-card:hover {
-            border-color: #d4af37;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(212,175,55,0.15);
+            border-color: #555;
         }
         
         .partner-logo {
-            height: 60px;
-            margin-bottom: 15px;
+            height: 50px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -348,22 +344,134 @@
         
         .partner-logo span {
             font-family: 'Cinzel', serif;
-            font-size: 1.4rem;
+            font-size: 0.85rem;
             color: #d4af37;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
         
         .partner-name {
-            color: #f4e4ba;
+            color: #fff;
             font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-weight: 400;
         }
         
         .partner-desc {
-            color: rgba(244,228,186,0.6);
+            color: rgba(255,255,255,0.7);
             font-size: 0.9rem;
             line-height: 1.6;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+        }
+        
+        /* Licensing Section - 3 Column Dark Boxes */
+        .licensing-section {
+            padding: 60px 0;
+            margin-top: 40px;
+        }
+        
+        .licensing-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .licensing-header h2 {
+            color: #fff;
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            font-style: italic;
+        }
+        
+        .licensing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        .license-card {
+            background: rgba(0,0,0,0.85);
+            border: 1px solid #333;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .license-type {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 12px;
+        }
+        
+        .license-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        
+        .license-desc {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .license-features {
+            list-style: none;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            flex-grow: 1;
+            margin: 20px 0;
+            padding: 0;
+        }
+        
+        .license-features li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        .license-features li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .license-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            text-align: center;
+            border: 1px solid #fff;
+            background: transparent;
+            color: #fff;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: auto;
+        }
+        
+        .license-btn:hover {
+            background: #fff;
+            color: #000;
         }
         
         .back-button {
@@ -549,6 +657,7 @@
         @media (max-width: 900px) {
             .gallery-grid { grid-template-columns: 1fr; }
             .partners-grid { grid-template-columns: 1fr; }
+            .licensing-grid { grid-template-columns: 1fr; }
             .modal-actions { grid-template-columns: 1fr; }
         }
         
@@ -567,25 +676,25 @@
         <div class="header">
             <div class="header-top">
                 <span>COLUMBUS MUSEUM OF ART</span>
-                <span>⚜</span>
                 <span>WONDERBALL 2026</span>
             </div>
-            <h1>⚜ BAROQUE MIRROR: SELF-PORTRAIT ⚜</h1>
+            <h1>BAROQUE MIRROR: SELF-PORTRAIT</h1>
             <div class="header-sub">Fine Art Prints & Digital Collectibles</div>
             <div class="header-credit">by Krista Faist</div>
         </div>
         
         <nav class="nav-bar">
-            <a href="/" class="nav-link">⚜ Live Experience</a>
+            <a href="/" class="nav-link">Live Experience</a>
             <a href="#gallery" class="nav-link active">Gallery</a>
             <a href="#prints" class="nav-link">Order Prints</a>
             <a href="#nft" class="nav-link">Mint NFT</a>
+            <a href="#licensing" class="nav-link">Licensing</a>
             <a href="#about" class="nav-link">About</a>
         </nav>
         
         <main class="main-content">
             <section id="gallery" class="section-header">
-                <h2>⚜ Your Captured Moments ⚜</h2>
+                <h2>Your Captured Moments</h2>
                 <p>Each artwork is a unique AI-transformed portrait, ready to become a museum-quality print or blockchain-certified digital collectible</p>
             </section>
             
@@ -596,7 +705,7 @@
             <!-- Partners Section -->
             <section class="partners-section" id="prints">
                 <div class="section-header">
-                    <h2>⚜ Premium Print Partners ⚜</h2>
+                    <h2>Premium Print Partners</h2>
                     <p>Museum-quality prints powered by industry-leading production and authentication</p>
                 </div>
                 
@@ -606,12 +715,12 @@
                             <span>PRINTFUL</span>
                         </div>
                         <h3 class="partner-name">Premium Production</h3>
-                        <p class="partner-desc">Gallery-grade giclée prints on archival paper and canvas. Framing options from modern to ornate baroque styles.</p>
+                        <p class="partner-desc">Gallery-grade giclee prints on archival paper and canvas. Framing options from modern to ornate baroque styles.</p>
                     </div>
                     
                     <div class="partner-card">
                         <div class="partner-logo">
-                            <span>SHOPIFY</span>
+                            <span>STRIPE</span>
                         </div>
                         <h3 class="partner-name">Secure Commerce</h3>
                         <p class="partner-desc">Enterprise-level checkout with global shipping. Track your order from production to delivery.</p>
@@ -630,42 +739,90 @@
             <!-- NFT Info Section -->
             <section class="partners-section" id="nft">
                 <div class="section-header">
-                    <h2>⚜ Digital Ownership ⚜</h2>
+                    <h2>Digital Ownership</h2>
                     <p>Your AI portrait as a certified digital collectible on the blockchain</p>
                 </div>
                 
                 <div class="partners-grid">
                     <div class="partner-card">
                         <div class="partner-logo">
-                            <span>🔐</span>
+                            <span>PROVENANCE</span>
                         </div>
-                        <h3 class="partner-name">Provenance</h3>
-                        <p class="partner-desc">Immutable record of creation, ownership, and authenticity stored permanently on the blockchain.</p>
+                        <h3 class="partner-name">Immutable Record</h3>
+                        <p class="partner-desc">Creation, ownership, and authenticity stored permanently on the blockchain.</p>
                     </div>
                     
                     <div class="partner-card">
                         <div class="partner-logo">
-                            <span>🎨</span>
+                            <span>ROYALTIES</span>
                         </div>
-                        <h3 class="partner-name">Artist Royalties</h3>
-                        <p class="partner-desc">Support the artist with built-in royalties on secondary sales. Your purchase sustains creative innovation.</p>
+                        <h3 class="partner-name">Artist Support</h3>
+                        <p class="partner-desc">Built-in royalties on secondary sales. Your purchase sustains creative innovation.</p>
                     </div>
                     
                     <div class="partner-card">
                         <div class="partner-logo">
-                            <span>🌐</span>
+                            <span>ACCESS</span>
                         </div>
-                        <h3 class="partner-name">Global Access</h3>
+                        <h3 class="partner-name">Global Display</h3>
                         <p class="partner-desc">Display your collectible in any Web3 gallery, metaverse, or digital frame. Own it anywhere.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Licensing & Access Section -->
+            <section class="licensing-section" id="licensing">
+                <div class="licensing-header">
+                    <h2>Licensing & Access</h2>
+                </div>
+                
+                <div class="licensing-grid">
+                    <div class="license-card">
+                        <div class="license-type">Open Access</div>
+                        <h3 class="license-title">Unlimited Edition</h3>
+                        <p class="license-desc">An unlimited edition available under open-source principles. Experience the work freely for educational, research, and non-commercial contexts.</p>
+                        <ul class="license-features">
+                            <li>Full source code access (AGPL-3.0)</li>
+                            <li>Unlimited non-commercial use</li>
+                            <li>Community and documentation support</li>
+                        </ul>
+                        <a href="https://github.com/kfaist/baroque-mirror" target="_blank" class="license-btn">Access Source Code</a>
+                    </div>
+                    
+                    <div class="license-card">
+                        <div class="license-type">Starting at $400</div>
+                        <h3 class="license-title">Exhibition License & Technical Residency</h3>
+                        <p class="license-desc">For professional contexts, commercial applications, and exhibition settings. Includes unrestricted access without temporal markers.</p>
+                        <ul class="license-features">
+                            <li>Commercial exhibition rights</li>
+                            <li>Professional use licensing</li>
+                            <li>Optional: Technical residency support ($150/hour)</li>
+                            <li>TouchDesigner/LiveKit integration consultation</li>
+                            <li>Custom configuration assistance</li>
+                        </ul>
+                        <a href="https://buy.stripe.com/test_00g00000000000000000" target="_blank" class="license-btn">Purchase Exhibition License - $400</a>
+                    </div>
+                    
+                    <div class="license-card">
+                        <div class="license-type">Contact</div>
+                        <h3 class="license-title">Curatorial & Institutional Partnership</h3>
+                        <p class="license-desc">For galleries, museums, and biennials. Comprehensive partnership with curatorial consultation and on-site residency throughout the exhibition period.</p>
+                        <ul class="license-features">
+                            <li>Complete licensing</li>
+                            <li>Curatorial consultation</li>
+                            <li>On-site residency</li>
+                        </ul>
+                        <a href="mailto:chaoscontemporarycraft@gmail.com" class="license-btn">Initiate Partnership</a>
                     </div>
                 </div>
             </section>
         </main>
         
         <footer class="footer" id="about">
-            <p>⚜ Baroque Mirror is an interactive AI art installation by <a href="https://kristafaist.com" target="_blank">Krista Faist</a></p>
+            <p>Baroque Mirror is an interactive AI art installation by <a href="https://kristafaist.com" target="_blank">Krista Faist</a></p>
             <p>Presented at Columbus Museum of Art Wonderball 2026</p>
-            <p style="margin-top: 15px; font-size: 0.8rem;">Prints powered by Printful × Shopify | NFTs certified by Verisart</p>
+            <p style="margin-top: 15px; font-size: 0.8rem;">Prints powered by Printful | Payments via Stripe & PayPal | NFTs certified by Verisart</p>
+            <p style="margin-top: 10px; font-size: 0.75rem; opacity: 0.6;">Artist: <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a> | Curatorial: <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
         </footer>
     </div>
     
@@ -688,16 +845,16 @@
             </div>
             <div class="modal-actions">
                 <a href="#" class="modal-btn" id="printfulBtn" onclick="orderPrint()">
-                    🖼️ Order Fine Art Print
+                    Order Fine Art Print
                 </a>
                 <a href="#" class="modal-btn" id="canvasBtn" onclick="orderCanvas()">
-                    🎨 Order Canvas
+                    Order Canvas
                 </a>
                 <a href="#" class="modal-btn nft" id="mintBtn" onclick="mintNFT()">
-                    ⛓️ Mint as NFT
+                    Mint as NFT
                 </a>
                 <a href="#" class="modal-btn" id="downloadBtn" onclick="downloadImage()">
-                    ⬇️ Download High-Res
+                    Download High-Res
                 </a>
             </div>
         </div>
