@@ -775,11 +775,11 @@
         /* Statement section - TWO TIERED SHIMMER LAYERS */
         .statement-section { margin-top: 12px; width: 100%; position: relative; }
         
-        /* Layer 1: More transparent shimmer background (outer) */
+        /* Layer 1: DARKER outer shimmer background */
         .shimmer-bg {
             position: relative;
             padding: 20px;
-            background: linear-gradient(120deg, rgba(255,255,255,0.08), rgba(255,200,255,0.12), rgba(180,200,255,0.10), rgba(255,255,255,0.08));
+            background: linear-gradient(120deg, rgba(0,0,0,0.75), rgba(20,10,25,0.80), rgba(10,15,25,0.78), rgba(0,0,0,0.75));
             overflow: hidden;
         }
         .shimmer-bg::before {
@@ -789,15 +789,15 @@
             left: -150%;
             width: 200%;
             height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.15), rgba(255,200,255,0.10), transparent);
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.08), rgba(255,200,255,0.05), transparent);
             animation: shimmer 8s infinite;
             pointer-events: none;
         }
         
-        /* Layer 2: More opaque shimmer text block (inner) */
+        /* Layer 2: LIGHTER/more transparent inner text block */
         .shimmer-block {
             position: relative;
-            background: linear-gradient(120deg, rgba(255,255,255,0.12), rgba(255,200,255,0.18), rgba(180,200,255,0.15), rgba(255,255,255,0.12));
+            background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(255,255,255,0.06));
             backdrop-filter: blur(8px);
             padding: 36px 44px;
             overflow: hidden;
@@ -809,7 +809,7 @@
             left: -150%;
             width: 200%;
             height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), rgba(255,200,255,0.15), transparent);
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), rgba(255,200,255,0.08), transparent);
             animation: shimmer 6s infinite;
             pointer-events: none;
         }
