@@ -772,20 +772,19 @@
         ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
         
-        /* Statement section - dynamic width matching video output */
+        /* Statement section - dark box design with baroque fonts */
         .statement-section { margin-top: 12px; width: 100%; }
-        .shimmer-block { background: rgba(0,0,0,0.35); backdrop-filter: blur(12px); padding: 36px 44px; border-radius: 14px; border: 1px solid rgba(212,175,55,0.2); color: #f4e4ba; font-family: 'Cormorant Garamond', Georgia, serif; position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.3); }
-        .shimmer-block::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(212,175,55,0.12), rgba(255,255,255,0.06), transparent); animation: shimmer 8s infinite; pointer-events: none; }
-        @keyframes shimmer { 0% { transform: translateX(0); } 50% { transform: translateX(100%); } 100% { transform: translateX(100%); } }
-        .shimmer-block h2 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.2rem; letter-spacing: 3px; margin: 0 0 18px 0; text-transform: uppercase; text-shadow: 0 0 15px rgba(212,175,55,0.3); }
-        .shimmer-block p { font-size: 1.05rem; line-height: 1.8; margin-bottom: 18px; color: rgba(244,228,186,0.92); }
+        .shimmer-block { background: rgba(0,0,0,0.85); padding: 40px 48px; border-radius: 0; border: 1px solid #333; color: #fff; font-family: 'Cormorant Garamond', Georgia, serif; }
+        .shimmer-block::before { display: none; }
+        .shimmer-block h2 { color: #fff; font-family: 'Cinzel', serif; font-size: 1.3rem; letter-spacing: 0.15em; margin: 0 0 24px 0; font-weight: 300; }
+        .shimmer-block p { font-size: 0.95rem; line-height: 1.7; margin-bottom: 16px; opacity: 0.85; }
         .shimmer-block p:last-of-type { margin-bottom: 0; }
-        .shimmer-block a { color: #d4af37; text-decoration: none; border-bottom: 1px solid rgba(212,175,55,0.4); transition: all 0.3s ease; }
-        .shimmer-block a:hover { color: #f4e4ba; border-bottom-color: #f4e4ba; text-shadow: 0 0 8px rgba(212,175,55,0.4); }
-        .shimmer-block .section-divider { text-align: center; color: #d4af37; font-size: 1rem; margin: 28px 0; opacity: 0.5; letter-spacing: 0.3em; }
-        .shimmer-block .contact-info { margin-top: 28px; padding-top: 22px; border-top: 1px solid rgba(212,175,55,0.15); }
-        .shimmer-block .contact-info p { margin-bottom: 8px; font-size: 0.95rem; }
-        .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
+        .shimmer-block a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.3); transition: all 0.3s ease; }
+        .shimmer-block a:hover { border-bottom-color: #fff; }
+        .shimmer-block .section-divider { display: none; }
+        .shimmer-block .contact-info { margin-top: 24px; padding-top: 20px; border-top: 1px solid #333; }
+        .shimmer-block .contact-info p { margin-bottom: 6px; font-size: 0.85rem; }
+        .shimmer-block .license-note { font-style: italic; opacity: 0.8; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
