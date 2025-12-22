@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Baroque Mirror: Self-Portrait - Prints & NFTs | Krista Faist</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #0a0608; 
+            color: #fff; 
+            font-family: 'Cormorant Garamond', Georgia, serif; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header { 
+            text-align: center; 
+            padding: 20px; 
+            border-bottom: 1px solid rgba(212,175,55,0.3); 
+            background: linear-gradient(180deg, rgba(114,47,55,0.4) 0%, rgba(10,6,8,0.9) 100%);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-top { 
+            display: flex; 
+            justify-content: center; 
+            gap: 40px; 
+            margin-bottom: 10px; 
+            font-size: 0.8rem; 
+            letter-spacing: 4px; 
+            color: #f4e4ba; 
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+        }
+        
+        .header h1 { 
+            color: #d4af37; 
+            font-size: 2.5rem; 
+            margin: 0; 
+            letter-spacing: 6px; 
+            font-family: 'Cinzel', serif;
+            text-shadow: 0 0 30px rgba(212,175,55,0.5);
+        }
+        
+        .header-sub { 
+            font-size: 1rem; 
+            color: rgba(244,228,186,0.8); 
+            margin-top: 8px; 
+            font-style: italic;
+        }
+        
+        .header-credit { 
+            font-size: 0.9rem; 
+            color: #d4af37; 
+            margin-top: 5px; 
+            font-weight: 600;
+        }
+        
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 15px 20px;
+            background: rgba(15,10,12,0.9);
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-link {
+            color: #f4e4ba;
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 8px 16px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #d4af37;
+            border-color: rgba(212,175,55,0.4);
+            background: rgba(212,175,55,0.1);
+        }
+        
+        .nav-link.active {
+            color: #d4af37;
+            border-color: #d4af37;
+            background: rgba(212,175,55,0.15);
+        }
+        
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 25px;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .section-header h2 {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .section-header p {
+            color: rgba(244,228,186,0.7);
+            font-size: 1.1rem;
+            font-style: italic;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .gallery-item {
+            background: rgba(15,10,12,0.85);
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5);
+            transition: all 0.4s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
+            box-shadow: 0 10px 50px rgba(212,175,55,0.25);
+        }
+        
+        .gallery-item.empty {
+            opacity: 0.5;
+        }
+        
+        .gallery-image {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gallery-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover .gallery-image img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-image .empty-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(212,175,55,0.4);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .gallery-image .frame-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            border: 6px solid transparent;
+            border-image: linear-gradient(135deg, #d4af37 0%, #8b6914 25%, #d4af37 50%, #8b6914 75%, #d4af37 100%) 1;
+        }
+        
+        .certificate-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid #9370db;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.65rem;
+            color: #e6e6fa;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .certificate-badge::before {
+            content: '✓';
+            color: #9370db;
+        }
+        
+        .gallery-info {
+            padding: 20px;
+        }
+        
+        .gallery-title {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .gallery-meta {
+            color: rgba(244,228,186,0.6);
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+        
+        .gallery-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .action-button {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 16px;
+            border: 1px solid rgba(212,175,55,0.5);
+            background: rgba(20,15,18,0.8);
+            color: #f4e4ba;
+            cursor: pointer;
+            border-radius: 6px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .action-button:hover {
+            background: rgba(212,175,55,0.15);
+            border-color: #d4af37;
+            color: #d4af37;
+        }
+        
+        .action-button.primary {
+            background: linear-gradient(135deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9));
+            border-color: #d4af37;
+            color: #d4af37;
+        }
+        
+        .action-button.primary:hover {
+            background: linear-gradient(135deg, #d4af37, #8b6914);
+            color: #0a0608;
+        }
+        
+        .action-button.nft {
+            background: linear-gradient(135deg, rgba(75,0,130,0.6), rgba(45,0,80,0.8));
+            border-color: #9370db;
+            color: #e6e6fa;
+        }
+        
+        .action-button.nft:hover {
+            background: linear-gradient(135deg, #9370db, #663399);
+            color: #fff;
+        }
+        
+        .action-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        /* Partners Section */
+        .partners-section {
+            padding: 50px 0;
+            border-top: 1px solid rgba(212,175,55,0.2);
+            margin-top: 40px;
+        }
+        
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .partner-card {
+            background: rgba(15,10,12,0.7);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 10px;
+            padding: 30px 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .partner-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212,175,55,0.15);
+        }
+        
+        .partner-logo {
+            height: 60px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .partner-logo span {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: #d4af37;
+            letter-spacing: 2px;
+        }
+        
+        .partner-name {
+            color: #f4e4ba;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .partner-desc {
+            color: rgba(244,228,186,0.6);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            padding: 14px 24px;
+            border: 2px solid rgba(212,175,55,0.6);
+            background: rgba(15,10,12,0.95);
+            color: #d4af37;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-button:hover {
+            background: linear-gradient(135deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 30px rgba(212,175,55,0.4);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(15px);
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: rgba(15,10,12,0.98);
+            border: 2px solid rgba(212,175,55,0.6);
+            border-radius: 15px;
+            max-width: 900px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 35px;
+            position: relative;
+            box-shadow: 0 0 80px rgba(212,175,55,0.2);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #d4af37;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            line-height: 1;
+        }
+        
+        .modal-close:hover {
+            transform: rotate(90deg);
+        }
+        
+        .modal-image-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        .modal-image {
+            width: 100%;
+            border-radius: 8px;
+            border: 6px solid transparent;
+            border-image: linear-gradient(135deg, #d4af37 0%, #8b6914 50%, #d4af37 100%) 1;
+        }
+        
+        .modal-title {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+        
+        .modal-details {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        
+        .modal-details p {
+            color: rgba(244,228,186,0.85);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .modal-details strong {
+            color: #d4af37;
+        }
+        
+        .modal-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .modal-btn {
+            padding: 18px 24px;
+            border: 2px solid rgba(212,175,55,0.6);
+            background: linear-gradient(180deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9));
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        
+        .modal-btn:hover {
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 30px rgba(212,175,55,0.5);
+            transform: translateY(-2px);
+        }
+        
+        .modal-btn.nft {
+            background: linear-gradient(180deg, rgba(75,0,130,0.7), rgba(45,0,80,0.9));
+            border-color: #9370db;
+            color: #e6e6fa;
+        }
+        
+        .modal-btn.nft:hover {
+            background: linear-gradient(180deg, #9370db, #663399);
+            color: #fff;
+            box-shadow: 0 0 30px rgba(147,112,219,0.5);
+        }
+        
+        .footer {
+            padding: 35px;
+            text-align: center;
+            border-top: 1px solid rgba(212,175,55,0.2);
+            margin-top: 40px;
+        }
+        
+        .footer p {
+            color: rgba(244,228,186,0.5);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .footer a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
+        
+        @media (max-width: 900px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+            .partners-grid { grid-template-columns: 1fr; }
+            .modal-actions { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 600px) {
+            .nav-bar { flex-wrap: wrap; gap: 10px; }
+            .header h1 { font-size: 1.8rem; }
+            .back-button { left: 50%; transform: translateX(-50%); }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bgCanvas"></canvas>
+    <canvas id="particleCanvas"></canvas>
+    
+    <div class="content">
+        <div class="header">
+            <div class="header-top">
+                <span>COLUMBUS MUSEUM OF ART</span>
+                <span>⚜</span>
+                <span>WONDERBALL 2026</span>
+            </div>
+            <h1>⚜ BAROQUE MIRROR: SELF-PORTRAIT ⚜</h1>
+            <div class="header-sub">Fine Art Prints & Digital Collectibles</div>
+            <div class="header-credit">by Krista Faist</div>
+        </div>
+        
+        <nav class="nav-bar">
+            <a href="/" class="nav-link">⚜ Live Experience</a>
+            <a href="#gallery" class="nav-link active">Gallery</a>
+            <a href="#prints" class="nav-link">Order Prints</a>
+            <a href="#nft" class="nav-link">Mint NFT</a>
+            <a href="#about" class="nav-link">About</a>
+        </nav>
+        
+        <main class="main-content">
+            <section id="gallery" class="section-header">
+                <h2>⚜ Your Captured Moments ⚜</h2>
+                <p>Each artwork is a unique AI-transformed portrait, ready to become a museum-quality print or blockchain-certified digital collectible</p>
+            </section>
+            
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery items will be populated by JavaScript -->
+            </div>
+            
+            <!-- Partners Section -->
+            <section class="partners-section" id="prints">
+                <div class="section-header">
+                    <h2>⚜ Premium Print Partners ⚜</h2>
+                    <p>Museum-quality prints powered by industry-leading production and authentication</p>
+                </div>
+                
+                <div class="partners-grid">
+                    <div class="partner-card">
+                        <div class="partner-logo">
+                            <span>PRINTFUL</span>
+                        </div>
+                        <h3 class="partner-name">Premium Production</h3>
+                        <p class="partner-desc">Gallery-grade giclée prints on archival paper and canvas. Framing options from modern to ornate baroque styles.</p>
+                    </div>
+                    
+                    <div class="partner-card">
+                        <div class="partner-logo">
+                            <span>SHOPIFY</span>
+                        </div>
+                        <h3 class="partner-name">Secure Commerce</h3>
+                        <p class="partner-desc">Enterprise-level checkout with global shipping. Track your order from production to delivery.</p>
+                    </div>
+                    
+                    <div class="partner-card">
+                        <div class="partner-logo">
+                            <span>VERISART</span>
+                        </div>
+                        <h3 class="partner-name">NFT Certification</h3>
+                        <p class="partner-desc">Blockchain-verified certificates of authenticity. Each digital collectible is uniquely minted and provably yours.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- NFT Info Section -->
+            <section class="partners-section" id="nft">
+                <div class="section-header">
+                    <h2>⚜ Digital Ownership ⚜</h2>
+                    <p>Your AI portrait as a certified digital collectible on the blockchain</p>
+                </div>
+                
+                <div class="partners-grid">
+                    <div class="partner-card">
+                        <div class="partner-logo">
+                            <span>🔐</span>
+                        </div>
+                        <h3 class="partner-name">Provenance</h3>
+                        <p class="partner-desc">Immutable record of creation, ownership, and authenticity stored permanently on the blockchain.</p>
+                    </div>
+                    
+                    <div class="partner-card">
+                        <div class="partner-logo">
+                            <span>🎨</span>
+                        </div>
+                        <h3 class="partner-name">Artist Royalties</h3>
+                        <p class="partner-desc">Support the artist with built-in royalties on secondary sales. Your purchase sustains creative innovation.</p>
+                    </div>
+                    
+                    <div class="partner-card">
+                        <div class="partner-logo">
+                            <span>🌐</span>
+                        </div>
+                        <h3 class="partner-name">Global Access</h3>
+                        <p class="partner-desc">Display your collectible in any Web3 gallery, metaverse, or digital frame. Own it anywhere.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="footer" id="about">
+            <p>⚜ Baroque Mirror is an interactive AI art installation by <a href="https://kristafaist.com" target="_blank">Krista Faist</a></p>
+            <p>Presented at Columbus Museum of Art Wonderball 2026</p>
+            <p style="margin-top: 15px; font-size: 0.8rem;">Prints powered by Printful × Shopify | NFTs certified by Verisart</p>
+        </footer>
+    </div>
+    
+    <a href="/" class="back-button">← Return to Live Experience</a>
+    
+    <!-- Purchase Modal -->
+    <div class="modal-overlay" id="purchaseModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div class="modal-image-container">
+                <img src="" alt="Selected artwork" class="modal-image" id="modalImage">
+                <div class="certificate-badge">VERISART CERTIFIED</div>
+            </div>
+            <h2 class="modal-title" id="modalTitle">Baroque Portrait I</h2>
+            <div class="modal-details">
+                <p><strong>Style:</strong> <span id="modalStyle">Baroque</span></p>
+                <p><strong>Created:</strong> <span id="modalDate">December 22, 2025</span></p>
+                <p><strong>Edition:</strong> 1 of 1 Unique AI-Generated Original</p>
+                <p><strong>Certificate:</strong> Blockchain-verified authenticity via Verisart</p>
+            </div>
+            <div class="modal-actions">
+                <a href="#" class="modal-btn" id="printfulBtn" onclick="orderPrint()">
+                    🖼️ Order Fine Art Print
+                </a>
+                <a href="#" class="modal-btn" id="canvasBtn" onclick="orderCanvas()">
+                    🎨 Order Canvas
+                </a>
+                <a href="#" class="modal-btn nft" id="mintBtn" onclick="mintNFT()">
+                    ⛓️ Mint as NFT
+                </a>
+                <a href="#" class="modal-btn" id="downloadBtn" onclick="downloadImage()">
+                    ⬇️ Download High-Res
+                </a>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ============================================
+// CONFIGURATION - Replace with your actual keys
+// ============================================
+const SHOPIFY_STORE_URL = 'https://your-store.myshopify.com';
+const PRINTFUL_PRODUCT_ID = 'your-product-id';
+const VERISART_API_KEY = 'your-verisart-api-key';
+
+// ============================================
+// STATE
+// ============================================
+let capturedStills = {};
+let selectedImage = null;
+let time = 0;
+let animationId;
+
+// ============================================
+// LOAD CAPTURED STILLS FROM MAIN PAGE
+// ============================================
+function loadGallery() {
+    const stored = localStorage.getItem('baroqueCaptures');
+    if (stored) {
+        capturedStills = JSON.parse(stored);
+    }
+    
+    const grid = document.getElementById('galleryGrid');
+    grid.innerHTML = '';
+    
+    // Create 6 gallery slots
+    for (let i = 1; i <= 6; i++) {
+        const item = document.createElement('div');
+        item.className = 'gallery-item' + (capturedStills[i] ? '' : ' empty');
+        
+        const hasImage = capturedStills[i] && capturedStills[i].image;
+        const styleText = capturedStills[i]?.style || 'baroque';
+        const timestamp = capturedStills[i]?.timestamp ? new Date(capturedStills[i].timestamp).toLocaleDateString() : '';
+        
+        item.innerHTML = `
+            <div class="gallery-image">
+                ${hasImage ? `<img src="${capturedStills[i].image}" alt="Baroque Portrait ${i}">` : ''}
+                ${!hasImage ? `<div class="empty-state">⚜<br>Awaiting Capture</div>` : ''}
+                <div class="frame-border"></div>
+                ${hasImage ? `<div class="certificate-badge">CERTIFIED</div>` : ''}
+            </div>
+            <div class="gallery-info">
+                <h3 class="gallery-title">Baroque Portrait ${toRoman(i)}</h3>
+                <p class="gallery-meta">${hasImage ? `${capitalize(styleText)} Style • ${timestamp}` : 'No image captured yet'}</p>
+                <div class="gallery-actions">
+                    <button class="action-button primary" onclick="openPurchaseModal(${i})" ${!hasImage ? 'disabled' : ''}>
+                        Order Print
+                    </button>
+                    <button class="action-button nft" onclick="openPurchaseModal(${i})" ${!hasImage ? 'disabled' : ''}>
+                        Mint NFT
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        grid.appendChild(item);
+    }
+}
+
+function toRoman(num) {
+    const romans = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+    return romans[num - 1] || num;
+}
+
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// ============================================
+// MODAL FUNCTIONS
+// ============================================
+function openPurchaseModal(slotNumber) {
+    const capture = capturedStills[slotNumber];
+    if (!capture || !capture.image) return;
+    
+    selectedImage = { slot: slotNumber, ...capture };
+    
+    document.getElementById('modalImage').src = capture.image;
+    document.getElementById('modalTitle').textContent = `Baroque Portrait ${toRoman(slotNumber)}`;
+    document.getElementById('modalStyle').textContent = capitalize(capture.style || 'Baroque');
+    document.getElementById('modalDate').textContent = new Date(capture.timestamp).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+    });
+    
+    document.getElementById('purchaseModal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('purchaseModal').classList.remove('active');
+    selectedImage = null;
+}
+
+// Close modal on overlay click
+document.getElementById('purchaseModal').addEventListener('click', (e) => {
+    if (e.target.id === 'purchaseModal') closeModal();
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+});
+
+// ============================================
+// E-COMMERCE INTEGRATION
+// ============================================
+function orderPrint() {
+    if (!selectedImage) return;
+    
+    // In production, this would integrate with Printful via Shopify
+    // For now, we'll create a checkout URL with the image data
+    const checkoutData = {
+        product: 'fine-art-print',
+        image: selectedImage.image,
+        title: `Baroque Portrait ${toRoman(selectedImage.slot)}`,
+        style: selectedImage.style
+    };
+    
+    // Simulate Shopify checkout redirect
+    console.log('Initiating Printful print order via Shopify:', checkoutData);
+    
+    // In production:
+    // window.location.href = `${SHOPIFY_STORE_URL}/cart/add?id=${PRINTFUL_PRODUCT_ID}&properties[image]=${encodeURIComponent(selectedImage.image)}`;
+    
+    alert('Print order integration ready!\n\nIn production, this connects to:\n• Shopify for checkout\n• Printful for fulfillment\n\nProduct: Gallery-Grade Giclée Print\nSize options: 8×10 to 24×36\nFraming: Multiple baroque frame styles available');
+}
+
+function orderCanvas() {
+    if (!selectedImage) return;
+    
+    console.log('Initiating canvas order:', selectedImage);
+    
+    alert('Canvas order integration ready!\n\nIn production, this connects to:\n• Shopify for checkout\n• Printful for fulfillment\n\nProduct: Museum-Wrap Canvas\nSize options: 12×16 to 40×60\nFinish: Matte or gloss varnish');
+}
+
+function mintNFT() {
+    if (!selectedImage) return;
+    
+    // Verisart integration for NFT minting
+    const nftData = {
+        title: `Baroque Portrait ${toRoman(selectedImage.slot)}`,
+        description: `AI-transformed portrait created at Columbus Museum of Art Wonderball 2026 using the Baroque Mirror installation by Krista Faist. Style: ${capitalize(selectedImage.style)}`,
+        image: selectedImage.image,
+        attributes: [
+            { trait_type: 'Style', value: capitalize(selectedImage.style) },
+            { trait_type: 'Event', value: 'CMA Wonderball 2026' },
+            { trait_type: 'Artist', value: 'Krista Faist' },
+            { trait_type: 'Edition', value: '1 of 1' }
+        ]
+    };
+    
+    console.log('Initiating Verisart NFT mint:', nftData);
+    
+    // In production, this would call Verisart API:
+    // fetch('https://api.verisart.com/v1/certificates', {
+    //     method: 'POST',
+    //     headers: { 'Authorization': `Bearer ${VERISART_API_KEY}` },
+    //     body: JSON.stringify(nftData)
+    // });
+    
+    alert('NFT minting integration ready!\n\nIn production, this connects to:\n• Verisart for certification\n• Blockchain minting (Ethereum/Polygon)\n\nIncludes:\n✓ Certificate of Authenticity\n✓ Provenance tracking\n✓ Artist royalties on resale\n✓ Web3 gallery compatibility');
+}
+
+function downloadImage() {
+    if (!selectedImage || !selectedImage.image) return;
+    
+    const link = document.createElement('a');
+    link.download = `baroque-portrait-${selectedImage.slot}-${Date.now()}.png`;
+    link.href = selectedImage.image;
+    link.click();
+}
+
+// ============================================
+// BACKGROUND ANIMATION (Simplified version)
+// ============================================
+function initBackground() {
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    
+    function noise(x, y, z) {
+        const X = Math.floor(x) & 255;
+        const Y = Math.floor(y) & 255;
+        function hash(n) { return Math.sin(n * 12.9898 + n * 78.233) * 43758.5453 % 1; }
+        return hash(X + Y * 57 + Math.floor(z) * 113);
+    }
+    
+    function drawBackground() {
+        const w = canvas.width;
+        const h = canvas.height;
+        const imageData = ctx.createImageData(w, h);
+        const data = imageData.data;
+        
+        const scale = 0.003;
+        const zOffset = time * 0.0002;
+        
+        for (let y = 0; y < h; y += 3) {
+            for (let x = 0; x < w; x += 3) {
+                const n = noise(x * scale, y * scale, zOffset);
+                const n2 = noise(x * scale * 2, y * scale * 2, zOffset * 2);
+                
+                const val = (n + n2 * 0.5) / 1.5;
+                const r = Math.floor(20 + val * 30);
+                const g = Math.floor(10 + val * 20);
+                const b = Math.floor(15 + val * 25);
+                
+                for (let dy = 0; dy < 3 && y + dy < h; dy++) {
+                    for (let dx = 0; dx < 3 && x + dx < w; dx++) {
+                        const idx = ((y + dy) * w + (x + dx)) * 4;
+                        data[idx] = r;
+                        data[idx + 1] = g;
+                        data[idx + 2] = b;
+                        data[idx + 3] = 255;
+                    }
+                }
+            }
+        }
+        
+        ctx.putImageData(imageData, 0, 0);
+    }
+    
+    return drawBackground;
+}
+
+function initParticles() {
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    
+    const particles = [];
+    for (let i = 0; i < 50; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 2 + 1,
+            life: Math.random(),
+            hue: Math.random() * 40 + 30
+        });
+    }
+    
+    function drawParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.002;
+            
+            if (p.life <= 0 || p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+                p.x = Math.random() * canvas.width;
+                p.y = Math.random() * canvas.height;
+                p.life = 1;
+            }
+            
+            ctx.save();
+            ctx.globalAlpha = p.life * 0.4;
+            ctx.fillStyle = `hsl(${p.hue}, 70%, 60%)`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+    }
+    
+    return drawParticles;
+}
+
+let drawBackground, drawParticles;
+
+function animate() {
+    time++;
+    if (drawBackground) drawBackground();
+    if (drawParticles) drawParticles();
+    animationId = requestAnimationFrame(animate);
+}
+
+// ============================================
+// INITIALIZE
+// ============================================
+window.addEventListener('load', () => {
+    loadGallery();
+    drawBackground = initBackground();
+    drawParticles = initParticles();
+    animate();
+});
+</script>
+</body>
+</html>
