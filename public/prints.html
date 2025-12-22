@@ -365,7 +365,7 @@
             font-family: 'Cormorant Garamond', Georgia, serif;
         }
         
-        /* Licensing Section - 3 Column Dark Boxes */
+        /* Licensing Section - Baroque Style */
         .licensing-section {
             padding: 60px 0;
             margin-top: 40px;
@@ -377,52 +377,59 @@
         }
         
         .licensing-header h2 {
-            color: #fff;
+            color: #d4af37;
             font-family: 'Cinzel', serif;
-            font-size: 1.4rem;
-            font-weight: 300;
-            letter-spacing: 0.15em;
-            font-style: italic;
+            font-size: 1.6rem;
+            font-weight: 400;
+            letter-spacing: 4px;
         }
         
         .licensing-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 25px;
             max-width: 1100px;
             margin: 0 auto;
         }
         
         .license-card {
-            background: rgba(0,0,0,0.85);
-            border: 1px solid #333;
+            background: rgba(15,10,12,0.85);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 10px;
             padding: 30px;
             display: flex;
             flex-direction: column;
             height: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .license-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 10px 30px rgba(212,175,55,0.15);
         }
         
         .license-type {
             font-family: 'Cinzel', serif;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.5);
+            letter-spacing: 2px;
+            color: rgba(212,175,55,0.7);
             margin-bottom: 12px;
         }
         
         .license-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 400;
-            color: #fff;
+            color: #f4e4ba;
             margin-bottom: 20px;
+            letter-spacing: 1px;
         }
         
         .license-desc {
             font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            color: rgba(244,228,186,0.7);
             line-height: 1.6;
             margin-bottom: 20px;
         }
@@ -430,8 +437,8 @@
         .license-features {
             list-style: none;
             font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            color: rgba(244,228,186,0.8);
             flex-grow: 1;
             margin: 20px 0;
             padding: 0;
@@ -448,30 +455,32 @@
             content: "—";
             position: absolute;
             left: 0;
-            color: rgba(255,255,255,0.4);
+            color: rgba(212,175,55,0.5);
         }
         
         .license-btn {
             display: block;
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             text-align: center;
-            border: 1px solid #fff;
-            background: transparent;
-            color: #fff;
+            border: 2px solid rgba(212,175,55,0.6);
+            background: linear-gradient(180deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9));
+            color: #d4af37;
             font-family: 'Cinzel', serif;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 2px;
             cursor: pointer;
             text-decoration: none;
             transition: all 0.3s ease;
             margin-top: auto;
+            border-radius: 6px;
         }
         
         .license-btn:hover {
-            background: #fff;
-            color: #000;
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 25px rgba(212,175,55,0.4);
         }
         
         .back-button {
