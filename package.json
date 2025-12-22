@@ -1,0 +1,17 @@
+{
+  "name": "baroque-mirror",
+  "version": "1.0.0",
+  "description": "Baroque Mirror: Self-Portrait - Live AI Art Transformation for CMA Wonderball 2026",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Krista Faist",
+  "license": "MIT"
+}
