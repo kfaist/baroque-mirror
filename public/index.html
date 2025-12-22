@@ -774,7 +774,7 @@
         
         /* Statement section - dynamic width matching video output */
         .statement-section { margin-top: 12px; width: 100%; }
-        .shimmer-block { background: linear-gradient(120deg, rgba(212,175,55,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(212,175,55,0.06)); backdrop-filter: blur(12px); padding: 36px 44px; border-radius: 14px; border: 1px solid rgba(212,175,55,0.2); color: #f4e4ba; font-family: 'Cormorant Garamond', Georgia, serif; position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(212,175,55,0.08); }
+        .shimmer-block { background: rgba(0,0,0,0.35); backdrop-filter: blur(12px); padding: 36px 44px; border-radius: 14px; border: 1px solid rgba(212,175,55,0.2); color: #f4e4ba; font-family: 'Cormorant Garamond', Georgia, serif; position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.3); }
         .shimmer-block::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(212,175,55,0.12), rgba(255,255,255,0.06), transparent); animation: shimmer 8s infinite; pointer-events: none; }
         @keyframes shimmer { 0% { transform: translateX(0); } 50% { transform: translateX(100%); } 100% { transform: translateX(100%); } }
         .shimmer-block h2 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.2rem; letter-spacing: 3px; margin: 0 0 18px 0; text-transform: uppercase; text-shadow: 0 0 15px rgba(212,175,55,0.3); }
