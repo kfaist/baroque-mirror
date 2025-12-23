@@ -71,8 +71,8 @@
         
         .captures-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 30px;
             margin-bottom: 60px;
         }
         
@@ -86,39 +86,137 @@
         .capture-card:hover {
             border-color: #d4af37;
             box-shadow: 0 0 40px rgba(212,175,55,0.25);
-            transform: translateY(-3px);
         }
         .capture-card.empty {
             opacity: 0.3;
             pointer-events: none;
         }
-        
-        .capture-image {
-            width: 100%;
-            aspect-ratio: 16/10;
-            background: #0a0608;
+
+        /* Frame Preview Styles */
+        .frame-preview-container {
+            padding: 20px;
             display: flex;
-            align-items: center;
             justify-content: center;
-            color: rgba(212,175,55,0.3);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
+            align-items: center;
+            min-height: 280px;
+            background: linear-gradient(135deg, #1a1518 0%, #0d0a0c 100%);
+        }
+        
+        .frame-preview {
             position: relative;
-            overflow: hidden;
+            display: inline-block;
+            transition: all 0.4s ease;
         }
-        .capture-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        
+        /* Standard Black Frame */
+        .frame-standard {
+            padding: 12px;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            box-shadow: 
+                inset 0 0 0 1px rgba(255,255,255,0.05),
+                inset 0 0 0 2px rgba(0,0,0,0.5),
+                0 8px 32px rgba(0,0,0,0.6),
+                0 2px 8px rgba(0,0,0,0.4);
         }
-        .capture-image::after {
+        .frame-standard::before {
             content: '';
             position: absolute;
-            inset: 0;
-            border: 3px solid rgba(212,175,55,0.2);
+            inset: 4px;
+            border: 1px solid rgba(255,255,255,0.08);
             pointer-events: none;
         }
         
+        /* Gallery Gold Frame */
+        .frame-gallery {
+            padding: 16px;
+            background: linear-gradient(145deg, #d4af37, #8b6914, #d4af37, #a08520);
+            background-size: 200% 200%;
+            box-shadow: 
+                inset 0 0 0 2px rgba(255,255,255,0.3),
+                inset 0 0 0 4px rgba(139,105,20,0.8),
+                0 8px 32px rgba(0,0,0,0.5),
+                0 0 20px rgba(212,175,55,0.3);
+        }
+        .frame-gallery::before {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border: 2px solid rgba(255,215,0,0.4);
+            pointer-events: none;
+        }
+        .frame-gallery::after {
+            content: '';
+            position: absolute;
+            inset: 10px;
+            border: 1px solid rgba(139,105,20,0.6);
+            pointer-events: none;
+        }
+        
+        /* Collector Metal */
+        .frame-collector {
+            padding: 6px;
+            background: linear-gradient(135deg, #e8e8e8, #a0a0a0, #d0d0d0, #888);
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.8),
+                inset 0 -1px 0 rgba(0,0,0,0.3),
+                0 8px 32px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(255,255,255,0.1);
+            border-radius: 2px;
+        }
+        .frame-collector .frame-image {
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+        }
+        
+        /* Museum Ornate Frame */
+        .frame-museum {
+            padding: 24px;
+            background: 
+                linear-gradient(145deg, #d4af37, #8b6914),
+                repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(0,0,0,0.1) 8px, rgba(0,0,0,0.1) 16px);
+            box-shadow: 
+                inset 0 0 0 3px rgba(255,255,255,0.2),
+                inset 0 0 0 6px rgba(139,105,20,0.9),
+                inset 0 0 0 8px rgba(255,215,0,0.3),
+                inset 0 0 0 12px rgba(139,105,20,0.7),
+                0 12px 48px rgba(0,0,0,0.6),
+                0 0 30px rgba(212,175,55,0.4);
+            border-radius: 4px;
+        }
+        .frame-museum::before {
+            content: '❧';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+        }
+        .frame-museum::after {
+            content: '❧';
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .frame-image {
+            display: block;
+            max-width: 200px;
+            max-height: 160px;
+            object-fit: cover;
+        }
+        
+        .frame-label {
+            text-align: center;
+            margin-top: 15px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: rgba(212,175,55,0.8);
+            letter-spacing: 2px;
+        }
+
         .capture-info {
             padding: 20px;
         }
@@ -128,12 +226,6 @@
             color: rgba(212,175,55,0.6);
             letter-spacing: 2px;
             margin-bottom: 8px;
-        }
-        .capture-style {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            color: #d4af37;
-            margin-bottom: 15px;
         }
         
         .product-select {
@@ -159,10 +251,10 @@
         
         .price-display {
             font-family: 'Cinzel', serif;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             color: #d4af37;
             text-align: center;
-            margin: 15px 0;
+            margin: 12px 0;
         }
         
         .order-btn {
@@ -198,9 +290,9 @@
             margin-left: 8px;
             font-family: 'Cinzel', serif;
         }
-        .tier-standard { background: rgba(150,150,150,0.3); color: #ccc; }
+        .tier-standard { background: rgba(100,100,100,0.4); color: #ccc; }
         .tier-gallery { background: rgba(212,175,55,0.3); color: #d4af37; }
-        .tier-collector { background: rgba(192,192,192,0.3); color: #e8e8e8; }
+        .tier-collector { background: rgba(200,200,200,0.3); color: #e8e8e8; }
         .tier-museum { background: rgba(255,215,0,0.4); color: #ffd700; }
         
         .info-section {
@@ -235,27 +327,65 @@
             border: 1px solid rgba(212,175,55,0.2);
             border-radius: 8px;
             padding: 20px;
+            text-align: center;
         }
         .tier-card h4 {
             font-family: 'Cinzel', serif;
             color: #d4af37;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
+
+        /* Tier preview frames in info section */
+        .tier-frame-demo {
+            width: 80px;
+            height: 60px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a1518;
+        }
+        .tier-frame-demo.demo-standard {
+            border: 8px solid #2a2a2a;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+        }
+        .tier-frame-demo.demo-gallery {
+            border: 10px solid;
+            border-image: linear-gradient(145deg, #d4af37, #8b6914) 1;
+            box-shadow: 0 0 15px rgba(212,175,55,0.3);
+        }
+        .tier-frame-demo.demo-collector {
+            border: 4px solid;
+            border-image: linear-gradient(135deg, #e8e8e8, #888) 1;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+        }
+        .tier-frame-demo.demo-museum {
+            border: 16px solid;
+            border-image: linear-gradient(145deg, #d4af37, #8b6914, #d4af37) 1;
+            box-shadow: 0 0 20px rgba(212,175,55,0.4);
+        }
+        .tier-frame-demo span {
+            font-size: 0.6rem;
+            color: rgba(212,175,55,0.4);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
         .tier-card ul {
             list-style: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: rgba(244,228,186,0.8);
+            text-align: left;
         }
         .tier-card li {
             padding: 5px 0;
-            padding-left: 15px;
+            padding-left: 18px;
             position: relative;
         }
         .tier-card li::before {
             content: '⚜';
             position: absolute;
             left: 0;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: #d4af37;
         }
         
@@ -306,6 +436,17 @@
             vertical-align: middle;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(244,228,186,0.5);
+        }
+        .empty-state h3 {
+            font-family: 'Cinzel', serif;
+            color: rgba(212,175,55,0.6);
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -320,42 +461,44 @@
         
         <h2 class="section-title">Your Captured Portraits</h2>
         
-        <div class="captures-grid" id="capturesGrid">
-            <!-- Captures loaded dynamically -->
-        </div>
-        
+        <div class="captures-grid" id="capturesGrid"></div>
+
         <div class="info-section">
             <h3>Print Tiers</h3>
             <div class="product-tiers">
                 <div class="tier-card">
+                    <div class="tier-frame-demo demo-standard"><span>YOUR ART</span></div>
                     <h4>Standard <span class="tier-badge tier-standard">FROM $125</span></h4>
                     <ul>
                         <li>Giclée on fine art paper</li>
-                        <li>Classic black frame</li>
+                        <li>Classic matte black frame</li>
                         <li>100+ year color guarantee</li>
                     </ul>
                 </div>
                 <div class="tier-card">
+                    <div class="tier-frame-demo demo-gallery"><span>YOUR ART</span></div>
                     <h4>Gallery <span class="tier-badge tier-gallery">FROM $350</span></h4>
                     <ul>
                         <li>Giclée on cotton rag</li>
-                        <li>Gold aluminum frame</li>
+                        <li>Brushed gold aluminum frame</li>
                         <li>Museum-grade mounting</li>
                     </ul>
                 </div>
                 <div class="tier-card">
+                    <div class="tier-frame-demo demo-collector"><span>YOUR ART</span></div>
                     <h4>Collector <span class="tier-badge tier-collector">FROM $395</span></h4>
                     <ul>
-                        <li>HD aluminum print</li>
+                        <li>HD dye-infused aluminum</li>
                         <li>Float mount included</li>
                         <li>Scratch resistant finish</li>
                     </ul>
                 </div>
                 <div class="tier-card">
+                    <div class="tier-frame-demo demo-museum"><span>YOUR ART</span></div>
                     <h4>Museum <span class="tier-badge tier-museum">FROM $850</span></h4>
                     <ul>
                         <li>Giclée on archival cotton</li>
-                        <li>Ornate gold frame</li>
+                        <li>Ornate gilded frame</li>
                         <li>Certificate of authenticity</li>
                     </ul>
                 </div>
@@ -379,20 +522,20 @@
         const stripe = Stripe('pk_live_51SL6QhADdiQo1kIcChk759IFrqbhz8QZIkAdpeB97CQKydGSXv0MUB6oDlLb4Yjl2nE5LY0Eb4PCAUpQSxw4DPBg003xTZiXPn');
         
         const PRODUCTS = {
-            'standard-8x10': { name: 'Standard 8×10" Framed', price: 125, tier: 'standard' },
-            'standard-16x20': { name: 'Standard 16×20" Framed', price: 225, tier: 'standard' },
-            'gallery-16x20': { name: 'Gallery Gold Frame 16×20"', price: 350, tier: 'gallery' },
-            'gallery-24x36': { name: 'Gallery Gold Frame 24×36"', price: 550, tier: 'gallery' },
-            'collector-16': { name: 'Collector Metal 16×16"', price: 395, tier: 'collector' },
-            'collector-24': { name: 'Collector Metal 24×24"', price: 595, tier: 'collector' },
-            'museum-24x36': { name: 'Museum Ornate Frame 24×36"', price: 850, tier: 'museum' }
+            'standard-8x10': { name: 'Standard 8×10"', price: 125, tier: 'standard', frame: 'frame-standard' },
+            'standard-16x20': { name: 'Standard 16×20"', price: 225, tier: 'standard', frame: 'frame-standard' },
+            'gallery-16x20': { name: 'Gallery Gold 16×20"', price: 350, tier: 'gallery', frame: 'frame-gallery' },
+            'gallery-24x36': { name: 'Gallery Gold 24×36"', price: 550, tier: 'gallery', frame: 'frame-gallery' },
+            'collector-16': { name: 'Metal Print 16×16"', price: 395, tier: 'collector', frame: 'frame-collector' },
+            'collector-24': { name: 'Metal Print 24×24"', price: 595, tier: 'collector', frame: 'frame-collector' },
+            'museum-24x36': { name: 'Museum Ornate 24×36"', price: 850, tier: 'museum', frame: 'frame-museum' }
         };
-        
+
         // Check URL params for success/cancel
         const params = new URLSearchParams(window.location.search);
         if (params.get('success')) {
             document.getElementById('statusBanner').innerHTML = 
-                '<div class="success-banner">✓ Order placed successfully! You\'ll receive a confirmation email shortly.</div>';
+                '<div class="success-banner">✓ Order placed successfully! Your print will ship within 3-5 business days.</div>';
         } else if (params.get('canceled')) {
             document.getElementById('statusBanner').innerHTML = 
                 '<div class="error-banner">Order was canceled. Your captures are still saved.</div>';
@@ -400,75 +543,102 @@
         
         function loadCaptures() {
             const grid = document.getElementById('capturesGrid');
-            // Try both storage keys
             let stored = localStorage.getItem('baroqueCaptures');
             if (!stored) stored = localStorage.getItem('goldenCaptures');
             const captures = stored ? JSON.parse(stored) : {};
             
+            const hasCaptures = Object.keys(captures).some(k => captures[k]);
+            
+            if (!hasCaptures) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <h3>No Captures Yet</h3>
+                        <p>Return to the experience and capture some portraits first!</p>
+                        <a href="index.html" class="back-link" style="margin-top:20px;">← Go to Experience</a>
+                    </div>
+                `;
+                return;
+            }
+            
             for (let i = 1; i <= 12; i++) {
                 const capture = captures[i];
-                const card = document.createElement('div');
-                card.className = 'capture-card' + (capture ? '' : ' empty');
+                if (!capture) continue;
                 
-                if (capture) {
-                    card.innerHTML = `
-                        <div class="capture-image">
-                            <img src="${capture.image}" alt="Capture ${i}">
+                const card = document.createElement('div');
+                card.className = 'capture-card';
+                card.innerHTML = `
+                    <div class="frame-preview-container">
+                        <div class="frame-preview frame-standard" id="framePreview-${i}">
+                            <img src="${capture.image}" alt="Capture ${i}" class="frame-image" id="frameImg-${i}">
                         </div>
-                        <div class="capture-info">
-                            <div class="capture-label">EXP_${String(i).padStart(2, '0')}</div>
-                            <div class="capture-style">${(capture.style || 'baroque').toUpperCase()} Style</div>
-                            <select class="product-select" id="product-${i}" onchange="updatePrice(${i})">
-                                <option value="">Select Print Option...</option>
-                                <optgroup label="Standard">
-                                    <option value="standard-8x10">8×10" Framed — $125</option>
-                                    <option value="standard-16x20">16×20" Framed — $225</option>
-                                </optgroup>
-                                <optgroup label="Gallery">
-                                    <option value="gallery-16x20">Gold Frame 16×20" — $350</option>
-                                    <option value="gallery-24x36">Gold Frame 24×36" — $550</option>
-                                </optgroup>
-                                <optgroup label="Collector">
-                                    <option value="collector-16">Metal Print 16×16" — $395</option>
-                                    <option value="collector-24">Metal Print 24×24" — $595</option>
-                                </optgroup>
-                                <optgroup label="Museum">
-                                    <option value="museum-24x36">Ornate Frame 24×36" — $850</option>
-                                </optgroup>
-                            </select>
-                            <div class="price-display" id="price-${i}"></div>
-                            <button class="order-btn" id="btn-${i}" onclick="orderPrint(${i})" disabled>
-                                Select a Size
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    card.innerHTML = `
-                        <div class="capture-image">EXP_${String(i).padStart(2, '0')} - Empty</div>
-                        <div class="capture-info">
-                            <div class="capture-label">EXP_${String(i).padStart(2, '0')}</div>
-                            <div class="capture-style">No Capture</div>
-                        </div>
-                    `;
-                }
+                    </div>
+                    <div class="frame-label" id="frameLabel-${i}">Standard Black Frame</div>
+                    <div class="capture-info">
+                        <div class="capture-label">EXP_${String(i).padStart(2, '0')}</div>
+                        <select class="product-select" id="product-${i}" onchange="updatePreview(${i})">
+                            <option value="">Select Print Option...</option>
+                            <optgroup label="⬛ Standard — Black Frame">
+                                <option value="standard-8x10">8×10" Framed — $125</option>
+                                <option value="standard-16x20">16×20" Framed — $225</option>
+                            </optgroup>
+                            <optgroup label="🟨 Gallery — Gold Frame">
+                                <option value="gallery-16x20">16×20" Gold Frame — $350</option>
+                                <option value="gallery-24x36">24×36" Gold Frame — $550</option>
+                            </optgroup>
+                            <optgroup label="⬜ Collector — Metal Print">
+                                <option value="collector-16">16×16" Metal — $395</option>
+                                <option value="collector-24">24×24" Metal — $595</option>
+                            </optgroup>
+                            <optgroup label="👑 Museum — Ornate Gold">
+                                <option value="museum-24x36">24×36" Ornate — $850</option>
+                            </optgroup>
+                        </select>
+                        <div class="price-display" id="price-${i}">$125</div>
+                        <button class="order-btn" id="btn-${i}" onclick="orderPrint(${i})" disabled>
+                            Select a Size
+                        </button>
+                    </div>
+                `;
                 grid.appendChild(card);
             }
         }
+
+        const FRAME_LABELS = {
+            'frame-standard': 'Standard Black Frame',
+            'frame-gallery': 'Gallery Gold Frame',
+            'frame-collector': 'HD Metal Print',
+            'frame-museum': 'Museum Ornate Frame'
+        };
         
-        function updatePrice(slot) {
+        function updatePreview(slot) {
             const select = document.getElementById(`product-${slot}`);
             const priceDiv = document.getElementById(`price-${slot}`);
             const btn = document.getElementById(`btn-${slot}`);
+            const framePreview = document.getElementById(`framePreview-${slot}`);
+            const frameLabel = document.getElementById(`frameLabel-${slot}`);
             const productId = select.value;
             
             if (productId && PRODUCTS[productId]) {
-                priceDiv.textContent = `$${PRODUCTS[productId].price}`;
+                const product = PRODUCTS[productId];
+                priceDiv.textContent = `$${product.price}`;
                 btn.disabled = false;
                 btn.textContent = 'Order Now →';
+                
+                // Update frame preview
+                framePreview.className = `frame-preview ${product.frame}`;
+                frameLabel.textContent = FRAME_LABELS[product.frame];
+                
+                // Animate the change
+                framePreview.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    framePreview.style.transform = 'scale(1)';
+                }, 150);
             } else {
-                priceDiv.textContent = '';
+                priceDiv.textContent = '$125';
                 btn.disabled = true;
                 btn.textContent = 'Select a Size';
+                framePreview.className = 'frame-preview frame-standard';
+                frameLabel.textContent = 'Standard Black Frame';
             }
         }
         
@@ -479,7 +649,6 @@
             
             if (!productId) return;
             
-            // Get capture image
             let stored = localStorage.getItem('baroqueCaptures');
             if (!stored) stored = localStorage.getItem('goldenCaptures');
             const captures = JSON.parse(stored);
@@ -494,8 +663,8 @@
             btn.innerHTML = '<span class="loading"></span>Processing...';
             
             try {
-                // First save image to server
-                const saveRes = await fetch(`${API_URL}/save-image`, {
+                // Save image to server
+                await fetch(`${API_URL}/save-image`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -518,10 +687,8 @@
                 const data = await res.json();
                 
                 if (data.url) {
-                    // Redirect to Stripe Checkout
                     window.location.href = data.url;
                 } else if (data.sessionId) {
-                    // Fallback to redirect
                     const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
                     if (result.error) throw new Error(result.error.message);
                 } else {
