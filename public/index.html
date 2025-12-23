@@ -930,101 +930,131 @@
             .controls, .capture-panel {
                 grid-column: 1;
             }
-            .capture-panel {
+            .output-area {
                 order: -1;
             }
         }
         
         @media (max-width: 768px) {
             .header {
-                padding: 15px 10px;
+                padding: 12px 10px;
             }
             .header-top {
                 flex-wrap: wrap;
-                gap: 10px 20px;
-                font-size: 0.65rem;
-                letter-spacing: 2px;
+                gap: 8px 15px;
+                font-size: 0.6rem;
+                letter-spacing: 1px;
             }
             .header h1 {
-                font-size: 1.4rem;
-                letter-spacing: 3px;
+                font-size: 1.3rem;
+                letter-spacing: 2px;
             }
-            .header-sub {
-                font-size: 0.9rem;
-            }
-            .header-credit {
+            .header-sub, .header-credit {
                 font-size: 0.8rem;
             }
             
             .main {
                 padding: 10px;
-                gap: 12px;
+                gap: 10px;
             }
             
-            .controls, .capture-panel {
-                padding: 15px;
-                border-radius: 8px;
+            /* VIDEO FIRST ON MOBILE */
+            .output-area {
+                order: -2;
             }
             
-            .capture-panel {
-                padding-left: 22px !important;
-                padding-right: 22px !important;
+            /* Collapsible controls */
+            .controls {
+                padding: 12px;
+                border-radius: 10px;
             }
             
-            .sprocket-track {
-                width: 14px;
-            }
-            .sprocket-hole {
-                width: 8px;
-                height: 11px;
+            .section {
+                margin-bottom: 12px;
+                padding-bottom: 12px;
             }
             
             .section h3 {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
+                margin-bottom: 10px;
             }
             
+            /* Bigger touch targets for session button */
             .session-btn {
-                padding: 14px 16px;
-                font-size: 0.9rem;
+                padding: 16px 20px;
+                font-size: 0.95rem;
                 letter-spacing: 2px;
+                min-height: 54px;
             }
             
-            /* Video container */
-            #videoContainer {
-                border-radius: 8px;
-            }
-            
-            /* Style buttons grid */
+            /* Style buttons - 2 column grid */
             .style-buttons {
                 grid-template-columns: repeat(2, 1fr) !important;
                 gap: 8px !important;
             }
+            .style-btn {
+                padding: 12px 8px !important;
+                font-size: 0.7rem !important;
+                min-height: 48px;
+            }
             
             /* Sliders */
+            .slider-row {
+                margin-bottom: 16px;
+            }
             .slider-row label {
-                font-size: 0.7rem;
+                font-size: 0.75rem;
+                margin-bottom: 8px;
+            }
+            input[type="range"] {
+                height: 8px;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                width: 24px;
+                height: 24px;
             }
             
-            /* Capture slots */
+            /* Film strip capture panel */
+            .capture-panel {
+                padding: 12px;
+                padding-left: 20px !important;
+                padding-right: 20px !important;
+            }
+            .sprocket-track {
+                width: 12px;
+            }
+            .sprocket-hole {
+                width: 6px;
+                height: 10px;
+            }
+            
+            /* Capture slots - horizontal scroll */
             .capture-slots {
+                display: flex !important;
+                flex-direction: row !important;
+                overflow-x: auto !important;
                 gap: 8px !important;
+                padding-bottom: 8px;
+                -webkit-overflow-scrolling: touch;
             }
             .capture-slot {
-                min-height: 50px;
+                flex: 0 0 70px;
+                min-height: 55px;
             }
             
             /* Shop prints button */
             .shop-prints-btn {
-                padding: 12px 16px !important;
-                font-size: 0.8rem !important;
+                padding: 14px 16px !important;
+                font-size: 0.85rem !important;
+                min-height: 50px;
             }
             
             /* Statement section */
             .shimmer-block {
-                padding: 20px 15px;
+                padding: 18px 14px;
             }
             .shimmer-block h2 {
-                font-size: 0.95rem;
+                font-size: 0.9rem;
                 letter-spacing: 2px;
             }
             .shimmer-block p {
@@ -1034,43 +1064,66 @@
         }
         
         @media (max-width: 480px) {
-            .header h1 {
-                font-size: 1.1rem;
-                letter-spacing: 2px;
+            .header {
+                padding: 10px 8px;
             }
             .header-top {
-                font-size: 0.55rem;
-                letter-spacing: 1px;
+                font-size: 0.5rem;
+                gap: 5px 10px;
             }
             .header-top span:nth-child(2) {
                 display: none;
             }
+            .header h1 {
+                font-size: 1.1rem;
+                letter-spacing: 1px;
+            }
+            .header-sub, .header-credit {
+                font-size: 0.7rem;
+            }
             
-            .style-buttons {
-                grid-template-columns: 1fr 1fr !important;
+            .main {
+                padding: 8px;
+                gap: 8px;
+            }
+            
+            .controls {
+                padding: 10px;
+            }
+            
+            .section h3 {
+                font-size: 0.75rem;
+            }
+            
+            .session-btn {
+                padding: 14px 16px;
+                font-size: 0.85rem;
+                min-height: 50px;
             }
             
             .style-btn {
-                padding: 10px 8px !important;
+                padding: 10px 6px !important;
                 font-size: 0.65rem !important;
+                min-height: 44px;
             }
             
-            .capture-slots {
-                grid-template-columns: repeat(4, 1fr) !important;
+            .capture-slot {
+                flex: 0 0 60px;
+                min-height: 48px;
             }
             
             .shimmer-block {
-                padding: 15px 12px;
+                padding: 14px 10px;
             }
             .shimmer-block h2 {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
             }
             .shimmer-block p {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
             }
             
             .contact-info {
-                font-size: 0.65rem !important;
+                font-size: 0.6rem !important;
             }
         }
     </style>
