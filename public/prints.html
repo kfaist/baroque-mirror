@@ -94,125 +94,209 @@
 
         /* Frame Preview Styles */
         .frame-preview-container {
-            padding: 20px;
+            padding: 30px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 280px;
-            background: linear-gradient(135deg, #1a1518 0%, #0d0a0c 100%);
+            min-height: 380px;
+            background: 
+                radial-gradient(ellipse at center, rgba(40,35,38,0.8) 0%, rgba(15,12,14,1) 70%),
+                linear-gradient(135deg, #1a1518 0%, #0d0a0c 100%);
+            position: relative;
+        }
+        /* Wall texture hint */
+        .frame-preview-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
         }
         
         .frame-preview {
             position: relative;
             display: inline-block;
             transition: all 0.4s ease;
+            transform-style: preserve-3d;
         }
         
-        /* Standard Black Frame */
+        /* Standard Black Frame - Classic gallery style */
         .frame-standard {
-            padding: 12px;
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            padding: 18px;
+            background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            border-radius: 2px;
             box-shadow: 
-                inset 0 0 0 1px rgba(255,255,255,0.05),
-                inset 0 0 0 2px rgba(0,0,0,0.5),
-                0 8px 32px rgba(0,0,0,0.6),
-                0 2px 8px rgba(0,0,0,0.4);
+                /* Outer frame edge highlight */
+                inset 2px 2px 0 rgba(255,255,255,0.1),
+                inset -2px -2px 0 rgba(0,0,0,0.4),
+                /* Inner frame depth */
+                inset 0 0 0 4px #1a1a1a,
+                inset 0 0 0 6px rgba(255,255,255,0.05),
+                /* Wall shadow */
+                8px 12px 40px rgba(0,0,0,0.7),
+                4px 6px 20px rgba(0,0,0,0.5),
+                /* Subtle lift */
+                0 2px 4px rgba(0,0,0,0.3);
         }
         .frame-standard::before {
             content: '';
             position: absolute;
-            inset: 4px;
-            border: 1px solid rgba(255,255,255,0.08);
+            inset: 8px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        /* Inner mat */
+        .frame-standard::after {
+            content: '';
+            position: absolute;
+            inset: 14px;
+            border: 3px solid #f5f5f0;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2);
             pointer-events: none;
         }
         
-        /* Gallery Gold Frame */
+        /* Gallery Gold Frame - Brushed aluminum gold */
         .frame-gallery {
-            padding: 16px;
-            background: linear-gradient(145deg, #d4af37, #8b6914, #d4af37, #a08520);
-            background-size: 200% 200%;
+            padding: 22px;
+            background: 
+                linear-gradient(145deg, 
+                    #e8c84a 0%, 
+                    #d4af37 15%, 
+                    #a08520 30%,
+                    #d4af37 50%,
+                    #f0d861 65%,
+                    #d4af37 80%,
+                    #8b6914 100%);
+            border-radius: 2px;
             box-shadow: 
-                inset 0 0 0 2px rgba(255,255,255,0.3),
-                inset 0 0 0 4px rgba(139,105,20,0.8),
-                0 8px 32px rgba(0,0,0,0.5),
-                0 0 20px rgba(212,175,55,0.3);
+                /* Gold highlights */
+                inset 2px 2px 0 rgba(255,235,150,0.6),
+                inset -2px -2px 0 rgba(100,75,10,0.5),
+                /* Depth layers */
+                inset 0 0 0 5px #8b6914,
+                inset 0 0 0 7px rgba(255,215,0,0.4),
+                inset 0 0 0 9px #6b4f10,
+                /* Wall shadow */
+                8px 14px 45px rgba(0,0,0,0.6),
+                4px 8px 25px rgba(0,0,0,0.4),
+                /* Gold glow */
+                0 0 30px rgba(212,175,55,0.25);
         }
         .frame-gallery::before {
             content: '';
             position: absolute;
-            inset: 6px;
-            border: 2px solid rgba(255,215,0,0.4);
+            inset: 10px;
+            background: linear-gradient(180deg, rgba(255,235,150,0.15) 0%, transparent 40%);
             pointer-events: none;
         }
         .frame-gallery::after {
             content: '';
             position: absolute;
-            inset: 10px;
-            border: 1px solid rgba(139,105,20,0.6);
+            inset: 18px;
+            border: 4px solid #faf8f0;
+            box-shadow: inset 1px 1px 4px rgba(0,0,0,0.15);
             pointer-events: none;
         }
         
-        /* Collector Metal */
+        /* Collector Metal - HD Aluminum float mount */
         .frame-collector {
-            padding: 6px;
-            background: linear-gradient(135deg, #e8e8e8, #a0a0a0, #d0d0d0, #888);
+            padding: 8px;
+            background: linear-gradient(160deg, 
+                #f0f0f0 0%, 
+                #c8c8c8 20%, 
+                #e0e0e0 40%,
+                #a8a8a8 60%,
+                #d0d0d0 80%,
+                #b8b8b8 100%);
+            border-radius: 3px;
             box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,0.8),
-                inset 0 -1px 0 rgba(0,0,0,0.3),
-                0 8px 32px rgba(0,0,0,0.5),
-                0 0 0 1px rgba(255,255,255,0.1);
-            border-radius: 2px;
+                /* Metal sheen */
+                inset 1px 1px 0 rgba(255,255,255,0.9),
+                inset -1px -1px 0 rgba(0,0,0,0.2),
+                /* Float mount gap shadow */
+                inset 0 0 15px rgba(0,0,0,0.1),
+                /* Wall shadow - deeper for float effect */
+                12px 16px 50px rgba(0,0,0,0.5),
+                6px 10px 30px rgba(0,0,0,0.4),
+                /* Edge definition */
+                0 0 0 1px rgba(0,0,0,0.1);
         }
         .frame-collector .frame-image {
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+            box-shadow: 
+                inset 0 0 40px rgba(0,0,0,0.15),
+                inset 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 1px;
         }
         
-        /* Museum Ornate Frame */
+        /* Museum Ornate Frame - Gilded baroque */
         .frame-museum {
-            padding: 24px;
+            padding: 32px;
             background: 
-                linear-gradient(145deg, #d4af37, #8b6914),
-                repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(0,0,0,0.1) 8px, rgba(0,0,0,0.1) 16px);
+                linear-gradient(145deg, 
+                    #f0d861 0%,
+                    #d4af37 10%,
+                    #8b6914 25%,
+                    #d4af37 40%,
+                    #e8c84a 50%,
+                    #d4af37 60%,
+                    #6b4f10 75%,
+                    #d4af37 90%,
+                    #a08520 100%);
+            border-radius: 3px;
             box-shadow: 
-                inset 0 0 0 3px rgba(255,255,255,0.2),
-                inset 0 0 0 6px rgba(139,105,20,0.9),
-                inset 0 0 0 8px rgba(255,215,0,0.3),
-                inset 0 0 0 12px rgba(139,105,20,0.7),
-                0 12px 48px rgba(0,0,0,0.6),
-                0 0 30px rgba(212,175,55,0.4);
-            border-radius: 4px;
+                /* Ornate outer edge */
+                inset 3px 3px 0 rgba(255,235,150,0.7),
+                inset -3px -3px 0 rgba(80,60,5,0.6),
+                /* Multiple depth rings */
+                inset 0 0 0 6px #705010,
+                inset 0 0 0 8px rgba(255,215,0,0.5),
+                inset 0 0 0 12px #8b6914,
+                inset 0 0 0 14px rgba(255,235,150,0.3),
+                inset 0 0 0 18px #6b4f10,
+                /* Deep wall shadow */
+                10px 18px 60px rgba(0,0,0,0.6),
+                5px 10px 35px rgba(0,0,0,0.5),
+                /* Rich gold glow */
+                0 0 50px rgba(212,175,55,0.35),
+                0 0 20px rgba(212,175,55,0.2);
         }
         .frame-museum::before {
-            content: '❧';
+            content: '✦';
             position: absolute;
-            top: 6px;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 14px;
-            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            color: rgba(255,245,200,0.7);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
         }
         .frame-museum::after {
-            content: '❧';
+            content: '';
             position: absolute;
-            bottom: 6px;
-            left: 50%;
-            transform: translateX(-50%) rotate(180deg);
-            font-size: 14px;
-            color: rgba(255,255,255,0.5);
+            inset: 26px;
+            border: 5px solid #fffef8;
+            box-shadow: 
+                inset 2px 2px 6px rgba(0,0,0,0.12),
+                0 0 0 2px rgba(139,105,20,0.3);
+            pointer-events: none;
         }
         
         .frame-image {
             display: block;
-            max-width: 200px;
-            max-height: 160px;
+            width: 240px;
+            height: 180px;
             object-fit: cover;
+            position: relative;
+            z-index: 1;
         }
         
         .frame-label {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 20px;
             font-family: 'Cinzel', serif;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: rgba(212,175,55,0.8);
             letter-spacing: 2px;
         }
@@ -477,19 +561,19 @@
             }
             
             .frame-preview-container {
-                padding: 15px;
-                min-height: 220px;
+                padding: 20px;
+                min-height: 320px;
             }
             
             .frame-image {
-                max-width: 160px;
-                max-height: 130px;
+                width: 200px;
+                height: 150px;
             }
             
-            .frame-standard { padding: 10px; }
-            .frame-gallery { padding: 12px; }
-            .frame-collector { padding: 5px; }
-            .frame-museum { padding: 18px; }
+            .frame-standard { padding: 14px; }
+            .frame-gallery { padding: 18px; }
+            .frame-collector { padding: 6px; }
+            .frame-museum { padding: 24px; }
             
             .capture-info {
                 padding: 15px;
@@ -559,8 +643,8 @@
             }
             
             .frame-image {
-                max-width: 140px;
-                max-height: 110px;
+                width: 180px;
+                height: 135px;
             }
         }
     </style>

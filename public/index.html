@@ -908,6 +908,171 @@
         .shimmer-block .contact-info p { margin-bottom: 6px; font-size: 0.75rem; }
         .shimmer-block .contact-info strong { color: rgba(212,175,55,0.8); letter-spacing: 2px; font-weight: normal; }
         .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
+        
+        /* ========== MOBILE RESPONSIVE ========== */
+        @media (max-width: 1200px) {
+            .main {
+                grid-template-columns: 1fr 200px;
+                grid-template-rows: auto 1fr;
+            }
+            .controls {
+                grid-column: 1 / -1;
+                grid-row: 1;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main {
+                grid-template-columns: 1fr;
+                padding: 15px;
+                gap: 15px;
+            }
+            .controls, .capture-panel {
+                grid-column: 1;
+            }
+            .capture-panel {
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 10px;
+            }
+            .header-top {
+                flex-wrap: wrap;
+                gap: 10px 20px;
+                font-size: 0.65rem;
+                letter-spacing: 2px;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+                letter-spacing: 3px;
+            }
+            .header-sub {
+                font-size: 0.9rem;
+            }
+            .header-credit {
+                font-size: 0.8rem;
+            }
+            
+            .main {
+                padding: 10px;
+                gap: 12px;
+            }
+            
+            .controls, .capture-panel {
+                padding: 15px;
+                border-radius: 8px;
+            }
+            
+            .capture-panel {
+                padding-left: 22px !important;
+                padding-right: 22px !important;
+            }
+            
+            .sprocket-track {
+                width: 14px;
+            }
+            .sprocket-hole {
+                width: 8px;
+                height: 11px;
+            }
+            
+            .section h3 {
+                font-size: 0.85rem;
+            }
+            
+            .session-btn {
+                padding: 14px 16px;
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+            }
+            
+            /* Video container */
+            #videoContainer {
+                border-radius: 8px;
+            }
+            
+            /* Style buttons grid */
+            .style-buttons {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+            
+            /* Sliders */
+            .slider-row label {
+                font-size: 0.7rem;
+            }
+            
+            /* Capture slots */
+            .capture-slots {
+                gap: 8px !important;
+            }
+            .capture-slot {
+                min-height: 50px;
+            }
+            
+            /* Shop prints button */
+            .shop-prints-btn {
+                padding: 12px 16px !important;
+                font-size: 0.8rem !important;
+            }
+            
+            /* Statement section */
+            .shimmer-block {
+                padding: 20px 15px;
+            }
+            .shimmer-block h2 {
+                font-size: 0.95rem;
+                letter-spacing: 2px;
+            }
+            .shimmer-block p {
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.1rem;
+                letter-spacing: 2px;
+            }
+            .header-top {
+                font-size: 0.55rem;
+                letter-spacing: 1px;
+            }
+            .header-top span:nth-child(2) {
+                display: none;
+            }
+            
+            .style-buttons {
+                grid-template-columns: 1fr 1fr !important;
+            }
+            
+            .style-btn {
+                padding: 10px 8px !important;
+                font-size: 0.65rem !important;
+            }
+            
+            .capture-slots {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+            
+            .shimmer-block {
+                padding: 15px 12px;
+            }
+            .shimmer-block h2 {
+                font-size: 0.85rem;
+            }
+            .shimmer-block p {
+                font-size: 0.85rem;
+            }
+            
+            .contact-info {
+                font-size: 0.65rem !important;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
