@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Mirror's Echo - Prints & NFTs</title>
+    <title>The Mirror's Echo - Order Prints</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -46,9 +47,9 @@
         .back-link:hover { color: #f4e4ba; }
         
         .main-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 60px 20px;
+            padding: 40px 20px;
         }
         
         .section-title {
@@ -59,7 +60,6 @@
             text-transform: uppercase;
             text-align: center;
             margin-bottom: 40px;
-            position: relative;
         }
         .section-title::after {
             content: '⚜';
@@ -71,25 +71,25 @@
         
         .captures-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
             margin-bottom: 60px;
         }
         
         .capture-card {
-            background: rgba(15,10,12,0.9);
+            background: rgba(15,10,12,0.95);
             border: 1px solid rgba(212,175,55,0.3);
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             transition: all 0.3s ease;
         }
         .capture-card:hover {
             border-color: #d4af37;
-            box-shadow: 0 0 30px rgba(212,175,55,0.2);
-            transform: translateY(-5px);
+            box-shadow: 0 0 40px rgba(212,175,55,0.25);
+            transform: translateY(-3px);
         }
         .capture-card.empty {
-            opacity: 0.4;
+            opacity: 0.3;
             pointer-events: none;
         }
         
@@ -103,11 +103,20 @@
             color: rgba(212,175,55,0.3);
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem;
+            position: relative;
+            overflow: hidden;
         }
         .capture-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+        .capture-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 3px solid rgba(212,175,55,0.2);
+            pointer-events: none;
         }
         
         .capture-info {
@@ -118,66 +127,143 @@
             font-size: 0.7rem;
             color: rgba(212,175,55,0.6);
             letter-spacing: 2px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .capture-style {
             font-family: 'Cinzel', serif;
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: #d4af37;
             margin-bottom: 15px;
         }
         
-        .purchase-options {
-            display: flex;
-            gap: 10px;
+        .product-select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(20,15,18,0.9);
+            color: #f4e4ba;
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 6px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            cursor: pointer;
         }
-        .btn {
-            flex: 1;
-            padding: 10px 15px;
-            border: 1px solid rgba(212,175,55,0.5);
-            background: transparent;
+        .product-select:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+        .product-select option {
+            background: #1a1018;
+            padding: 10px;
+        }
+        
+        .price-display {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: #d4af37;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .order-btn {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #d4af37;
+            background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
             color: #d4af37;
             font-family: 'Cinzel', serif;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
             cursor: pointer;
             transition: all 0.3s;
             text-transform: uppercase;
+            border-radius: 6px;
         }
-        .btn:hover {
-            background: linear-gradient(135deg, #d4af37, #8b6914);
+        .order-btn:hover {
+            background: linear-gradient(180deg, #d4af37, #8b6914);
             color: #0a0608;
+            box-shadow: 0 0 30px rgba(212,175,55,0.5);
         }
-        .btn.primary {
-            background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
+        .order-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
+        
+        .tier-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            border-radius: 3px;
+            margin-left: 8px;
+            font-family: 'Cinzel', serif;
+        }
+        .tier-standard { background: rgba(150,150,150,0.3); color: #ccc; }
+        .tier-gallery { background: rgba(212,175,55,0.3); color: #d4af37; }
+        .tier-collector { background: rgba(192,192,192,0.3); color: #e8e8e8; }
+        .tier-museum { background: rgba(255,215,0,0.4); color: #ffd700; }
         
         .info-section {
             background: rgba(20,15,25,0.5);
             border: 1px solid rgba(212,175,55,0.2);
             border-radius: 12px;
-            padding: 40px;
-            margin-top: 60px;
+            padding: 35px;
+            margin-top: 40px;
             backdrop-filter: blur(10px);
         }
         .info-section h3 {
             font-family: 'Cinzel', serif;
             color: #d4af37;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: 3px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .info-section p {
-            line-height: 1.8;
-            margin-bottom: 15px;
+            line-height: 1.7;
+            margin-bottom: 12px;
             color: rgba(244,228,186,0.9);
+        }
+        
+        .product-tiers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .tier-card {
+            background: rgba(15,10,12,0.8);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .tier-card h4 {
+            font-family: 'Cinzel', serif;
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+        .tier-card ul {
+            list-style: none;
+            font-size: 0.9rem;
+            color: rgba(244,228,186,0.8);
+        }
+        .tier-card li {
+            padding: 5px 0;
+            padding-left: 15px;
+            position: relative;
+        }
+        .tier-card li::before {
+            content: '⚜';
+            position: absolute;
+            left: 0;
+            font-size: 0.7rem;
+            color: #d4af37;
         }
         
         .contact-footer {
             text-align: center;
             padding: 40px;
             border-top: 1px solid rgba(212,175,55,0.2);
-            margin-top: 60px;
+            margin-top: 40px;
         }
         .contact-footer p {
             font-family: 'JetBrains Mono', monospace;
@@ -189,16 +275,49 @@
             color: #d4af37;
             text-decoration: none;
         }
+        
+        .success-banner, .error-banner {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+        }
+        .success-banner {
+            background: rgba(74,222,128,0.2);
+            border: 1px solid rgba(74,222,128,0.5);
+            color: #4ade80;
+        }
+        .error-banner {
+            background: rgba(248,113,113,0.2);
+            border: 1px solid rgba(248,113,113,0.5);
+            color: #f87171;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(212,175,55,0.3);
+            border-top-color: #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>⚜ Prints & NFTs ⚜</h1>
-        <p>The Mirror's Echo Collection</p>
+        <h1>⚜ Order Your Portrait ⚜</h1>
+        <p>Museum-Quality Prints • Direct to Your Door</p>
         <a href="index.html" class="back-link">← Return to Experience</a>
     </div>
     
     <div class="main-content">
+        <div id="statusBanner"></div>
+        
         <h2 class="section-title">Your Captured Portraits</h2>
         
         <div class="captures-grid" id="capturesGrid">
@@ -206,28 +325,84 @@
         </div>
         
         <div class="info-section">
-            <h3>About the Collection</h3>
-            <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses—learning motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
-            <p><strong>Archival Prints:</strong> Museum-quality giclée prints on Hahnemühle fine art paper, available in sizes from 8×10" to 30×40". Each print includes a certificate of authenticity signed by the artist.</p>
-            <p><strong>NFT Editions:</strong> Mint your portraits as unique digital collectibles on the blockchain. Each NFT includes the high-resolution original, metadata about the transformation parameters, and perpetual exhibition rights.</p>
+            <h3>Print Tiers</h3>
+            <div class="product-tiers">
+                <div class="tier-card">
+                    <h4>Standard <span class="tier-badge tier-standard">FROM $125</span></h4>
+                    <ul>
+                        <li>Giclée on fine art paper</li>
+                        <li>Classic black frame</li>
+                        <li>100+ year color guarantee</li>
+                    </ul>
+                </div>
+                <div class="tier-card">
+                    <h4>Gallery <span class="tier-badge tier-gallery">FROM $350</span></h4>
+                    <ul>
+                        <li>Giclée on cotton rag</li>
+                        <li>Gold aluminum frame</li>
+                        <li>Museum-grade mounting</li>
+                    </ul>
+                </div>
+                <div class="tier-card">
+                    <h4>Collector <span class="tier-badge tier-collector">FROM $395</span></h4>
+                    <ul>
+                        <li>HD aluminum print</li>
+                        <li>Float mount included</li>
+                        <li>Scratch resistant finish</li>
+                    </ul>
+                </div>
+                <div class="tier-card">
+                    <h4>Museum <span class="tier-badge tier-museum">FROM $850</span></h4>
+                    <ul>
+                        <li>Giclée on archival cotton</li>
+                        <li>Ornate gold frame</li>
+                        <li>Certificate of authenticity</li>
+                    </ul>
+                </div>
+            </div>
         </div>
         
         <div class="info-section">
-            <h3>Exhibition License</h3>
-            <p>The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development. Exhibition licenses and institutional partnerships support the continued evolution of networked digital art practices.</p>
-            <p>For gallery installations, museum exhibitions, or commercial licensing inquiries, please contact us directly.</p>
+            <h3>About Your Print</h3>
+            <p>Each portrait is printed using giclée technology by Fine Art Trade Guild approved facilities, ensuring museum-quality reproduction with a 100+ year color guarantee. Your artwork ships directly from our global print network to your door.</p>
+            <p>All prints are produced on demand and typically ship within 3-5 business days. International shipping available to US, Canada, UK, Australia, and EU.</p>
         </div>
     </div>
     
     <div class="contact-footer">
-        <p>Artist / Technical: <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
-        <p>Curatorial / Institutional: <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
+        <p>Questions? <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+        <p>© 2024 Krista Faist • The Mirror's Echo</p>
     </div>
     
     <script>
+        const API_URL = 'https://baroque-print-api-production.up.railway.app';
+        const stripe = Stripe('pk_live_51SL6QhADdiQo1kIcChk759IFrqbhz8QZIkAdpeB97CQKydGSXv0MUB6oDlLb4Yjl2nE5LY0Eb4PCAUpQSxw4DPBg003xTZiXPn');
+        
+        const PRODUCTS = {
+            'standard-8x10': { name: 'Standard 8×10" Framed', price: 125, tier: 'standard' },
+            'standard-16x20': { name: 'Standard 16×20" Framed', price: 225, tier: 'standard' },
+            'gallery-16x20': { name: 'Gallery Gold Frame 16×20"', price: 350, tier: 'gallery' },
+            'gallery-24x36': { name: 'Gallery Gold Frame 24×36"', price: 550, tier: 'gallery' },
+            'collector-16': { name: 'Collector Metal 16×16"', price: 395, tier: 'collector' },
+            'collector-24': { name: 'Collector Metal 24×24"', price: 595, tier: 'collector' },
+            'museum-24x36': { name: 'Museum Ornate Frame 24×36"', price: 850, tier: 'museum' }
+        };
+        
+        // Check URL params for success/cancel
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('success')) {
+            document.getElementById('statusBanner').innerHTML = 
+                '<div class="success-banner">✓ Order placed successfully! You\'ll receive a confirmation email shortly.</div>';
+        } else if (params.get('canceled')) {
+            document.getElementById('statusBanner').innerHTML = 
+                '<div class="error-banner">Order was canceled. Your captures are still saved.</div>';
+        }
+        
         function loadCaptures() {
             const grid = document.getElementById('capturesGrid');
-            const stored = localStorage.getItem('baroqueCaptures');
+            // Try both storage keys
+            let stored = localStorage.getItem('baroqueCaptures');
+            if (!stored) stored = localStorage.getItem('goldenCaptures');
             const captures = stored ? JSON.parse(stored) : {};
             
             for (let i = 1; i <= 12; i++) {
@@ -242,11 +417,29 @@
                         </div>
                         <div class="capture-info">
                             <div class="capture-label">EXP_${String(i).padStart(2, '0')}</div>
-                            <div class="capture-style">${capture.style ? capture.style.toUpperCase() : 'BAROQUE'} Style</div>
-                            <div class="purchase-options">
-                                <button class="btn primary" onclick="orderPrint(${i})">Order Print</button>
-                                <button class="btn" onclick="mintNFT(${i})">Mint NFT</button>
-                            </div>
+                            <div class="capture-style">${(capture.style || 'baroque').toUpperCase()} Style</div>
+                            <select class="product-select" id="product-${i}" onchange="updatePrice(${i})">
+                                <option value="">Select Print Option...</option>
+                                <optgroup label="Standard">
+                                    <option value="standard-8x10">8×10" Framed — $125</option>
+                                    <option value="standard-16x20">16×20" Framed — $225</option>
+                                </optgroup>
+                                <optgroup label="Gallery">
+                                    <option value="gallery-16x20">Gold Frame 16×20" — $350</option>
+                                    <option value="gallery-24x36">Gold Frame 24×36" — $550</option>
+                                </optgroup>
+                                <optgroup label="Collector">
+                                    <option value="collector-16">Metal Print 16×16" — $395</option>
+                                    <option value="collector-24">Metal Print 24×24" — $595</option>
+                                </optgroup>
+                                <optgroup label="Museum">
+                                    <option value="museum-24x36">Ornate Frame 24×36" — $850</option>
+                                </optgroup>
+                            </select>
+                            <div class="price-display" id="price-${i}"></div>
+                            <button class="order-btn" id="btn-${i}" onclick="orderPrint(${i})" disabled>
+                                Select a Size
+                            </button>
                         </div>
                     `;
                 } else {
@@ -262,12 +455,84 @@
             }
         }
         
-        function orderPrint(slot) {
-            alert(`Print ordering coming soon!\n\nYour EXP_${String(slot).padStart(2, '0')} portrait will be available as:\n• 8×10" - $45\n• 16×20" - $125\n• 30×40" - $350\n\nContact kristabluedoor@gmail.com for pre-orders.`);
+        function updatePrice(slot) {
+            const select = document.getElementById(`product-${slot}`);
+            const priceDiv = document.getElementById(`price-${slot}`);
+            const btn = document.getElementById(`btn-${slot}`);
+            const productId = select.value;
+            
+            if (productId && PRODUCTS[productId]) {
+                priceDiv.textContent = `$${PRODUCTS[productId].price}`;
+                btn.disabled = false;
+                btn.textContent = 'Order Now →';
+            } else {
+                priceDiv.textContent = '';
+                btn.disabled = true;
+                btn.textContent = 'Select a Size';
+            }
         }
         
-        function mintNFT(slot) {
-            alert(`NFT minting coming soon!\n\nYour EXP_${String(slot).padStart(2, '0')} portrait will be minted on Ethereum.\n\nMint price: 0.01 ETH\n\nContact kristabluedoor@gmail.com for early access.`);
+        async function orderPrint(slot) {
+            const select = document.getElementById(`product-${slot}`);
+            const btn = document.getElementById(`btn-${slot}`);
+            const productId = select.value;
+            
+            if (!productId) return;
+            
+            // Get capture image
+            let stored = localStorage.getItem('baroqueCaptures');
+            if (!stored) stored = localStorage.getItem('goldenCaptures');
+            const captures = JSON.parse(stored);
+            const capture = captures[slot];
+            
+            if (!capture) {
+                alert('Capture not found');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Processing...';
+            
+            try {
+                // First save image to server
+                const saveRes = await fetch(`${API_URL}/save-image`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderId: `order-${Date.now()}-${slot}`,
+                        imageData: capture.image
+                    })
+                });
+                
+                // Create checkout session
+                const res = await fetch(`${API_URL}/create-checkout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId: productId,
+                        imageData: capture.image,
+                        returnUrl: window.location.href.split('?')[0]
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (data.url) {
+                    // Redirect to Stripe Checkout
+                    window.location.href = data.url;
+                } else if (data.sessionId) {
+                    // Fallback to redirect
+                    const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+                    if (result.error) throw new Error(result.error.message);
+                } else {
+                    throw new Error(data.error || 'Failed to create checkout');
+                }
+            } catch (err) {
+                console.error('Order error:', err);
+                alert('Error creating order: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = 'Order Now →';
+            }
         }
         
         window.addEventListener('load', loadCaptures);
