@@ -772,68 +772,62 @@
         ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
         
-        /* Statement section - DARK SHIMMER BOX with Rainbow Sweep */
+        /* Statement section - TWO TIERED SHIMMER LAYERS */
         .statement-section { margin-top: 12px; width: 100%; position: relative; }
         
-        /* Dark shimmer box - plus-lighter blend for luminous see-through */
-        .dark-shimmer-box {
+        /* Layer 1: LIGHTER/more transparent outer shimmer background */
+        .shimmer-bg {
             position: relative;
-            background-color: rgba(15, 15, 15, 0.45);
-            mix-blend-mode: plus-lighter;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 20px;
+            background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(255,255,255,0.06));
             overflow: hidden;
-            padding: 36px 44px;
-            isolation: isolate;
         }
-        
-        .dark-shimmer-box::after {
-            content: '';
+        .shimmer-bg::before {
+            content: "";
             position: absolute;
-            inset: 0;
-            background: linear-gradient(115deg, 
-                rgba(255,255,255,0) 0%, 
-                rgba(255,105,180,0.22) 10%, 
-                rgba(138,43,226,0.22) 20%, 
-                rgba(75,0,130,0.22) 30%, 
-                rgba(0,191,255,0.22) 40%, 
-                rgba(0,255,255,0.22) 50%, 
-                rgba(255,215,0,0.22) 60%, 
-                rgba(255,165,0,0.22) 70%, 
-                rgba(255,20,147,0.22) 80%, 
-                rgba(255,255,255,0) 100%);
-            background-size: 300% 100%;
-            mix-blend-mode: screen;
-            animation: rainbow-shimmer 8s linear infinite;
-            opacity: 0.76;
+            top: 0;
+            left: -150%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), rgba(255,200,255,0.08), transparent);
+            animation: shimmer 8s infinite;
             pointer-events: none;
-            z-index: 1;
         }
         
-        @keyframes rainbow-shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -100% 0; }
-        }
-        
-        .shimmer-content {
+        /* Layer 2: DARKER inner text block */
+        .shimmer-block {
             position: relative;
-            z-index: 2;
+            background: rgba(0,0,0,0.85);
+            padding: 36px 44px;
+            overflow: hidden;
+        }
+        .shimmer-block::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.06), rgba(255,200,255,0.04), transparent);
+            animation: shimmer 6s infinite;
+            pointer-events: none;
         }
         
-        .shimmer-content h2, .shimmer-block h2 { color: #fff; font-family: 'Times New Roman', Georgia, serif; font-size: 1.2rem; letter-spacing: 3px; margin: 0 0 18px 0; text-transform: uppercase; }
-        .shimmer-content p, .shimmer-block p { font-family: 'Times New Roman', Georgia, serif; font-size: 1.05rem; line-height: 1.8; margin-bottom: 18px; color: rgba(255,255,255,0.92); }
-        .shimmer-content p:last-of-type, .shimmer-block p:last-of-type { margin-bottom: 0; }
-        .shimmer-content a, .shimmer-block a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.4); transition: all 0.3s ease; }
-        .shimmer-content a:hover, .shimmer-block a:hover { border-bottom-color: #fff; }
-        .shimmer-content .section-divider, .shimmer-block .section-divider { text-align: center; color: #fff; font-size: 1rem; margin: 28px 0; opacity: 0.5; letter-spacing: 0.3em; }
-        .shimmer-content .contact-info, .shimmer-block .contact-info { margin-top: 28px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.15); }
-        .shimmer-content .contact-info p, .shimmer-block .contact-info p { margin-bottom: 8px; font-size: 0.95rem; }
-        .shimmer-content .license-note, .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
+        @keyframes shimmer {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
+        }
         
-        /* Legacy wrapper support */
-        .shimmer-bg { display: contents; }
-        .shimmer-block { position: relative; z-index: 2; }
+        .shimmer-block h2 { position: relative; color: #fff; font-family: 'Cinzel', serif; font-size: 1.2rem; letter-spacing: 3px; margin: 0 0 18px 0; text-transform: uppercase; }
+        .shimmer-block p { position: relative; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; line-height: 1.8; margin-bottom: 18px; color: rgba(255,255,255,0.92); }
+        .shimmer-block p:last-of-type { margin-bottom: 0; }
+        .shimmer-block a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.4); transition: all 0.3s ease; }
+        .shimmer-block a:hover { border-bottom-color: #fff; }
+        .shimmer-block .section-divider { position: relative; text-align: center; color: #fff; font-size: 1rem; margin: 28px 0; opacity: 0.5; letter-spacing: 0.3em; }
+        .shimmer-block .contact-info { position: relative; margin-top: 28px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.15); }
+        .shimmer-block .contact-info p { margin-bottom: 8px; font-size: 0.95rem; }
+        .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -954,7 +948,7 @@
                 
                 <!-- Statement Section - Two Tiered Shimmer Layers -->
                 <div class="statement-section">
-                    <div class="shimmer-bg dark-shimmer-box">
+                    <div class="shimmer-bg">
                         <div class="shimmer-block">
                             <h2>Statement</h2>
                             <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses. It learns motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
