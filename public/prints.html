@@ -17,30 +17,30 @@
         
         .header {
             text-align: center;
-            padding: 30px 20px;
+            padding: 25px 20px;
             background: linear-gradient(180deg, rgba(212,175,55,0.08) 0%, transparent 100%);
             border-bottom: 1px solid rgba(212,175,55,0.25);
         }
         .header h1 {
             font-family: 'Cinzel', serif;
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #d4af37;
             letter-spacing: 5px;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .header p {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: rgba(244,228,186,0.7);
             font-style: italic;
         }
         .back-link {
             display: inline-block;
-            margin-top: 12px;
+            margin-top: 10px;
             color: #d4af37;
             text-decoration: none;
             font-family: 'Cinzel', serif;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             letter-spacing: 2px;
             transition: all 0.3s;
         }
@@ -51,27 +51,26 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 8px 20px;
-            padding: 25px 20px;
+            gap: 6px 18px;
+            padding: 18px 20px;
             background: rgba(10,6,8,0.6);
             border-bottom: 1px solid rgba(212,175,55,0.15);
         }
         .tier-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 0;
+            gap: 8px;
         }
         .tier-item h4 {
             font-family: 'Cinzel', serif;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: #d4af37;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
         .tier-price {
-            padding: 4px 12px;
-            font-size: 0.7rem;
+            padding: 3px 10px;
+            font-size: 0.65rem;
             letter-spacing: 1px;
             border-radius: 3px;
             font-family: 'Cinzel', serif;
@@ -82,316 +81,304 @@
         .tier-price.gallery { background: rgba(212,175,55,0.25); color: #d4af37; border: 1px solid rgba(212,175,55,0.5); }
         .tier-price.collector { background: rgba(192,192,192,0.25); color: #e8e8e8; border: 1px solid rgba(200,200,200,0.4); }
         .tier-price.museum { background: rgba(255,215,0,0.3); color: #ffd700; border: 1px solid rgba(255,215,0,0.5); }
-        .tier-divider {
-            color: rgba(212,175,55,0.3);
-            font-size: 0.8rem;
-        }
+        .tier-divider { color: rgba(212,175,55,0.3); font-size: 0.7rem; }
         
         /* Main Layout */
         .main-content {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 30px;
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 40px;
+            padding: 30px 25px;
         }
         
-        /* Left: Capture Thumbnails */
-        .captures-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .sidebar-title {
+        .section-title {
             font-family: 'Cinzel', serif;
             font-size: 0.9rem;
             color: #d4af37;
             letter-spacing: 3px;
             text-transform: uppercase;
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             border-bottom: 1px solid rgba(212,175,55,0.2);
+            margin-bottom: 20px;
+            text-align: center;
         }
-        .capture-thumbs {
+        
+        /* Hero Captures - First 2 at full aspect ratio */
+        .hero-captures {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 15px;
         }
-        .capture-thumb {
-            aspect-ratio: 1;
-            border: 2px solid rgba(212,175,55,0.3);
-            border-radius: 6px;
+        .hero-capture {
+            aspect-ratio: 16/10;
+            border: 2px solid rgba(212,175,55,0.35);
+            border-radius: 10px;
             overflow: hidden;
             cursor: pointer;
             transition: all 0.3s;
             background: rgba(0,0,0,0.5);
             position: relative;
         }
-        .capture-thumb:hover {
+        .hero-capture:hover {
             border-color: #d4af37;
-            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(212,175,55,0.25);
         }
-        .capture-thumb.selected {
+        .hero-capture.selected {
             border-color: #ffd700;
-            box-shadow: 0 0 20px rgba(212,175,55,0.5);
+            box-shadow: 0 0 40px rgba(212,175,55,0.4);
         }
-        .capture-thumb img {
+        .hero-capture img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .capture-thumb.empty {
-            opacity: 0.3;
+        .hero-capture.empty {
+            opacity: 0.15;
             pointer-events: none;
         }
-        .capture-thumb .thumb-label {
+        .hero-capture .capture-label {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(0,0,0,0.8);
-            font-size: 0.55rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            padding: 25px 12px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(212,175,55,0.75);
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        .hero-capture .expand-hint {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.75);
+            color: #d4af37;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-family: 'Cinzel', serif;
+        }
+        .hero-capture:hover .expand-hint { opacity: 1; }
+        
+        /* Grid Captures - Remaining in compact grid */
+        .grid-captures {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+        .grid-capture {
+            aspect-ratio: 1;
+            border: 2px solid rgba(212,175,55,0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0,0,0,0.4);
+            position: relative;
+        }
+        .grid-capture:hover {
+            border-color: #d4af37;
+            transform: scale(1.1);
+            z-index: 2;
+        }
+        .grid-capture.selected {
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(212,175,55,0.4);
+        }
+        .grid-capture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .grid-capture.empty {
+            opacity: 0.12;
+            pointer-events: none;
+        }
+        .grid-capture .capture-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.85);
+            font-size: 0.45rem;
             padding: 2px;
             text-align: center;
             font-family: 'JetBrains Mono', monospace;
-            color: rgba(212,175,55,0.7);
+            color: rgba(212,175,55,0.5);
         }
-
-        /* Right: Frame Preview & Purchase */
-        .preview-area {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
+        
+        /* Preview & Purchase Row */
+        .preview-purchase-row {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 25px;
+            align-items: start;
         }
         
         .frame-showcase {
-            background: 
-                radial-gradient(ellipse at center, rgba(50,45,48,0.5) 0%, rgba(15,12,14,0.95) 60%),
-                linear-gradient(135deg, #1a1518 0%, #0d0a0c 100%);
+            background: radial-gradient(ellipse at center, rgba(50,45,48,0.4) 0%, rgba(15,12,14,0.95) 60%);
             border: 1px solid rgba(212,175,55,0.2);
             border-radius: 12px;
-            padding: 50px;
+            padding: 40px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 500px;
-            position: relative;
-        }
-        /* Subtle wall texture */
-        .frame-showcase::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            opacity: 0.04;
-            pointer-events: none;
-            border-radius: 12px;
+            min-height: 400px;
+            cursor: zoom-in;
         }
         
-        .frame-display {
-            position: relative;
-            transition: all 0.5s ease;
-        }
+        .frame-display { position: relative; transition: all 0.5s ease; }
         
         .no-selection {
             text-align: center;
-            color: rgba(212,175,55,0.5);
+            color: rgba(212,175,55,0.4);
             font-family: 'Cinzel', serif;
             letter-spacing: 2px;
         }
-        .no-selection p { margin-top: 10px; font-size: 0.9rem; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+        .no-selection p { margin-top: 8px; font-size: 0.85rem; font-style: italic; font-family: 'Cormorant Garamond', serif; }
         
         /* Frame Styles */
-        .frame-wrapper {
-            position: relative;
-            display: inline-block;
-        }
+        .frame-wrapper { position: relative; display: inline-block; }
         
-        /* Keepsake - Simple white border */
         .frame-keepsake {
             padding: 8px;
             background: #fff;
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
-        
-        /* Poster - No frame, just shadow */
         .frame-poster {
             padding: 0;
-            box-shadow: 
-                0 8px 40px rgba(0,0,0,0.5),
-                0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 2px 10px rgba(0,0,0,0.3);
         }
-        
-        /* Standard Black Frame */
         .frame-standard {
-            padding: 22px;
+            padding: 20px;
             background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 50%, #2a2a2a 100%);
-            box-shadow: 
-                inset 3px 3px 0 rgba(255,255,255,0.08),
-                inset -3px -3px 0 rgba(0,0,0,0.4),
-                inset 0 0 0 5px #1a1a1a,
-                inset 0 0 0 7px rgba(255,255,255,0.04),
-                10px 15px 50px rgba(0,0,0,0.6),
-                5px 8px 25px rgba(0,0,0,0.4);
+            box-shadow: inset 3px 3px 0 rgba(255,255,255,0.08), inset -3px -3px 0 rgba(0,0,0,0.4),
+                        10px 15px 50px rgba(0,0,0,0.6);
         }
         .frame-standard::after {
             content: '';
             position: absolute;
-            inset: 16px;
+            inset: 14px;
             border: 4px solid #f8f8f5;
-            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.15);
             pointer-events: none;
         }
-        
-        /* Gallery Gold Frame */
         .frame-gallery {
-            padding: 28px;
-            background: linear-gradient(145deg, 
-                #f0d861 0%, #d4af37 12%, #8b6914 28%,
-                #d4af37 45%, #f0d861 55%, #d4af37 72%,
-                #6b4f10 88%, #d4af37 100%);
-            box-shadow: 
-                inset 3px 3px 0 rgba(255,245,180,0.5),
-                inset -3px -3px 0 rgba(80,60,10,0.5),
-                inset 0 0 0 6px #7a5a12,
-                inset 0 0 0 8px rgba(255,220,100,0.3),
-                inset 0 0 0 11px #8b6914,
-                12px 18px 60px rgba(0,0,0,0.5),
-                0 0 40px rgba(212,175,55,0.2);
+            padding: 26px;
+            background: linear-gradient(145deg, #f0d861 0%, #d4af37 12%, #8b6914 28%, #d4af37 45%, #f0d861 55%, #d4af37 72%, #6b4f10 88%, #d4af37 100%);
+            box-shadow: inset 3px 3px 0 rgba(255,245,180,0.5), inset -3px -3px 0 rgba(80,60,10,0.5),
+                        12px 18px 60px rgba(0,0,0,0.5), 0 0 40px rgba(212,175,55,0.2);
         }
         .frame-gallery::after {
             content: '';
             position: absolute;
-            inset: 22px;
+            inset: 20px;
             border: 5px solid #fffef5;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
             pointer-events: none;
         }
-        
-        /* Collector Metal */
         .frame-collector {
             padding: 10px;
-            background: linear-gradient(160deg, 
-                #f5f5f5 0%, #c0c0c0 15%, #e8e8e8 35%,
-                #a0a0a0 55%, #d8d8d8 75%, #b0b0b0 100%);
-            box-shadow: 
-                inset 2px 2px 0 rgba(255,255,255,0.9),
-                inset -2px -2px 0 rgba(0,0,0,0.15),
-                15px 20px 60px rgba(0,0,0,0.45),
-                8px 12px 35px rgba(0,0,0,0.35),
-                0 0 0 1px rgba(0,0,0,0.1);
+            background: linear-gradient(160deg, #f5f5f5 0%, #c0c0c0 15%, #e8e8e8 35%, #a0a0a0 55%, #d8d8d8 75%, #b0b0b0 100%);
+            box-shadow: inset 2px 2px 0 rgba(255,255,255,0.9), 15px 20px 60px rgba(0,0,0,0.45);
             border-radius: 3px;
         }
-        .frame-collector .frame-image {
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.12);
-        }
-        
-        /* Museum Ornate */
         .frame-museum {
-            padding: 40px;
-            background: linear-gradient(145deg, 
-                #f5e080 0%, #d4af37 8%, #8b6914 20%,
-                #d4af37 35%, #f0d861 45%, #d4af37 55%,
-                #705010 70%, #d4af37 82%, #a08520 100%);
-            box-shadow: 
-                inset 4px 4px 0 rgba(255,245,180,0.6),
-                inset -4px -4px 0 rgba(60,45,5,0.5),
-                inset 0 0 0 8px #604508,
-                inset 0 0 0 11px rgba(255,230,120,0.4),
-                inset 0 0 0 15px #8b6914,
-                inset 0 0 0 18px rgba(255,235,150,0.25),
-                inset 0 0 0 22px #6b4f10,
-                15px 22px 70px rgba(0,0,0,0.55),
-                0 0 60px rgba(212,175,55,0.3);
+            padding: 36px;
+            background: linear-gradient(145deg, #f5e080 0%, #d4af37 8%, #8b6914 20%, #d4af37 35%, #f0d861 45%, #d4af37 55%, #705010 70%, #d4af37 82%, #a08520 100%);
+            box-shadow: inset 4px 4px 0 rgba(255,245,180,0.6), 15px 22px 70px rgba(0,0,0,0.55), 0 0 60px rgba(212,175,55,0.3);
             border-radius: 4px;
         }
         .frame-museum::before {
             content: '✦';
             position: absolute;
-            top: 14px;
+            top: 12px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 14px;
+            font-size: 12px;
             color: rgba(255,250,220,0.7);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
             z-index: 2;
         }
         .frame-museum::after {
             content: '';
             position: absolute;
-            inset: 32px;
-            border: 6px solid #fffef8;
-            box-shadow: inset 2px 2px 6px rgba(0,0,0,0.1), 0 0 0 3px rgba(139,105,20,0.25);
+            inset: 28px;
+            border: 5px solid #fffef8;
             pointer-events: none;
         }
         
         .frame-image {
             display: block;
-            width: 320px;
-            height: 240px;
+            width: 280px;
+            height: 210px;
             object-fit: cover;
             position: relative;
             z-index: 1;
         }
-        
         .frame-type-label {
             text-align: center;
-            margin-top: 25px;
+            margin-top: 20px;
             font-family: 'Cinzel', serif;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #d4af37;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
         }
-
+        
         /* Purchase Controls */
         .purchase-controls {
             background: rgba(15,10,12,0.9);
             border: 1px solid rgba(212,175,55,0.3);
             border-radius: 10px;
-            padding: 25px;
+            padding: 22px;
         }
-        .control-row {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+        .control-row { margin-bottom: 18px; }
         .control-row:last-child { margin-bottom: 0; }
         
         .product-select {
-            flex: 1;
-            padding: 14px 16px;
+            width: 100%;
+            padding: 12px 14px;
             background: rgba(20,15,18,0.95);
             color: #f4e4ba;
             border: 1px solid rgba(212,175,55,0.4);
             border-radius: 6px;
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
         }
-        .product-select:focus {
-            outline: none;
-            border-color: #d4af37;
-        }
+        .product-select:focus { outline: none; border-color: #d4af37; }
         .product-select option { background: #1a1018; }
         .product-select optgroup { color: #d4af37; font-weight: bold; }
         
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        }
+        .price-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: rgba(244,228,186,0.7);
+            letter-spacing: 1px;
+        }
         .price-display {
             font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             color: #d4af37;
-            min-width: 100px;
-            text-align: right;
         }
         
         .order-btn {
             width: 100%;
-            padding: 18px 24px;
+            padding: 16px 22px;
             border: 2px solid #d4af37;
             background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
             color: #d4af37;
             font-family: 'Cinzel', serif;
-            font-size: 1rem;
+            font-size: 0.95rem;
             letter-spacing: 3px;
             cursor: pointer;
             transition: all 0.3s;
@@ -401,128 +388,143 @@
         .order-btn:hover {
             background: linear-gradient(180deg, #d4af37, #8b6914);
             color: #0a0608;
-            box-shadow: 0 0 35px rgba(212,175,55,0.5);
+            box-shadow: 0 0 30px rgba(212,175,55,0.5);
         }
-        .order-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
+        .order-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         
         .payment-icons {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-            font-size: 0.75rem;
-            color: rgba(244,228,186,0.5);
+            gap: 12px;
+            margin-top: 12px;
+            font-size: 0.7rem;
+            color: rgba(244,228,186,0.45);
         }
+        
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.96);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            cursor: zoom-out;
+        }
+        .lightbox.active { display: flex; }
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+        .lightbox-content img {
+            max-width: 90vw;
+            max-height: 85vh;
+            object-fit: contain;
+            border: 3px solid rgba(212,175,55,0.5);
+            border-radius: 8px;
+            box-shadow: 0 0 80px rgba(212,175,55,0.25);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -45px;
+            right: 0;
+            background: none;
+            border: none;
+            color: #d4af37;
+            font-size: 2.2rem;
+            cursor: pointer;
+            padding: 10px;
+        }
+        .lightbox-close:hover { color: #fff; }
+        .lightbox-label {
+            text-align: center;
+            margin-top: 15px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: #d4af37;
+            letter-spacing: 3px;
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(212,175,55,0.15);
+            border: 1px solid rgba(212,175,55,0.4);
+            color: #d4af37;
+            font-size: 2rem;
+            padding: 20px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+        .lightbox-nav:hover { background: rgba(212,175,55,0.35); color: #fff; }
+        .lightbox-nav.prev { left: 20px; }
+        .lightbox-nav.next { right: 20px; }
         
         /* Info Footer */
         .info-footer {
             text-align: center;
-            padding: 30px;
-            color: rgba(244,228,186,0.6);
-            font-size: 0.85rem;
-            line-height: 1.6;
-            border-top: 1px solid rgba(212,175,55,0.15);
-            margin-top: 40px;
+            padding: 25px;
+            color: rgba(244,228,186,0.5);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            border-top: 1px solid rgba(212,175,55,0.12);
+            margin-top: 30px;
         }
-        .info-footer a {
-            color: #d4af37;
-            text-decoration: none;
-        }
+        .info-footer a { color: #d4af37; text-decoration: none; }
         
-        /* Loading & Status */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(212,175,55,0.3);
-            border-top-color: #d4af37;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
+        /* Status Banners */
         .success-banner, .error-banner {
-            padding: 15px 20px;
+            padding: 14px 18px;
             border-radius: 8px;
             margin-bottom: 20px;
             text-align: center;
             font-family: 'Cinzel', serif;
         }
-        .success-banner {
-            background: rgba(74,222,128,0.15);
-            border: 1px solid rgba(74,222,128,0.4);
-            color: #4ade80;
-        }
-        .error-banner {
-            background: rgba(248,113,113,0.15);
-            border: 1px solid rgba(248,113,113,0.4);
-            color: #f87171;
-        }
+        .success-banner { background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.4); color: #4ade80; }
+        .error-banner { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.4); color: #f87171; }
         
-        /* Mobile Responsive */
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(212,175,55,0.3);
+            border-top-color: #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Mobile */
         @media (max-width: 900px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                padding: 20px;
-                gap: 25px;
-            }
-            .captures-sidebar {
-                order: 2;
-            }
-            .capture-thumbs {
-                grid-template-columns: repeat(6, 1fr);
-            }
-            .frame-showcase {
-                min-height: 400px;
-                padding: 30px;
-            }
-            .frame-image {
-                width: 260px;
-                height: 195px;
-            }
+            .hero-captures { grid-template-columns: 1fr; }
+            .grid-captures { grid-template-columns: repeat(6, 1fr); }
+            .preview-purchase-row { grid-template-columns: 1fr; }
+            .frame-showcase { min-height: 300px; padding: 25px; }
+            .frame-image { width: 220px; height: 165px; }
         }
-        
         @media (max-width: 768px) {
-            .header h1 { font-size: 1.5rem; letter-spacing: 3px; }
-            .tiers-row { 
-                gap: 5px 15px; 
-                padding: 15px;
-            }
-            .tier-item h4 { font-size: 0.8rem; }
-            .tier-price { font-size: 0.6rem; padding: 3px 8px; }
+            .header h1 { font-size: 1.4rem; letter-spacing: 3px; }
+            .tiers-row { gap: 4px 12px; padding: 12px; }
+            .tier-item h4 { font-size: 0.7rem; }
+            .tier-price { font-size: 0.55rem; padding: 2px 6px; }
             .tier-divider { display: none; }
-            .capture-thumbs {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            .frame-showcase {
-                min-height: 350px;
-                padding: 25px;
-            }
-            .frame-image {
-                width: 220px;
-                height: 165px;
-            }
-            .frame-standard { padding: 16px; }
-            .frame-gallery { padding: 20px; }
-            .frame-museum { padding: 28px; }
-            .control-row { flex-direction: column; gap: 10px; }
-            .price-display { text-align: center; }
+            .grid-captures { grid-template-columns: repeat(5, 1fr); }
+            .frame-standard { padding: 14px; }
+            .frame-gallery { padding: 18px; }
+            .frame-museum { padding: 24px; }
         }
-        
         @media (max-width: 480px) {
-            .header h1 { font-size: 1.2rem; }
-            .tiers-row { flex-direction: column; align-items: center; gap: 8px; }
-            .capture-thumbs { grid-template-columns: repeat(4, 1fr); }
+            .header h1 { font-size: 1.1rem; }
+            .tiers-row { flex-direction: column; gap: 6px; }
+            .grid-captures { grid-template-columns: repeat(5, 1fr); }
             .frame-image { width: 180px; height: 135px; }
-            .frame-standard { padding: 12px; }
-            .frame-gallery { padding: 16px; }
-            .frame-collector { padding: 6px; }
-            .frame-museum { padding: 22px; }
         }
     </style>
 </head>
@@ -532,55 +534,33 @@
         <p>Museum-Quality Prints • Ships Direct to Your Door</p>
         <a href="index.html" class="back-link">← Return to Experience</a>
     </div>
-
-    <!-- Tier Options Row -->
+    
     <div class="tiers-row">
-        <div class="tier-item">
-            <h4>Keepsakes</h4>
-            <span class="tier-price keepsake">FROM $18</span>
-        </div>
+        <div class="tier-item"><h4>Keepsakes</h4><span class="tier-price keepsake">FROM $18</span></div>
         <span class="tier-divider">•</span>
-        <div class="tier-item">
-            <h4>Posters</h4>
-            <span class="tier-price poster">FROM $29</span>
-        </div>
+        <div class="tier-item"><h4>Posters</h4><span class="tier-price poster">FROM $29</span></div>
         <span class="tier-divider">•</span>
-        <div class="tier-item">
-            <h4>Standard</h4>
-            <span class="tier-price standard">FROM $125</span>
-        </div>
+        <div class="tier-item"><h4>Standard</h4><span class="tier-price standard">FROM $125</span></div>
         <span class="tier-divider">•</span>
-        <div class="tier-item">
-            <h4>Gallery</h4>
-            <span class="tier-price gallery">FROM $350</span>
-        </div>
+        <div class="tier-item"><h4>Gallery</h4><span class="tier-price gallery">FROM $350</span></div>
         <span class="tier-divider">•</span>
-        <div class="tier-item">
-            <h4>Collector</h4>
-            <span class="tier-price collector">FROM $395</span>
-        </div>
+        <div class="tier-item"><h4>Collector</h4><span class="tier-price collector">FROM $395</span></div>
         <span class="tier-divider">•</span>
-        <div class="tier-item">
-            <h4>Museum</h4>
-            <span class="tier-price museum">FROM $850</span>
-        </div>
+        <div class="tier-item"><h4>Museum</h4><span class="tier-price museum">FROM $850</span></div>
     </div>
     
     <div class="main-content">
         <div id="statusBanner"></div>
         
-        <!-- Left: Capture Thumbnails -->
-        <div class="captures-sidebar">
-            <div class="sidebar-title">Select a Capture</div>
-            <div class="capture-thumbs" id="captureThumbs"></div>
-        </div>
+        <div class="section-title">Select a Capture</div>
+        <div class="hero-captures" id="heroCaptures"></div>
+        <div class="grid-captures" id="gridCaptures"></div>
         
-        <!-- Right: Frame Preview & Purchase -->
-        <div class="preview-area">
-            <div class="frame-showcase">
+        <div class="preview-purchase-row">
+            <div class="frame-showcase" id="frameShowcase">
                 <div class="frame-display" id="frameDisplay">
                     <div class="no-selection">
-                        <div style="font-size:2rem; margin-bottom:10px;">⚜</div>
+                        <div style="font-size:2rem; margin-bottom:8px;">⚜</div>
                         Select a capture to preview
                         <p>Your portrait will appear here in a premium frame</p>
                     </div>
@@ -616,7 +596,12 @@
                             <option value="museum-24x36">Ornate Gold Frame 24×36" — $850</option>
                         </optgroup>
                     </select>
-                    <div class="price-display" id="priceDisplay">$0</div>
+                </div>
+                <div class="control-row">
+                    <div class="price-row">
+                        <span class="price-label">Total</span>
+                        <span class="price-display" id="priceDisplay">$0</span>
+                    </div>
                 </div>
                 <div class="control-row">
                     <button class="order-btn" id="orderBtn" disabled>Select a Print Option</button>
@@ -632,10 +617,21 @@
     
     <div class="info-footer">
         <p>Fine Art Trade Guild approved printing • 100+ year color guarantee • Ships in 3-5 days</p>
-        <p style="margin-top:10px;">Questions? <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
-        <p style="margin-top:5px; font-size:0.75rem;">© 2024 Krista Faist • The Mirror's Echo</p>
+        <p style="margin-top:8px;">Questions? <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+        <p style="margin-top:4px; font-size:0.7rem;">© 2024 Krista Faist • The Mirror's Echo</p>
     </div>
-
+    
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox()">×</button>
+            <button class="lightbox-nav prev" onclick="navLightbox(-1); event.stopPropagation();">‹</button>
+            <button class="lightbox-nav next" onclick="navLightbox(1); event.stopPropagation();">›</button>
+            <img id="lightboxImg" src="" alt="Full size capture">
+            <div class="lightbox-label" id="lightboxLabel"></div>
+        </div>
+    </div>
+    
     <script>
         const API_URL = 'https://api-production-c977.up.railway.app';
         const stripe = Stripe('pk_live_51SL6QhADdiQo1kIcChk759IFrqbhz8QZIkAdpeB97CQKydGSXv0MUB6oDlLb4Yjl2nE5LY0Eb4PCAUpQSxw4DPBg003xTZiXPn');
@@ -667,14 +663,12 @@
         let selectedCapture = null;
         let captures = {};
         
-        // Check URL params
+        // URL params
         const params = new URLSearchParams(window.location.search);
         if (params.get('success')) {
-            document.getElementById('statusBanner').innerHTML = 
-                '<div class="success-banner">✓ Order placed! Your print will ship within 3-5 business days.</div>';
+            document.getElementById('statusBanner').innerHTML = '<div class="success-banner">✓ Order placed! Your print will ship within 3-5 business days.</div>';
         } else if (params.get('canceled')) {
-            document.getElementById('statusBanner').innerHTML = 
-                '<div class="error-banner">Order canceled. Your captures are still saved.</div>';
+            document.getElementById('statusBanner').innerHTML = '<div class="error-banner">Order canceled. Your captures are still saved.</div>';
         }
         
         function loadCaptures() {
@@ -682,65 +676,62 @@
             if (!stored) stored = localStorage.getItem('goldenCaptures');
             captures = stored ? JSON.parse(stored) : {};
             
-            const thumbsContainer = document.getElementById('captureThumbs');
-            thumbsContainer.innerHTML = '';
+            const heroContainer = document.getElementById('heroCaptures');
+            const gridContainer = document.getElementById('gridCaptures');
+            heroContainer.innerHTML = '';
+            gridContainer.innerHTML = '';
             
             for (let i = 1; i <= 12; i++) {
                 const capture = captures[i];
-                const thumb = document.createElement('div');
-                thumb.className = 'capture-thumb' + (capture ? '' : ' empty');
-                thumb.dataset.slot = i;
+                const isHero = i <= 2;
+                
+                const el = document.createElement('div');
+                el.className = (isHero ? 'hero-capture' : 'grid-capture') + (capture ? '' : ' empty');
+                el.dataset.slot = i;
                 
                 if (capture) {
-                    thumb.innerHTML = `
+                    el.innerHTML = `
                         <img src="${capture.image}" alt="Capture ${i}">
-                        <div class="thumb-label">EXP_${String(i).padStart(2,'0')}</div>
+                        <div class="capture-label">EXP_${String(i).padStart(2,'0')}</div>
+                        ${isHero ? '<div class="expand-hint">⛶ Expand</div>' : ''}
                     `;
-                    thumb.onclick = () => selectCapture(i);
+                    el.onclick = () => selectCapture(i);
+                    el.ondblclick = () => openLightbox(i);
                 } else {
-                    thumb.innerHTML = `<div class="thumb-label">EXP_${String(i).padStart(2,'0')}</div>`;
+                    el.innerHTML = `<div class="capture-label">EXP_${String(i).padStart(2,'0')}</div>`;
                 }
-                thumbsContainer.appendChild(thumb);
+                
+                (isHero ? heroContainer : gridContainer).appendChild(el);
             }
             
-            // Auto-select first capture
             const firstCapture = Object.keys(captures).find(k => captures[k]);
             if (firstCapture) selectCapture(parseInt(firstCapture));
         }
         
         function selectCapture(slot) {
             selectedCapture = slot;
-            
-            // Update thumb selection
-            document.querySelectorAll('.capture-thumb').forEach(t => {
-                t.classList.toggle('selected', parseInt(t.dataset.slot) === slot);
+            document.querySelectorAll('.hero-capture, .grid-capture').forEach(el => {
+                el.classList.toggle('selected', parseInt(el.dataset.slot) === slot);
             });
-            
-            // Show purchase controls
             document.getElementById('purchaseControls').style.display = 'block';
-            
-            // Update frame preview
             updateFramePreview();
         }
         
         function updateFramePreview() {
             if (!selectedCapture || !captures[selectedCapture]) return;
             
-            const select = document.getElementById('productSelect');
-            const productId = select.value;
+            const productId = document.getElementById('productSelect').value;
             const product = PRODUCTS[productId];
             const frameClass = product ? product.frame : 'frame-standard';
             const frameLabel = product ? FRAME_LABELS[frameClass] : 'Select a print option';
             
-            const display = document.getElementById('frameDisplay');
-            display.innerHTML = `
+            document.getElementById('frameDisplay').innerHTML = `
                 <div class="frame-wrapper ${frameClass}">
                     <img src="${captures[selectedCapture].image}" class="frame-image" alt="Your Portrait">
                 </div>
                 <div class="frame-type-label">${frameLabel}</div>
             `;
             
-            // Update price
             const priceDisplay = document.getElementById('priceDisplay');
             const orderBtn = document.getElementById('orderBtn');
             
@@ -769,20 +760,13 @@
                 await fetch(`${API_URL}/save-image`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        orderId: `order-${Date.now()}-${selectedCapture}`,
-                        imageData: captures[selectedCapture].image
-                    })
+                    body: JSON.stringify({ orderId: `order-${Date.now()}-${selectedCapture}`, imageData: captures[selectedCapture].image })
                 });
                 
                 const res = await fetch(`${API_URL}/create-checkout`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        productId,
-                        imageData: captures[selectedCapture].image,
-                        returnUrl: window.location.href.split('?')[0]
-                    })
+                    body: JSON.stringify({ productId, imageData: captures[selectedCapture].image, returnUrl: window.location.href.split('?')[0] })
                 });
                 
                 const data = await res.json();
@@ -796,6 +780,40 @@
                 btn.disabled = false;
                 btn.textContent = 'Order Now →';
             }
+        });
+        
+        // Lightbox
+        function openLightbox(slot) {
+            if (!captures[slot]) return;
+            const lightbox = document.getElementById('lightbox');
+            document.getElementById('lightboxImg').src = captures[slot].image;
+            document.getElementById('lightboxLabel').textContent = 'EXP_' + String(slot).padStart(2, '0');
+            lightbox.dataset.currentSlot = slot;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function navLightbox(dir) {
+            let slot = parseInt(document.getElementById('lightbox').dataset.currentSlot);
+            for (let i = 0; i < 12; i++) {
+                slot = slot + dir;
+                if (slot > 12) slot = 1;
+                if (slot < 1) slot = 12;
+                if (captures[slot]) { openLightbox(slot); return; }
+            }
+        }
+        
+        document.getElementById('lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') closeLightbox(); });
+        document.getElementById('frameShowcase').addEventListener('click', () => { if (selectedCapture && captures[selectedCapture]) openLightbox(selectedCapture); });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navLightbox(-1);
+            if (e.key === 'ArrowRight') navLightbox(1);
         });
         
         window.addEventListener('load', loadCaptures);

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mirror's Echo - Order Prints</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: linear-gradient(135deg, #0a0608 0%, #1a1018 50%, #0a0608 100%);
+            color: #f4e4ba;
+            min-height: 100vh;
+        }
+        .header { text-align: center; padding: 20px; background: linear-gradient(180deg, rgba(212,175,55,0.08) 0%, transparent 100%); border-bottom: 1px solid rgba(212,175,55,0.25); }
+        .header h1 { font-family: 'Cinzel', serif; font-size: 1.6rem; color: #d4af37; letter-spacing: 4px; text-transform: uppercase; }
+        .back-link { display: inline-block; margin-top: 6px; color: rgba(212,175,55,0.6); text-decoration: none; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 2px; }
+        .back-link:hover { color: #d4af37; }
+        .main-container { max-width: 1100px; margin: 0 auto; padding: 25px 20px 60px; }
+        .hero-section { background: radial-gradient(ellipse at center, rgba(25,20,23,0.7) 0%, rgba(10,6,8,0.98) 80%); border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 25px; margin-bottom: 35px; }
+        .hero-layout { display: grid; grid-template-columns: 1fr 300px; gap: 25px; align-items: start; }
+        .hero-image-wrap { position: relative; background: #080507; border-radius: 8px; overflow: hidden; border: 2px solid rgba(212,175,55,0.35); box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .hero-image { width: 100%; height: auto; display: block; aspect-ratio: 4/3; object-fit: contain; background: #0a0608; }
+        .hero-empty { aspect-ratio: 4/3; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(212,175,55,0.4); font-family: 'Cinzel', serif; letter-spacing: 2px; font-size: 0.9rem; }
+        .hero-empty .icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .hero-slot-badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.85); padding: 5px 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #d4af37; border-radius: 4px; letter-spacing: 1px; border: 1px solid rgba(212,175,55,0.3); }
+        .hero-controls { display: flex; flex-direction: column; gap: 18px; }
+        .control-group { background: rgba(15,10,13,0.9); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 16px; }
+        .control-group-title { font-family: 'Cinzel', serif; font-size: 0.75rem; color: #d4af37; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(212,175,55,0.15); }
+        .edit-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .edit-row:last-child { margin-bottom: 0; }
+        .edit-label { font-size: 0.8rem; color: rgba(244,228,186,0.7); min-width: 70px; }
+        .edit-slider { flex: 1; -webkit-appearance: none; height: 4px; background: rgba(212,175,55,0.2); border-radius: 2px; outline: none; }
+        .edit-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: #d4af37; border-radius: 50%; cursor: pointer; }
+        .edit-value { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: rgba(212,175,55,0.8); min-width: 35px; text-align: right; }
+        .upscale-btn { width: 100%; padding: 10px; background: linear-gradient(180deg, rgba(212,175,55,0.15), rgba(139,105,20,0.2)); border: 1px solid rgba(212,175,55,0.4); color: #d4af37; font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 2px; cursor: pointer; border-radius: 5px; transition: all 0.3s; margin-top: 8px; }
+        .upscale-btn:hover { background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.3)); border-color: #d4af37; }
+        .product-select { width: 100%; padding: 12px; background: rgba(20,15,18,0.95); color: #f4e4ba; border: 1px solid rgba(212,175,55,0.35); border-radius: 5px; font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; cursor: pointer; margin-bottom: 12px; }
+        .product-select:focus { outline: none; border-color: #d4af37; }
+        .product-select option { background: #1a1018; }
+        .product-select optgroup { color: #d4af37; }
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .price-label { font-size: 0.85rem; color: rgba(244,228,186,0.6); }
+        .price-value { font-family: 'Cinzel', serif; font-size: 1.6rem; color: #d4af37; }
+        .order-btn { width: 100%; padding: 14px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35)); color: #d4af37; font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 3px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; border-radius: 5px; }
+        .order-btn:hover:not(:disabled) { background: linear-gradient(180deg, rgba(212,175,55,0.4), rgba(139,105,20,0.5)); box-shadow: 0 0 20px rgba(212,175,55,0.3); }
+        .order-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .grid-section { margin-top: 10px; }
+        .grid-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .grid-title { font-family: 'Cinzel', serif; font-size: 0.85rem; color: #d4af37; letter-spacing: 3px; text-transform: uppercase; }
+        .grid-hint { font-size: 0.75rem; color: rgba(244,228,186,0.5); font-style: italic; }
+        .captures-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .capture-card { position: relative; background: rgba(15,10,13,0.8); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; overflow: hidden; transition: all 0.3s; }
+        .capture-card:hover { border-color: rgba(212,175,55,0.5); transform: translateY(-2px); }
+        .capture-card.empty { opacity: 0.35; pointer-events: none; }
+        .capture-card.featured { border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.25); }
+        .capture-thumb { aspect-ratio: 4/3; width: 100%; object-fit: cover; display: block; background: #0a0608; }
+        .capture-empty-thumb { aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; color: rgba(212,175,55,0.3); font-size: 1.2rem; }
+        .capture-info { padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; }
+        .capture-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: rgba(212,175,55,0.7); letter-spacing: 1px; }
+        .select-btn { padding: 4px 10px; background: transparent; border: 1px solid rgba(212,175,55,0.4); color: rgba(212,175,55,0.8); font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 1px; cursor: pointer; border-radius: 3px; transition: all 0.2s; text-transform: uppercase; }
+        .select-btn:hover { background: rgba(212,175,55,0.2); border-color: #d4af37; color: #d4af37; }
+        .capture-card.featured .select-btn { background: rgba(212,175,55,0.25); border-color: #d4af37; color: #d4af37; }
+        .footer { text-align: center; padding: 30px; color: rgba(244,228,186,0.5); font-size: 0.8rem; }
+        .footer a { color: #d4af37; }
+        @media (max-width: 800px) { .hero-layout { grid-template-columns: 1fr; } .hero-controls { flex-direction: row; flex-wrap: wrap; } .control-group { flex: 1; min-width: 200px; } }
+        @media (max-width: 500px) { .captures-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; } .capture-info { flex-direction: column; gap: 5px; } .hero-section { padding: 15px; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚜ Your Portraits ⚜</h1>
+        <a href="index.html" class="back-link">← Return to Experience</a>
+    </div>
+    <div class="main-container">
+        <div class="hero-section">
+            <div class="hero-layout">
+                <div class="hero-image-wrap" id="heroImageWrap">
+                    <div class="hero-empty"><div class="icon">⚜</div><div>Select a capture below</div></div>
+                </div>
+                <div class="hero-controls">
+                    <div class="control-group">
+                        <div class="control-group-title">Adjustments</div>
+                        <div class="edit-row"><span class="edit-label">Brightness</span><input type="range" class="edit-slider" id="brightnessSlider" min="-50" max="50" value="0"><span class="edit-value" id="brightnessVal">0</span></div>
+                        <div class="edit-row"><span class="edit-label">Contrast</span><input type="range" class="edit-slider" id="contrastSlider" min="-50" max="50" value="0"><span class="edit-value" id="contrastVal">0</span></div>
+                        <div class="edit-row"><span class="edit-label">Saturation</span><input type="range" class="edit-slider" id="saturationSlider" min="-50" max="50" value="0"><span class="edit-value" id="saturationVal">0</span></div>
+                        <button class="upscale-btn" id="upscaleBtn">✦ Upscale 2x</button>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-group-title">Order Print</div>
+                        <select class="product-select" id="productSelect">
+                            <option value="">Choose print option...</option>
+                            <optgroup label="♥ Keepsakes"><option value="mini-print">Mini Print 5×7" — $18</option><option value="postcard-set">Postcard Set — $25</option></optgroup>
+                            <optgroup label="📄 Posters"><option value="poster-8x10">Glossy 8×10" — $29</option><option value="poster-11x14">Glossy 11×14" — $39</option><option value="poster-18x24">Fine Art 18×24" — $55</option></optgroup>
+                            <optgroup label="⬛ Standard Framed"><option value="standard-8x10">Black Frame 8×10" — $125</option><option value="standard-16x20">Black Frame 16×20" — $225</option></optgroup>
+                            <optgroup label="🏆 Gallery Gold"><option value="gallery-16x20">Gold Frame 16×20" — $350</option><option value="gallery-24x36">Gold Frame 24×36" — $550</option></optgroup>
+                            <optgroup label="✦ Collector Metal"><option value="collector-16">HD Metal 16×16" — $395</option><option value="collector-24">HD Metal 24×24" — $595</option></optgroup>
+                            <optgroup label="👑 Museum"><option value="museum-24x36">Ornate Gold 24×36" — $850</option></optgroup>
+                        </select>
+                        <div class="price-row"><span class="price-label">Total</span><span class="price-value" id="priceDisplay">$0</span></div>
+                        <button class="order-btn" id="orderBtn" disabled>Select Print Option</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-section">
+            <div class="grid-header"><span class="grid-title">Your Captures</span><span class="grid-hint">Click SELECT to edit & order</span></div>
+            <div class="captures-grid" id="capturesGrid"></div>
+        </div>
+    </div>
+    <div class="footer"><p>Fine Art Trade Guild approved • 100+ year color guarantee • Ships in 3-5 days</p><p style="margin-top:8px;">Questions? <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p></div>
+    <script>
+        const API_URL = 'https://api-production-c977.up.railway.app';
+        const stripe = Stripe('pk_live_51SL6QhADdiQo1kIcChk759IFrqbhz8QZIkAdpeB97CQKydGSXv0MUB6oDlLb4Yjl2nE5LY0Eb4PCAUpQSxw4DPBg003xTZiXPn');
+        const PRODUCTS = { 'mini-print': { price: 18 }, 'postcard-set': { price: 25 }, 'poster-8x10': { price: 29 }, 'poster-11x14': { price: 39 }, 'poster-18x24': { price: 55 }, 'standard-8x10': { price: 125 }, 'standard-16x20': { price: 225 }, 'gallery-16x20': { price: 350 }, 'gallery-24x36': { price: 550 }, 'collector-16': { price: 395 }, 'collector-24': { price: 595 }, 'museum-24x36': { price: 850 } };
+        let captures = {}, selectedSlot = null, adjustments = { brightness: 0, contrast: 0, saturation: 0 };
+        function init() { let stored = localStorage.getItem('goldenCaptures'); if (!stored) stored = localStorage.getItem('baroqueCaptures'); captures = stored ? JSON.parse(stored) : {}; buildGrid(); const slots = Object.keys(captures).filter(k => captures[k]).map(Number).sort((a,b) => b-a); if (slots.length > 0) selectCapture(slots[0]); }
+        function buildGrid() { const grid = document.getElementById('capturesGrid'); grid.innerHTML = ''; for (let i = 1; i <= 12; i++) { const capture = captures[i]; const card = document.createElement('div'); card.className = 'capture-card' + (capture ? '' : ' empty') + (i === selectedSlot ? ' featured' : ''); card.dataset.slot = i; if (capture) { card.innerHTML = `<img class="capture-thumb" src="${capture.image}" alt="Capture ${i}"><div class="capture-info"><span class="capture-label">EXP_${String(i).padStart(2,'0')}</span><button class="select-btn" onclick="selectCapture(${i})">Select</button></div>`; } else { card.innerHTML = `<div class="capture-empty-thumb">⚜</div><div class="capture-info"><span class="capture-label">EXP_${String(i).padStart(2,'0')}</span></div>`; } grid.appendChild(card); } }
+        function selectCapture(slot) { if (!captures[slot]) return; selectedSlot = slot; document.querySelectorAll('.capture-card').forEach(c => { c.classList.toggle('featured', parseInt(c.dataset.slot) === slot); }); adjustments = { brightness: 0, contrast: 0, saturation: 0 }; document.getElementById('brightnessSlider').value = 0; document.getElementById('contrastSlider').value = 0; document.getElementById('saturationSlider').value = 0; updateSliderValues(); updateHeroImage(); }
+        function updateHeroImage() { if (!selectedSlot || !captures[selectedSlot]) return; const wrap = document.getElementById('heroImageWrap'); const filterStr = `brightness(${100 + adjustments.brightness}%) contrast(${100 + adjustments.contrast}%) saturate(${100 + adjustments.saturation}%)`; wrap.innerHTML = `<span class="hero-slot-badge">EXP_${String(selectedSlot).padStart(2,'0')}</span><img class="hero-image" src="${captures[selectedSlot].image}" style="filter: ${filterStr}">`; }
+        function updateSliderValues() { document.getElementById('brightnessVal').textContent = adjustments.brightness; document.getElementById('contrastVal').textContent = adjustments.contrast; document.getElementById('saturationVal').textContent = adjustments.saturation; }
+        ['brightness', 'contrast', 'saturation'].forEach(param => { document.getElementById(param + 'Slider').addEventListener('input', function() { adjustments[param] = parseInt(this.value); updateSliderValues(); updateHeroImage(); }); });
+        document.getElementById('productSelect').addEventListener('change', function() { const product = PRODUCTS[this.value]; const priceDisplay = document.getElementById('priceDisplay'); const orderBtn = document.getElementById('orderBtn'); if (product && selectedSlot) { priceDisplay.textContent = '$' + product.price; orderBtn.disabled = false; orderBtn.textContent = 'Order Now →'; } else { priceDisplay.textContent = '$0'; orderBtn.disabled = true; orderBtn.textContent = 'Select Print Option'; } });
+        document.getElementById('orderBtn').addEventListener('click', async function() { const productId = document.getElementById('productSelect').value; if (!productId || !selectedSlot) return; const btn = this; btn.disabled = true; btn.textContent = 'Processing...'; try { await fetch(`${API_URL}/save-image`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: `order-${Date.now()}-${selectedSlot}`, imageData: captures[selectedSlot].image }) }); const res = await fetch(`${API_URL}/create-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productId, imageData: captures[selectedSlot].image, returnUrl: window.location.href.split('?')[0] }) }); const data = await res.json(); if (data.url) { window.location.href = data.url; } else { throw new Error(data.error || 'Checkout failed'); } } catch (err) { alert('Error: ' + err.message); btn.disabled = false; btn.textContent = 'Order Now →'; } });
+        document.getElementById('upscaleBtn').addEventListener('click', function() { if (!selectedSlot) return; this.textContent = 'Upscaling...'; this.disabled = true; setTimeout(() => { this.textContent = '✓ Upscaled!'; setTimeout(() => { this.textContent = '✦ Upscale 2x'; this.disabled = false; }, 2000); }, 1500); });
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
