@@ -924,206 +924,154 @@
         @media (max-width: 900px) {
             .main {
                 grid-template-columns: 1fr;
-                padding: 15px;
-                gap: 15px;
+                padding: 0;
+                gap: 0;
             }
-            .controls, .capture-panel {
-                grid-column: 1;
-            }
+            
+            /* FULL SCREEN VIDEO AT TOP */
             .output-area {
-                order: -1;
+                order: -10;
+                width: 100vw;
+                margin-left: calc(-50vw + 50%);
+            }
+            .video-container {
+                border-radius: 0 !important;
+                border-left: none !important;
+                border-right: none !important;
+            }
+            
+            /* Hide film strip panel on mobile */
+            .capture-panel {
+                display: none !important;
+            }
+            
+            .controls {
+                margin: 10px;
+                border-radius: 12px;
             }
         }
         
         @media (max-width: 768px) {
+            /* MINIMAL HEADER */
             .header {
-                padding: 12px 10px;
+                padding: 10px;
             }
             .header-top {
-                flex-wrap: wrap;
-                gap: 8px 15px;
-                font-size: 0.6rem;
-                letter-spacing: 1px;
+                display: none;
             }
             .header h1 {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
                 letter-spacing: 2px;
             }
             .header-sub, .header-credit {
-                font-size: 0.8rem;
+                font-size: 0.9rem;
             }
             
-            .main {
-                padding: 10px;
-                gap: 10px;
+            /* HIDE HALF THE SECTIONS */
+            .section:nth-child(n+4) {
+                display: none;
             }
             
-            /* VIDEO FIRST ON MOBILE */
-            .output-area {
-                order: -2;
-            }
-            
-            /* Collapsible controls */
             .controls {
-                padding: 12px;
-                border-radius: 10px;
+                padding: 16px;
             }
             
             .section {
-                margin-bottom: 12px;
-                padding-bottom: 12px;
+                margin-bottom: 16px;
+                padding-bottom: 16px;
             }
             
+            /* DOUBLE SIZE HEADINGS */
             .section h3 {
-                font-size: 0.8rem;
-                margin-bottom: 10px;
+                font-size: 1.2rem;
+                margin-bottom: 14px;
             }
             
-            /* Bigger touch targets for session button */
+            /* GIANT SESSION BUTTON */
             .session-btn {
-                padding: 16px 20px;
-                font-size: 0.95rem;
-                letter-spacing: 2px;
-                min-height: 54px;
+                padding: 24px 28px;
+                font-size: 1.4rem;
+                letter-spacing: 3px;
+                min-height: 70px;
             }
             
-            /* Style buttons - 2 column grid */
+            /* BIGGER STYLE BUTTONS - 2 columns only */
             .style-buttons {
                 grid-template-columns: repeat(2, 1fr) !important;
-                gap: 8px !important;
+                gap: 12px !important;
             }
             .style-btn {
-                padding: 12px 8px !important;
-                font-size: 0.7rem !important;
-                min-height: 48px;
+                padding: 20px 14px !important;
+                font-size: 1rem !important;
+                min-height: 65px;
             }
             
-            /* Sliders */
+            /* BIGGER SLIDERS */
             .slider-row {
-                margin-bottom: 16px;
+                margin-bottom: 20px;
             }
             .slider-row label {
-                font-size: 0.75rem;
-                margin-bottom: 8px;
+                font-size: 1rem;
+                margin-bottom: 12px;
             }
             input[type="range"] {
-                height: 8px;
+                height: 12px;
             }
             input[type="range"]::-webkit-slider-thumb {
-                width: 24px;
-                height: 24px;
+                width: 32px;
+                height: 32px;
             }
             
-            /* Film strip capture panel */
-            .capture-panel {
-                padding: 12px;
-                padding-left: 20px !important;
-                padding-right: 20px !important;
-            }
-            .sprocket-track {
-                width: 12px;
-            }
-            .sprocket-hole {
-                width: 6px;
-                height: 10px;
-            }
-            
-            /* Capture slots - horizontal scroll */
-            .capture-slots {
-                display: flex !important;
-                flex-direction: row !important;
-                overflow-x: auto !important;
-                gap: 8px !important;
-                padding-bottom: 8px;
-                -webkit-overflow-scrolling: touch;
-            }
-            .capture-slot {
-                flex: 0 0 70px;
-                min-height: 55px;
-            }
-            
-            /* Shop prints button */
+            /* Shop prints - BIG */
             .shop-prints-btn {
-                padding: 14px 16px !important;
-                font-size: 0.85rem !important;
-                min-height: 50px;
+                padding: 20px 24px !important;
+                font-size: 1.2rem !important;
+                min-height: 65px;
             }
             
-            /* Statement section */
+            /* Hide statement on mobile */
             .shimmer-block {
-                padding: 18px 14px;
-            }
-            .shimmer-block h2 {
-                font-size: 0.9rem;
-                letter-spacing: 2px;
-            }
-            .shimmer-block p {
-                font-size: 0.9rem;
-                line-height: 1.6;
+                display: none;
             }
         }
         
         @media (max-width: 480px) {
-            .header {
-                padding: 10px 8px;
-            }
-            .header-top {
-                font-size: 0.5rem;
-                gap: 5px 10px;
-            }
-            .header-top span:nth-child(2) {
-                display: none;
-            }
             .header h1 {
-                font-size: 1.1rem;
-                letter-spacing: 1px;
+                font-size: 1.2rem;
             }
             .header-sub, .header-credit {
-                font-size: 0.7rem;
-            }
-            
-            .main {
-                padding: 8px;
-                gap: 8px;
+                font-size: 0.8rem;
             }
             
             .controls {
-                padding: 10px;
+                margin: 8px;
+                padding: 14px;
             }
             
             .section h3 {
-                font-size: 0.75rem;
+                font-size: 1.1rem;
             }
             
             .session-btn {
-                padding: 14px 16px;
-                font-size: 0.85rem;
-                min-height: 50px;
+                padding: 20px 24px;
+                font-size: 1.2rem;
+                min-height: 60px;
             }
             
             .style-btn {
-                padding: 10px 6px !important;
-                font-size: 0.65rem !important;
-                min-height: 44px;
+                padding: 16px 10px !important;
+                font-size: 0.9rem !important;
+                min-height: 55px;
             }
             
-            .capture-slot {
-                flex: 0 0 60px;
-                min-height: 48px;
+            .slider-row label {
+                font-size: 0.9rem;
             }
             
-            .shimmer-block {
-                padding: 14px 10px;
-            }
-            .shimmer-block h2 {
-                font-size: 0.8rem;
-            }
-            .shimmer-block p {
-                font-size: 0.8rem;
-            }
-            
-            .contact-info {
-                font-size: 0.6rem !important;
+            .shop-prints-btn {
+                padding: 18px 20px !important;
+                font-size: 1rem !important;
+                min-height: 55px;
             }
         }
     </style>
