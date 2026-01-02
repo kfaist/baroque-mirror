@@ -781,17 +781,23 @@
             color: rgba(212,175,55,0.6);
             letter-spacing: 1px;
             z-index: 2;
+            pointer-events: none;
         }
         
         .capture-slot img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: none;
+            pointer-events: none;
         }
         
         .capture-slot.has-image img {
             display: block;
+            pointer-events: auto;
         }
         
         .capture-slot.has-image .capture-btn {
@@ -835,6 +841,7 @@
             font-size: 0.55rem;
             color: rgba(212,175,55,0.6);
             font-family: 'Cinzel', serif;
+            pointer-events: none;
         }
         
         /* Scrollbar styling */
