@@ -1484,18 +1484,10 @@ function captureStill(slotNumber) {
 
 // Load existing captures on page load
 function loadCapturedStills() {
-    const stored = localStorage.getItem('baroqueCaptures');
-    if (stored) {
-        capturedStills = JSON.parse(stored);
-        Object.keys(capturedStills).forEach(slotNumber => {
-            const slot = document.querySelector(`.capture-slot[data-slot="${slotNumber}"]`);
-            if (slot && capturedStills[slotNumber]) {
-                const img = slot.querySelector('img');
-                img.src = capturedStills[slotNumber].image;
-                slot.classList.add('has-image');
-            }
-        });
-    }
+    // Clear old captures on each new session
+    localStorage.removeItem('baroqueCaptures');
+    capturedStills = {};
+    console.log('Captures cleared for fresh session');
 }
 
 // ============================================
