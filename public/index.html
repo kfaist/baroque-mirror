@@ -1315,15 +1315,7 @@
     <!-- Hidden canvas for capturing -->
     <canvas id="captureCanvas" style="display:none;"></canvas>
 
-<!-- DEBUG: Test button outside all containers -->
-<button onclick="alert('TEST WORKS')" style="position:fixed; bottom:20px; left:20px; z-index:99999; padding:20px; background:red; color:white; font-size:18px;">TEST CLICK</button>
-
 <script>
-// DEBUG: Log all clicks to see what element is being hit
-document.addEventListener('click', function(e) {
-    console.log('Clicked element:', e.target.tagName, e.target.className, e.target);
-});
-
 // ============================================
 // CONFIGURATION
 // ============================================
@@ -1446,11 +1438,15 @@ function captureStill(slotNumber) {
         return;
     }
     
-    canvas.width = outputVideo.videoWidth;
-    canvas.height = outputVideo.videoHeight;
-    ctx.drawImage(outputVideo, 0, 0);
+    // Scale down for storage (max 800px wide)
+    const maxWidth = 800;
+    const scale = Math.min(1, maxWidth / outputVideo.videoWidth);
+    canvas.width = outputVideo.videoWidth * scale;
+    canvas.height = outputVideo.videoHeight * scale;
+    ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
     
-    const dataUrl = canvas.toDataURL('image/png');
+    // Use JPEG with 70% quality instead of PNG (much smaller)
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
     
     // Store in localStorage for prints page
     capturedStills[slotNumber] = {
@@ -1459,7 +1455,23 @@ function captureStill(slotNumber) {
         style: currentStyle,
         prompt: customPrompt || styles[currentStyle].base
     };
-    localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills));
+    
+    try {
+        localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills));
+    } catch (e) {
+        // Storage full - clear old captures and try again
+        console.warn('Storage full, clearing old captures');
+        localStorage.removeItem('baroqueCaptures');
+        capturedStills = {};
+        capturedStills[slotNumber] = {
+            image: dataUrl,
+            timestamp: new Date().toISOString(),
+            style: currentStyle,
+            prompt: customPrompt || styles[currentStyle].base
+        };
+        localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills));
+        log('Storage was full - cleared old captures', 'info');
+    }
     
     // Update UI
     const slot = document.querySelector(`.capture-slot[data-slot="${slotNumber}"]`);
