@@ -762,10 +762,12 @@
             border: 1px solid rgba(139,105,20,0.5);
             border-radius: 2px;
             background: rgba(10,8,6,0.95);
-            overflow: hidden;
+            overflow: visible;
             position: relative;
             transition: all 0.3s ease;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            z-index: 50;
+            pointer-events: auto !important;
         }
         
         .capture-slot:hover {
@@ -1313,7 +1315,15 @@
     <!-- Hidden canvas for capturing -->
     <canvas id="captureCanvas" style="display:none;"></canvas>
 
+<!-- DEBUG: Test button outside all containers -->
+<button onclick="alert('TEST WORKS')" style="position:fixed; bottom:20px; left:20px; z-index:99999; padding:20px; background:red; color:white; font-size:18px;">TEST CLICK</button>
+
 <script>
+// DEBUG: Log all clicks to see what element is being hit
+document.addEventListener('click', function(e) {
+    console.log('Clicked element:', e.target.tagName, e.target.className, e.target);
+});
+
 // ============================================
 // CONFIGURATION
 // ============================================
