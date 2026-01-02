@@ -1435,6 +1435,7 @@ function log(msg, type = '') {
 // CAPTURE FUNCTIONALITY
 // ============================================
 function captureStill(slotNumber) {
+    console.log('captureStill called with slot:', slotNumber);
     const outputVideo = document.getElementById('output');
     const canvas = document.getElementById('captureCanvas');
     const ctx = canvas.getContext('2d');
@@ -1444,11 +1445,15 @@ function captureStill(slotNumber) {
         return;
     }
     
-    canvas.width = outputVideo.videoWidth;
-    canvas.height = outputVideo.videoHeight;
-    ctx.drawImage(outputVideo, 0, 0);
+    // Scale down for storage (max 800px wide)
+    const maxWidth = 800;
+    const scale = Math.min(1, maxWidth / outputVideo.videoWidth);
+    canvas.width = outputVideo.videoWidth * scale;
+    canvas.height = outputVideo.videoHeight * scale;
+    ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
     
-    const dataUrl = canvas.toDataURL('image/png');
+    // Use JPEG with 70% quality instead of PNG (much smaller)
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
     
     // Store in localStorage for prints page
     capturedStills[slotNumber] = {
@@ -1457,7 +1462,23 @@ function captureStill(slotNumber) {
         style: currentStyle,
         prompt: customPrompt || styles[currentStyle].base
     };
-    localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills));
+    
+    try {
+        localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills));
+    } catch (e) {
+        // Storage full - clear old captures and try again
+        console.warn('Storage full, clearing old captures');
+        localStorage.removeItem('baroqueCaptures');
+        capturedStills = {};
+        capturedStills[slotNumber] = {
+            image: dataUrl,
+            timestamp: new Date().toISOString(),
+            style: currentStyle,
+            prompt: customPrompt || styles[currentStyle].base
+        };
+        localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills));
+        log('Storage was full - cleared old captures', 'info');
+    }
     
     // Update UI
     const slot = document.querySelector(`.capture-slot[data-slot="${slotNumber}"]`);
@@ -1470,18 +1491,10 @@ function captureStill(slotNumber) {
 
 // Load existing captures on page load
 function loadCapturedStills() {
-    const stored = localStorage.getItem('baroqueCaptures');
-    if (stored) {
-        capturedStills = JSON.parse(stored);
-        Object.keys(capturedStills).forEach(slotNumber => {
-            const slot = document.querySelector(`.capture-slot[data-slot="${slotNumber}"]`);
-            if (slot && capturedStills[slotNumber]) {
-                const img = slot.querySelector('img');
-                img.src = capturedStills[slotNumber].image;
-                slot.classList.add('has-image');
-            }
-        });
-    }
+    // Clear old captures on each new session
+    localStorage.removeItem('baroqueCaptures');
+    capturedStills = {};
+    console.log('Captures cleared for fresh session');
 }
 
 // ============================================
