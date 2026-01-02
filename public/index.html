@@ -132,6 +132,7 @@
                     rgba(15,12,10,0.9) 8px
                 );
             z-index: 0;
+            pointer-events: none;
         }
         .capture-panel::before { left: 0; border-right: 1px solid rgba(139,105,20,0.4); }
         .capture-panel::after { right: 0; border-left: 1px solid rgba(139,105,20,0.4); }
@@ -148,6 +149,7 @@
             align-items: center;
             gap: 8px;
             padding: 5px 0;
+            pointer-events: none;
         }
         .sprocket-track.left { left: 0; }
         .sprocket-track.right { right: 0; }
@@ -817,6 +819,7 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             white-space: nowrap;
+            z-index: 10;
         }
         
         .capture-btn:hover {
