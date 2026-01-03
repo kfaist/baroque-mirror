@@ -1072,6 +1072,61 @@
                 min-height: 55px;
             }
         }
+        
+        /* LANDSCAPE MODE */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header { display: none; }
+            .video-container { max-height: 90vh; }
+            .controls { max-height: 80vh; overflow-y: auto; }
+        }
+        
+        /* ========== FLOATING MOBILE CAPTURE BUTTON ========== */
+        .mobile-capture-btn {
+            display: none;
+        }
+        
+        @media (max-width: 900px) {
+            .mobile-capture-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 1000;
+                padding: 16px 24px;
+                background: linear-gradient(180deg, #d4af37, #8b6914);
+                color: #0a0608;
+                border: 2px solid #d4af37;
+                border-radius: 50px;
+                font-family: 'Cinzel', serif;
+                font-size: 1.1rem;
+                font-weight: 700;
+                letter-spacing: 2px;
+                cursor: pointer;
+                box-shadow: 0 4px 20px rgba(212,175,55,0.5), 0 0 40px rgba(212,175,55,0.3);
+                animation: capture-pulse 2s infinite;
+                text-transform: uppercase;
+            }
+            
+            .mobile-capture-btn:active {
+                transform: scale(0.95);
+                box-shadow: 0 2px 10px rgba(212,175,55,0.4);
+            }
+            
+            @keyframes capture-pulse {
+                0%, 100% { box-shadow: 0 4px 20px rgba(212,175,55,0.5), 0 0 40px rgba(212,175,55,0.3); }
+                50% { box-shadow: 0 4px 30px rgba(212,175,55,0.7), 0 0 60px rgba(212,175,55,0.5); }
+            }
+            
+            /* Sticky header on mobile */
+            .header {
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -1186,6 +1241,9 @@
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
                 </div>
+                
+                <!-- Mobile Floating Capture Button -->
+                <button class="mobile-capture-btn" id="mobileCaptureBtn">📸 Capture</button>
                 
                 <!-- Statement Section - Two Tiered Shimmer Layers -->
                 <div class="statement-section">
@@ -2529,6 +2587,29 @@ window.addEventListener('load', () => {
     }
     
     demoAnimate();
+    
+    // Mobile capture button handler
+    const mobileCaptureBtn = document.getElementById('mobileCaptureBtn');
+    if (mobileCaptureBtn) {
+        mobileCaptureBtn.addEventListener('click', () => {
+            // Find next empty capture slot (1-12)
+            let targetSlot = null;
+            for (let i = 1; i <= 12; i++) {
+                const key = `baroqueMirror_still_${i}`;
+                if (!localStorage.getItem(key)) {
+                    targetSlot = i;
+                    break;
+                }
+            }
+            // If all slots full, overwrite slot 1
+            if (!targetSlot) targetSlot = 1;
+            
+            // Call existing capture function
+            if (typeof captureStill === 'function') {
+                captureStill(targetSlot);
+            }
+        });
+    }
 });
 </script>
 </body>
