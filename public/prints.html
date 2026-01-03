@@ -845,11 +845,31 @@
             btn.innerHTML = '<span class="loading"></span>Processing...';
             
             try {
+                // Check image data exists
+                const imageData = captures[selectedCapture]?.image;
+                if (!imageData) {
+                    throw new Error('No image data found. Please recapture.');
+                }
+                
+                console.log('Image size:', Math.round(imageData.length / 1024), 'KB');
+                
+                // Add timeout (60 seconds for large images)
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 60000);
+                
                 const res = await fetch(`${API_URL}/create-checkout`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ productId, imageData: captures[selectedCapture].image, returnUrl: window.location.href.split('?')[0] })
+                    body: JSON.stringify({ productId, imageData, returnUrl: window.location.href.split('?')[0] }),
+                    signal: controller.signal
                 });
+                
+                clearTimeout(timeout);
+                
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(`Server error ${res.status}: ${text}`);
+                }
                 
                 const data = await res.json();
                 if (data.url) {
@@ -858,7 +878,11 @@
                     throw new Error(data.error || 'Checkout failed');
                 }
             } catch (err) {
-                alert('Error: ' + err.message);
+                if (err.name === 'AbortError') {
+                    alert('Request timed out. Please try again or use a smaller image.');
+                } else {
+                    alert('Error: ' + err.message);
+                }
                 btn.disabled = false;
                 btn.textContent = 'Order Now →';
             }
