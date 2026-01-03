@@ -922,17 +922,58 @@
         
         @media (max-width: 900px) {
             .main {
-                grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
                 padding: 0;
                 gap: 0;
             }
             
-            /* FULL SCREEN VIDEO AT TOP */
+            /* Flatten controls so children can be reordered */
+            .controls {
+                display: contents;
+            }
+            
+            /* ORDER: 1=Session, 2=Video, 3+=Controls */
+            .session-section {
+                order: 1;
+                background: rgba(15,10,12,0.95);
+                padding: 15px;
+                margin: 10px;
+                border-radius: 12px;
+                border: 1px solid rgba(212,175,55,0.4);
+            }
+            
             .output-area {
-                order: -10;
+                order: 2;
                 width: 100vw;
                 margin-left: calc(-50vw + 50%);
             }
+            
+            .prompt-section {
+                order: 3;
+                background: rgba(15,10,12,0.95);
+                padding: 15px;
+                margin: 0 10px;
+                border-radius: 12px 12px 0 0;
+                border: 1px solid rgba(212,175,55,0.4);
+                border-bottom: none;
+            }
+            
+            .section {
+                order: 4;
+                background: rgba(15,10,12,0.95);
+                padding: 15px;
+                margin: 0 10px;
+                border-left: 1px solid rgba(212,175,55,0.4);
+                border-right: 1px solid rgba(212,175,55,0.4);
+            }
+            
+            .section:last-of-type {
+                border-bottom: 1px solid rgba(212,175,55,0.4);
+                border-radius: 0 0 12px 12px;
+                margin-bottom: 10px;
+            }
+            
             .video-container {
                 border-radius: 0 !important;
                 border-left: none !important;
@@ -942,11 +983,6 @@
             /* Hide film strip panel on mobile */
             .capture-panel {
                 display: none !important;
-            }
-            
-            .controls {
-                margin: 10px;
-                border-radius: 12px;
             }
         }
         
@@ -971,13 +1007,10 @@
                 display: none;
             }
             
-            .controls {
-                padding: 16px;
-            }
-            
+            /* Section styling (controls uses display:contents) */
             .section {
-                margin-bottom: 16px;
-                padding-bottom: 16px;
+                padding: 16px;
+                margin-bottom: 0;
             }
             
             /* DOUBLE SIZE HEADINGS */
