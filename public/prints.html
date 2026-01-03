@@ -526,6 +526,94 @@
             .grid-captures { grid-template-columns: repeat(5, 1fr); }
             .frame-image { width: 180px; height: 135px; }
         }
+
+        /* ========== ENHANCED MOBILE FOR PRINTS ========== */
+        @media (max-width: 768px) {
+            /* Sticky header */
+            .header {
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                padding: 12px;
+            }
+            
+            /* Horizontal scroll tier badges */
+            .tiers-row {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                gap: 8px;
+                padding: 10px 15px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .tiers-row::-webkit-scrollbar { display: none; }
+            .tier-item {
+                flex: 0 0 auto;
+                padding: 8px 12px;
+                background: rgba(212,175,55,0.1);
+                border-radius: 20px;
+                border: 1px solid rgba(212,175,55,0.3);
+            }
+            .tier-item h4 { font-size: 0.75rem; white-space: nowrap; }
+            .tier-price { font-size: 0.65rem; }
+            
+            /* Bigger capture grid items */
+            .grid-captures img, .hero-captures img {
+                min-height: 60px;
+            }
+            
+            /* Sticky bottom purchase controls */
+            .purchase-controls {
+                position: fixed !important;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                background: linear-gradient(180deg, rgba(10,6,8,0.95), rgba(10,6,8,1));
+                padding: 15px;
+                border-top: 2px solid rgba(212,175,55,0.5);
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+            }
+            
+            /* Giant purchase button */
+            .purchase-btn {
+                padding: 20px 24px !important;
+                font-size: 1.1rem !important;
+                min-height: 60px;
+            }
+            
+            /* Add padding at bottom for sticky controls */
+            .main-content {
+                padding-bottom: 120px;
+            }
+            
+            /* Selection checkmark indicator */
+            .capture-item.selected::after {
+                content: '✓';
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                background: #d4af37;
+                color: #0a0608;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .grid-captures {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+            .purchase-controls {
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -538,7 +626,7 @@
     <div class="tiers-row">
         <div class="tier-item"><h4>Keepsakes</h4><span class="tier-price keepsake">FROM $18</span></div>
         <span class="tier-divider">•</span>
-        <div class="tier-item"><h4>Posters</h4><span class="tier-price poster">FROM $29</span></div>
+        <div class="tier-item"><h4>Posters</h4><span class="tier-price poster">FROM $49</span></div>
         <span class="tier-divider">•</span>
         <div class="tier-item"><h4>Standard</h4><span class="tier-price standard">FROM $125</span></div>
         <span class="tier-divider">•</span>
