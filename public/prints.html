@@ -138,20 +138,19 @@
             font-size: 0.85rem;
         }
         
-        /* Category Grid - 8 boxes */
-        .categories-grid {
+        /* Category Grid - 8 boxes with inline dropdowns */
+        .categories-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 15px;
-            margin-bottom: 30px;
         }
         
         @media (max-width: 900px) {
-            .categories-grid { grid-template-columns: repeat(2, 1fr); }
+            .categories-container { grid-template-columns: repeat(2, 1fr); }
         }
         
         @media (max-width: 500px) {
-            .categories-grid { grid-template-columns: 1fr; }
+            .categories-container { grid-template-columns: 1fr; }
         }
         
         .category-box {
@@ -173,6 +172,8 @@
             border-color: #d4af37;
             background: rgba(212,175,55,0.15);
             box-shadow: 0 0 25px rgba(212,175,55,0.2);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
         }
         
         .category-name {
@@ -197,15 +198,18 @@
             font-weight: 600;
         }
         
-        /* Dropdown panel */
+        /* Dropdown panel - spans full width, appears after clicked category */
         .dropdown-panel {
             display: none;
+            grid-column: 1 / -1;
             background: rgba(10,6,8,0.95);
             border: 1px solid rgba(212,175,55,0.5);
-            border-radius: 12px;
-            margin-bottom: 25px;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            margin-top: -15px;
+            margin-bottom: 15px;
             overflow: hidden;
-            animation: slideDown 0.3s ease;
+            animation: slideDown 0.25s ease;
         }
         
         .dropdown-panel.open {
@@ -213,34 +217,34 @@
         }
         
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 500px; }
         }
         
         .dropdown-header {
             background: rgba(212,175,55,0.1);
-            padding: 15px 20px;
+            padding: 12px 20px;
             border-bottom: 1px solid rgba(212,175,55,0.3);
         }
         
         .dropdown-title {
             color: #d4af37;
             font-family: 'Cinzel', serif;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: 3px;
         }
         
         .dropdown-desc {
             color: rgba(244,228,186,0.8);
-            font-size: 0.9rem;
-            margin-top: 5px;
+            font-size: 0.85rem;
+            margin-top: 4px;
         }
         
         .products-list {
             padding: 15px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
         }
         
         .product-option {
@@ -265,9 +269,7 @@
             cursor: not-allowed;
         }
         
-        .product-details {
-            flex: 1;
-        }
+        .product-details { flex: 1; }
         
         .product-name {
             color: #f4e4ba;
@@ -288,7 +290,7 @@
             font-family: 'Cinzel', serif;
         }
         
-        /* Selected capture reminder */
+        /* Selection reminder */
         .selection-reminder {
             text-align: center;
             padding: 15px;
@@ -297,11 +299,9 @@
             display: none;
         }
         
-        .selection-reminder.show {
-            display: block;
-        }
+        .selection-reminder.show { display: block; }
         
-        /* Loading/Processing states */
+        /* Processing state */
         .processing {
             pointer-events: none;
             opacity: 0.7;
@@ -327,28 +327,16 @@
         </div>
         
         <div class="main">
-            <!-- Captured portraits section -->
             <div id="capturesContainer"></div>
             
-            <!-- Selection reminder -->
             <div id="selectionReminder" class="selection-reminder">
                 ↑ Select a portrait above to purchase
             </div>
             
-            <!-- Categories section -->
             <div class="products-section">
                 <h2 class="section-title">⚜ Available Print Options ⚜</h2>
-                
-                <div id="categoriesGrid" class="categories-grid">
-                    <!-- Populated by JS -->
-                </div>
-                
-                <div id="dropdownPanel" class="dropdown-panel">
-                    <div class="dropdown-header">
-                        <div class="dropdown-title" id="dropdownTitle"></div>
-                        <div class="dropdown-desc" id="dropdownDesc"></div>
-                    </div>
-                    <div class="products-list" id="productsList"></div>
+                <div id="categoriesContainer" class="categories-container">
+                    <!-- Categories and dropdowns populated by JS -->
                 </div>
             </div>
         </div>
@@ -360,10 +348,10 @@ const API_BASE = 'https://api-production-d80a.up.railway.app';
 let catalog = [];
 let selectedCapture = null;
 let selectedSlot = null;
+let activeCategory = null;
 
-// Category descriptions for the dropdown
 const CATEGORY_INFO = {
-    'stationery': 'Perfect for sharing or gifting. Premium card stock with envelopes included.',
+    'stationery': 'Premium card stock with envelopes included.',
     'prints': 'Acid-free archival paper with 100+ year color guarantee. Ready to frame.',
     'premium-paper': 'Museum-grade substrates for discerning collectors. Cotton rag & specialty textures.',
     'canvas': 'Hand-stretched over solid pine frames, gallery-wrapped edges. Ready to hang.',
@@ -373,7 +361,6 @@ const CATEGORY_INFO = {
     'museum': 'Limited collector editions with hand-gilded frames and Tru Vue® museum glass.'
 };
 
-// Load catalog from API
 async function loadCatalog() {
     try {
         const res = await fetch(`${API_BASE}/catalog`);
@@ -381,79 +368,93 @@ async function loadCatalog() {
         renderCategories();
     } catch (e) {
         console.error('Failed to load catalog:', e);
-        // Fallback to hardcoded if API fails
         renderFallbackCategories();
     }
 }
 
 function renderCategories() {
-    const grid = document.getElementById('categoriesGrid');
-    grid.innerHTML = catalog.map(cat => {
+    const container = document.getElementById('categoriesContainer');
+    let html = '';
+    
+    catalog.forEach((cat, idx) => {
         const prices = cat.products.map(p => p.price);
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
-        const priceRange = minPrice === maxPrice 
-            ? `$${minPrice}` 
-            : `$${minPrice} - $${maxPrice}`;
+        const priceRange = minPrice === maxPrice ? `$${minPrice}` : `$${minPrice} - $${maxPrice}`;
         
-        return `
+        // Category box
+        html += `
             <div class="category-box" data-category="${cat.id}" onclick="toggleCategory('${cat.id}')">
                 <div class="category-name">${cat.name}</div>
                 <div class="category-tagline">${cat.tagline}</div>
                 <div class="category-price">${priceRange}</div>
             </div>
         `;
-    }).join('');
+        
+        // Dropdown panel (hidden by default) - inserted after each category
+        // On desktop (4 cols), we insert after positions 3,7 (end of each row)
+        // But we'll use JS to position it correctly
+        html += `
+            <div class="dropdown-panel" id="dropdown-${cat.id}">
+                <div class="dropdown-header">
+                    <div class="dropdown-title">${cat.name}</div>
+                    <div class="dropdown-desc">${CATEGORY_INFO[cat.id] || cat.tagline}</div>
+                </div>
+                <div class="products-list">
+                    ${cat.products.map(p => `
+                        <div class="product-option ${!selectedCapture ? 'disabled' : ''}" onclick="orderPrint('${p.id}')" title="${p.description || ''}">
+                            <div class="product-details">
+                                <div class="product-name">${p.subtitle || p.name}</div>
+                                <div class="product-subtitle">${p.description || ''}</div>
+                            </div>
+                            <div class="product-price">$${p.price}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
 }
 
 function toggleCategory(categoryId) {
-    const panel = document.getElementById('dropdownPanel');
+    const container = document.getElementById('categoriesContainer');
     const boxes = document.querySelectorAll('.category-box');
     const clickedBox = document.querySelector(`[data-category="${categoryId}"]`);
+    const dropdown = document.getElementById(`dropdown-${categoryId}`);
     
-    // If clicking same category, close it
-    if (clickedBox.classList.contains('active')) {
-        clickedBox.classList.remove('active');
-        panel.classList.remove('open');
+    // Close all dropdowns and remove active state
+    document.querySelectorAll('.dropdown-panel').forEach(d => d.classList.remove('open'));
+    boxes.forEach(b => b.classList.remove('active'));
+    
+    // If clicking same category, just close
+    if (activeCategory === categoryId) {
+        activeCategory = null;
         return;
     }
     
-    // Remove active from all, add to clicked
-    boxes.forEach(b => b.classList.remove('active'));
+    // Open clicked dropdown
+    activeCategory = categoryId;
     clickedBox.classList.add('active');
+    dropdown.classList.add('open');
     
-    // Find category data
-    const cat = catalog.find(c => c.id === categoryId);
-    if (!cat) return;
+    // Move dropdown to appear right after the clicked box
+    clickedBox.after(dropdown);
     
-    // Update dropdown content
-    document.getElementById('dropdownTitle').textContent = cat.name;
-    document.getElementById('dropdownDesc').textContent = CATEGORY_INFO[categoryId] || cat.tagline;
+    // Update disabled state based on capture selection
+    const options = dropdown.querySelectorAll('.product-option');
+    options.forEach(opt => {
+        opt.classList.toggle('disabled', !selectedCapture);
+    });
     
-    const productsList = document.getElementById('productsList');
-    productsList.innerHTML = cat.products.map(p => {
-        const disabled = !selectedCapture ? 'disabled' : '';
-        return `
-            <div class="product-option ${disabled}" onclick="orderPrint('${p.id}')" title="${p.description || ''}">
-                <div class="product-details">
-                    <div class="product-name">${p.subtitle || p.name}</div>
-                    <div class="product-subtitle">${p.description || ''}</div>
-                </div>
-                <div class="product-price">$${p.price}</div>
-            </div>
-        `;
-    }).join('');
-    
-    // Show panel
-    panel.classList.add('open');
-    
-    // Scroll panel into view
-    setTimeout(() => {
-        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 100);
-    
-    // Show reminder if no capture selected
+    // Show reminder if no capture
     document.getElementById('selectionReminder').classList.toggle('show', !selectedCapture);
+    
+    // Scroll into view
+    setTimeout(() => {
+        dropdown.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
 }
 
 function loadCaptures() {
@@ -502,7 +503,6 @@ function loadCaptures() {
         
         grid.appendChild(card);
         
-        // Auto-select first capture
         if (idx === 0) {
             selectCapture(slot, capture);
             card.classList.add('selected');
@@ -514,17 +514,14 @@ function selectCapture(slot, capture) {
     selectedSlot = slot;
     selectedCapture = capture;
     
-    // Update UI
     document.querySelectorAll('.capture-card').forEach(c => {
         c.classList.toggle('selected', c.dataset.slot === slot);
     });
     
-    // Re-enable product options
     document.querySelectorAll('.product-option').forEach(p => {
         p.classList.remove('disabled');
     });
     
-    // Hide reminder
     document.getElementById('selectionReminder').classList.remove('show');
 }
 
@@ -535,7 +532,7 @@ async function orderPrint(productId) {
     }
     
     const btn = event.currentTarget;
-    if (btn.classList.contains('processing')) return;
+    if (btn.classList.contains('processing') || btn.classList.contains('disabled')) return;
     
     btn.classList.add('processing');
     
@@ -565,7 +562,6 @@ async function orderPrint(productId) {
     }
 }
 
-// Fallback categories if API fails
 function renderFallbackCategories() {
     catalog = [
         { id: 'stationery', name: 'Stationery', tagline: 'Cards & Postcards', products: [
@@ -616,7 +612,6 @@ function renderFallbackCategories() {
     renderCategories();
 }
 
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadCaptures();
     loadCatalog();
