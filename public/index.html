@@ -844,8 +844,12 @@
         .statement-section { 
             margin-top: 25px; 
             position: relative; 
-            grid-column: 1 / -1;  /* Span all columns in the grid */
+            max-width: 1900px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 25px;
             width: 100%;
+            box-sizing: border-box;
         }
         
         /* Layer 1: LIGHTER/more transparent outer shimmer background */
@@ -1496,9 +1500,10 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Statement Section - At Bottom -->
-            <div class="statement-section">
+        </div>
+        
+        <!-- Statement Section - Outside grid for proper full-width layout -->
+        <div class="statement-section">
                 <div class="shimmer-bg">
                     <div class="shimmer-block">
                         <h2>Statement</h2>
@@ -1516,7 +1521,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     </div>
 
     <!-- Hidden canvas for capturing -->
