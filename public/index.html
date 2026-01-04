@@ -1586,6 +1586,7 @@ const MAX_PARTICLES = 300;
 
 // Random prompt inspirations
 const promptInspirations = [
+    // Classical prompts
     "Venetian carnival masquerade, golden masks, mysterious candlelight atmosphere",
     "Dutch still life with tulips and silver vessels, morning light through window",
     "Spanish court portrait, velvet fabrics, pearl jewelry, dignified pose",
@@ -1600,24 +1601,34 @@ const promptInspirations = [
     "Byzantine icon style, gold leaf halos, frontal gaze, sacred geometry",
     "Pre-Raphaelite romanticism, flowing hair, medieval legends, vivid colors",
     "Venetian veduta cityscape, grand canals, gondolas, atmospheric perspective",
-    "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects"
-];
-
-
-// Caricature-specific prompts for 50/50 mode
-const caricaturePrompts = [
-    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features, lithograph texture, biting social commentary",
+    "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects",
+    // Caricature prompts - French Revolutionary style
+    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features, lithograph texture",
     "James Gillray caricature, bulging eyes, elongated nose, mocking aristocracy, hand-colored etching",
     "Thomas Rowlandson satirical print, rotund figures, red-faced excess, Georgian era mockery",
-    "Sans-culottes propaganda broadsheet, fierce revolutionary spirit, woodcut boldness, righteous anger",
+    "Sans-culottes propaganda broadsheet, fierce revolutionary spirit, woodcut boldness",
     "Philipon pear-head style, transformative caricature, subversive wit, pen and ink grotesque",
     "William Hogarth moral satire, exaggerated expressions, crowded composition, social critique",
-    "George Cruikshank political cartoon, sharp angular features, dramatic gestures, copper engraving style",
+    "George Cruikshank political cartoon, sharp angular features, dramatic gestures, copper engraving",
     "French Revolutionary playing card, reversed hierarchy, commoner as king, satirical inversion",
-    "Père Duchesne pamphlet illustration, angry populist figure, crude woodcut energy, revolutionary fury",
+    "Père Duchesne pamphlet illustration, angry populist figure, crude woodcut energy",
     "Physiognomic study gone wrong, Lavater nightmare, distorted proportions, pseudo-scientific grotesque"
 ];
-// ============================================
+
+// Caricature-only prompts for 50/50 mode
+const caricaturePrompts = [
+    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features, lithograph texture",
+    "James Gillray caricature, bulging eyes, elongated nose, mocking aristocracy, hand-colored etching",
+    "Thomas Rowlandson satirical print, rotund figures, red-faced excess, Georgian era mockery",
+    "Sans-culottes propaganda broadsheet, fierce revolutionary spirit, woodcut boldness",
+    "Philipon pear-head style, transformative caricature, subversive wit, pen and ink grotesque",
+    "William Hogarth moral satire, exaggerated expressions, crowded composition, social critique",
+    "George Cruikshank political cartoon, sharp angular features, dramatic gestures, copper engraving",
+    "French Revolutionary playing card, reversed hierarchy, commoner as king, satirical inversion",
+    "Père Duchesne pamphlet illustration, angry populist figure, crude woodcut energy",
+    "Physiognomic study gone wrong, Lavater nightmare, distorted proportions, pseudo-scientific grotesque"
+];
+
 // STYLES
 // ============================================
 const styles = {
@@ -2489,6 +2500,116 @@ function buildPrompt() {
 async function start() {
     document.getElementById('startBtn').disabled = true;
     
+    // ============================================
+    // 50/50 CARICATURE MODE - ANIMATE UI
+    // ============================================
+    const isCaricatureMode = Math.random() < 0.5;
+    
+    if (isCaricatureMode) {
+        log('🎭 CARICATURE MODE - Initializing...', 'info');
+        
+        // Step 1: Animate dice button click
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        shuffleBtn.classList.add('active');
+        shuffleBtn.style.transform = 'scale(1.2)';
+        shuffleBtn.style.transition = 'transform 0.15s';
+        
+        await new Promise(r => setTimeout(r, 200));
+        
+        // Set caricature prompt
+        const caricaturePrompt = caricaturePrompts[Math.floor(Math.random() * caricaturePrompts.length)];
+        document.getElementById('promptInput').value = caricaturePrompt;
+        customPrompt = caricaturePrompt;
+        
+        shuffleBtn.style.transform = 'scale(1)';
+        shuffleBtn.classList.remove('active');
+        
+        await new Promise(r => setTimeout(r, 150));
+        
+        // Step 2: Animate apply button click
+        const applyBtn = document.getElementById('applyPromptBtn');
+        applyBtn.classList.add('active');
+        applyBtn.style.transform = 'scale(1.1)';
+        applyBtn.style.background = 'rgba(212,175,55,0.4)';
+        applyBtn.style.transition = 'all 0.15s';
+        
+        await new Promise(r => setTimeout(r, 200));
+        
+        applyBtn.style.transform = 'scale(1)';
+        applyBtn.style.background = '';
+        applyBtn.classList.remove('active');
+        
+        await new Promise(r => setTimeout(r, 150));
+        
+        // Step 3: Animate mode slider to caricature (85-99)
+        const modeSlider = document.getElementById('modeSlider');
+        const targetMode = 85 + Math.floor(Math.random() * 15);
+        const modeLabels = ['Pure Classical', 'Traditional', 'Classical Fusion', 'Balanced', 'Satirical Blend', 'Bold Satire', 'Revolutionary Satire'];
+        
+        // Animate slider movement
+        const startMode = parseInt(modeSlider.value);
+        const modeSteps = 20;
+        for (let i = 0; i <= modeSteps; i++) {
+            await new Promise(r => setTimeout(r, 15));
+            const val = Math.round(startMode + (targetMode - startMode) * (i / modeSteps));
+            modeSlider.value = val;
+            modeValue = val;
+            document.getElementById('modeValue').textContent = modeLabels[Math.min(Math.floor(val / 100 * 7), 6)];
+        }
+        
+        await new Promise(r => setTimeout(r, 100));
+        
+        // Step 4: Animate strength slider DOWN (5-8)
+        const strengthSlider = document.getElementById('strengthSlider');
+        const targetStrength = 5 + Math.floor(Math.random() * 4);
+        const startStrength = parseInt(strengthSlider.value);
+        const strengthSteps = 15;
+        
+        for (let i = 0; i <= strengthSteps; i++) {
+            await new Promise(r => setTimeout(r, 20));
+            const val = Math.round(startStrength + (targetStrength - startStrength) * (i / strengthSteps));
+            strengthSlider.value = val;
+            params.strength = val;
+            document.getElementById('strengthVal').textContent = val;
+        }
+        
+        await new Promise(r => setTimeout(r, 100));
+        
+        // Step 5: Animate prompt weight UP (90-97)
+        const promptWeight = 90 + Math.floor(Math.random() * 8);
+        const pwSlider = document.getElementById('promptWeightSlider');
+        const pwSlider2 = document.getElementById('promptWeightSlider2');
+        const startPW = parseInt(pwSlider.value);
+        const pwSteps = 10;
+        
+        for (let i = 0; i <= pwSteps; i++) {
+            await new Promise(r => setTimeout(r, 20));
+            const val = Math.round(startPW + (promptWeight - startPW) * (i / pwSteps));
+            pwSlider.value = val;
+            pwSlider2.value = val;
+            const pw = val / 100;
+            params.promptWeight = pw;
+            document.getElementById('promptWeightVal').textContent = pw.toFixed(2);
+            document.getElementById('promptWeightVal2').textContent = pw.toFixed(2);
+        }
+        
+        log('🎭 Revolutionary portrait mode ready!', 'success');
+        await new Promise(r => setTimeout(r, 200));
+        
+    } else {
+        log('🎨 Classical mode selected', 'info');
+        
+        // Just set strength low for gentler start
+        const strengthSlider = document.getElementById('strengthSlider');
+        const targetStrength = 6 + Math.floor(Math.random() * 4);
+        strengthSlider.value = targetStrength;
+        params.strength = targetStrength;
+        document.getElementById('strengthVal').textContent = targetStrength;
+    }
+    
+    // ============================================
+    // CONTINUE WITH NORMAL START
+    // ============================================
     try {
         log('Getting camera...', 'info');
         localStream = await navigator.mediaDevices.getUserMedia({
@@ -2527,6 +2648,7 @@ async function start() {
         streamId = data.id;
         playbackId = data.output_playback_id;
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
+
 
         log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
@@ -2808,52 +2930,6 @@ window.addEventListener('load', () => {
     loadCapturedStills();
     
     
-    // ============================================
-    // 50/50 CARICATURE MODE INITIALIZATION
-    // ============================================
-    const isCaricatureMode = Math.random() < 0.5;
-    
-    if (isCaricatureMode) {
-        console.log("🎭 Starting in CARICATURE MODE");
-        
-        // Set mode slider to full caricature (85-100)
-        const modeSlider = document.getElementById("modeSlider");
-        const modeVal = 85 + Math.floor(Math.random() * 15); // 85-99
-        modeSlider.value = modeVal;
-        modeValue = modeVal;
-        document.getElementById("modeValue").textContent = "Revolutionary Satire";
-        
-        // Set strength LOW (5-8) for subtle transformation
-        const strengthSlider = document.getElementById("strengthSlider");
-        const strengthVal = 5 + Math.floor(Math.random() * 4); // 5-8
-        strengthSlider.value = strengthVal;
-        params.strength = strengthVal;
-        document.getElementById("strengthVal").textContent = strengthVal;
-        
-        // Set prompt weight HIGH (90-98)
-        const promptWeight = 90 + Math.floor(Math.random() * 8); // 90-97
-        const pw = promptWeight / 100;
-        document.getElementById("promptWeightSlider").value = promptWeight;
-        document.getElementById("promptWeightSlider2").value = promptWeight;
-        document.getElementById("promptWeightVal").textContent = pw.toFixed(2);
-        document.getElementById("promptWeightVal2").textContent = pw.toFixed(2);
-        params.promptWeight = pw;
-        
-        // Set a caricature-specific prompt
-        const caricaturePrompt = caricaturePrompts[Math.floor(Math.random() * caricaturePrompts.length)];
-        document.getElementById("promptInput").value = caricaturePrompt;
-        customPrompt = caricaturePrompt;
-    } else {
-        console.log("🎨 Starting in CLASSICAL MODE");
-        
-        // Set strength LOW anyway (under 10) for gentler start
-        const strengthSlider = document.getElementById("strengthSlider");
-        const strengthVal = 6 + Math.floor(Math.random() * 4); // 6-9
-        strengthSlider.value = strengthVal;
-        params.strength = strengthVal;
-        document.getElementById("strengthVal").textContent = strengthVal;
-    }
-    // Start with a static background preview
     drawBackground = initBackground();
     drawParticles = initParticles();
     drawVideoOverlay = initVideoOverlay();
