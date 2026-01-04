@@ -921,17 +921,30 @@
         
         @media (max-width: 900px) {
             .main {
-                grid-template-columns: 1fr;
+                display: flex !important;
+                flex-direction: column !important;
                 padding: 0;
                 gap: 0;
             }
             
             /* FULL SCREEN VIDEO AT TOP */
             .output-area {
-                order: -10;
+                order: 1 !important;
                 width: 100vw;
-                margin-left: calc(-50vw + 50%);
+                margin: 0;
             }
+            
+            /* Mobile action bar right after video */
+            .mobile-action-bar {
+                order: 2 !important;
+                display: flex !important;
+            }
+            
+            /* Controls below */
+            .controls {
+                order: 3 !important;
+            }
+            
             .video-container {
                 border-radius: 0 !important;
                 border-left: none !important;
@@ -1096,14 +1109,14 @@
             }
             
             .mobile-action-bar {
-                display: flex;
+                display: flex !important;
                 justify-content: space-between;
                 align-items: stretch;
                 gap: 10px;
                 padding: 12px 10px;
                 background: rgba(10,6,8,0.95);
                 border-bottom: 2px solid rgba(212,175,55,0.4);
-                order: -9;
+                order: 2 !important;
                 width: 100%;
             }
             
