@@ -25,5 +25,3 @@ app.get('/health', (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`⚜ Baroque Mirror running on port ${PORT}`);
 });
--e 
-// Redeploy trigger: 2026-01-04T22:16:28Z
