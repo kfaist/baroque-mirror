@@ -945,6 +945,12 @@
                 width: 100vw;
                 margin-left: calc(-50vw + 50%);
             }
+            
+            /* Hide statement on mobile */
+            .statement-section {
+                display: none !important;
+            }
+            
             .video-container {
                 border-radius: 0 !important;
                 border-left: none !important;
@@ -1198,6 +1204,20 @@
                     </div>
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
+                </div>
+                
+                <!-- Pink Preamble / Statement Section -->
+                <div class="statement-section" style="margin-top: 25px; padding: 35px 40px; background: rgba(20, 15, 25, 0.4); border: 1px solid rgba(212,175,55,0.25); border-radius: 16px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1); position: relative; overflow: hidden;">
+                    <h2 style="color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 4px; text-transform: uppercase; margin: 0 0 15px 0;">✦ THE MIRROR'S ECHO ✦</h2>
+                    <p style="color: #f4e4ba; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin: 0 0 12px 0;">Speak, and watch your words transform into living landscapes. This AI-powered mirror captures your voice through advanced speech recognition, extracting the essence of your words to generate real-time visual poetry.</p>
+                    <p style="color: #f4e4ba; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin: 0 0 12px 0;">The system uses Whisper AI and natural language processing to find compound nouns in your speech—"mountain stream," "golden sunset," "ancient forest"—then renders them as baroque dreamscapes through StreamDiffusion.</p>
+                    <p style="color: #d4af37; font-style: italic; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin: 0 0 12px 0;">Speak. Dream. Become the landscape.</p>
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(212,175,55,0.3); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.75rem; color: rgba(244,228,186,0.7);">
+                        <span style="color: rgba(212,175,55,0.8); letter-spacing: 2px; display: block; margin-bottom: 4px;">ARTIST</span>
+                        <span style="display: block;">Krista Faist</span>
+                        <span style="display: block;">krista@kristafaist.com</span>
+                        <span style="display: block;">kristafaist.com</span>
+                    </div>
                 </div>
             </div>
             
