@@ -235,6 +235,11 @@
             box-shadow: 0 0 35px rgba(139,0,0,0.5);
         }
         
+        /* Mobile Session Bar - spans above video on mobile only */
+        .mobile-session-bar {
+            display: none; /* Hidden on desktop */
+        }
+        
         .section h3 { 
             color: #d4af37; 
             font-size: 0.95rem; 
@@ -948,6 +953,24 @@
                 gap: 0;
             }
             
+            /* Hide desktop session button on mobile */
+            .session-section {
+                display: none !important;
+            }
+            
+            /* Mobile session bar spans full width above video */
+            .mobile-session-bar {
+                display: block !important;
+                order: 0 !important;
+                width: 100%;
+                padding: 10px 15px;
+                box-sizing: border-box;
+            }
+            
+            .mobile-session-bar .session-btn {
+                width: 100%;
+            }
+            
             /* FULL SCREEN VIDEO AT TOP */
             .output-area {
                 order: 1 !important;
@@ -1380,6 +1403,13 @@
             
             <!-- Right content area: video + captures + statement -->
             <div class="right-content">
+            
+            <!-- Mobile Session Bar - Above video on mobile only -->
+            <div class="mobile-session-bar">
+                <button class="session-btn mobile-start" id="mobileStartBtn">Begin Session ⚜</button>
+                <button class="session-btn stop mobile-stop" id="mobileStopBtn" style="display:none;">End Session ■</button>
+            </div>
+            
             <!-- Video and Statement wrapper - keeps them stacked regardless of capture panel height -->
             <div class="video-statement-wrapper">
             <div class="output-area">
@@ -1414,22 +1444,7 @@
             </div>
             </div> <!-- close video-statement-wrapper -->
             
-            <!-- Mobile Action Bar: Capture | Recent Still | Shop -->
-            <div class="mobile-action-bar" id="mobileActionBar">
-                <button class="mobile-action-btn capture" onclick="captureNextSlot()">📸<br>Capture</button>
-                <div class="mobile-recent-still" id="mobileRecentStill">
-                    <span class="placeholder-text">No stills</span>
-                    <img src="" alt="Recent capture">
-                    <span class="still-counter" id="stillCounter">0/12</span>
-                </div>
-                <a href="/prints" class="mobile-action-btn shop">
-                    <span class="shop-line">🛒 Shop Prints</span>
-                    <span class="shop-divider">⚜</span>
-                    <span class="shop-line">Mint NFTs</span>
-                </a>
-            </div>
-            
-            <!-- Capture Panel - NEW -->
+            <!-- Capture Panel - Right sidebar -->
             <div class="capture-panel">
                 <!-- Input Preview -->
                 <div class="input-preview-section">
@@ -1525,16 +1540,6 @@
                         <img src="" alt="Captured still 10">
                         <button class="capture-btn" onclick="captureStill(10)">Capture Still</button>
                     </div>
-                    <div class="capture-slot" data-slot="11">
-                        <span class="capture-slot-number">EXP_11</span>
-                        <img src="" alt="Captured still 11">
-                        <button class="capture-btn" onclick="captureStill(11)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="12">
-                        <span class="capture-slot-number">EXP_12</span>
-                        <img src="" alt="Captured still 12">
-                        <button class="capture-btn" onclick="captureStill(12)">Capture Still</button>
-                    </div>
                 </div>
             </div>
             </div> <!-- close right-content -->
@@ -1586,7 +1591,6 @@ const MAX_PARTICLES = 300;
 
 // Random prompt inspirations
 const promptInspirations = [
-    // Classical prompts
     "Venetian carnival masquerade, golden masks, mysterious candlelight atmosphere",
     "Dutch still life with tulips and silver vessels, morning light through window",
     "Spanish court portrait, velvet fabrics, pearl jewelry, dignified pose",
@@ -1601,34 +1605,10 @@ const promptInspirations = [
     "Byzantine icon style, gold leaf halos, frontal gaze, sacred geometry",
     "Pre-Raphaelite romanticism, flowing hair, medieval legends, vivid colors",
     "Venetian veduta cityscape, grand canals, gondolas, atmospheric perspective",
-    "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects",
-    // Caricature prompts - French Revolutionary style
-    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features, lithograph texture",
-    "James Gillray caricature, bulging eyes, elongated nose, mocking aristocracy, hand-colored etching",
-    "Thomas Rowlandson satirical print, rotund figures, red-faced excess, Georgian era mockery",
-    "Sans-culottes propaganda broadsheet, fierce revolutionary spirit, woodcut boldness",
-    "Philipon pear-head style, transformative caricature, subversive wit, pen and ink grotesque",
-    "William Hogarth moral satire, exaggerated expressions, crowded composition, social critique",
-    "George Cruikshank political cartoon, sharp angular features, dramatic gestures, copper engraving",
-    "French Revolutionary playing card, reversed hierarchy, commoner as king, satirical inversion",
-    "Père Duchesne pamphlet illustration, angry populist figure, crude woodcut energy",
-    "Physiognomic study gone wrong, Lavater nightmare, distorted proportions, pseudo-scientific grotesque"
+    "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects"
 ];
 
-// Caricature-only prompts for 50/50 mode
-const caricaturePrompts = [
-    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features, lithograph texture",
-    "James Gillray caricature, bulging eyes, elongated nose, mocking aristocracy, hand-colored etching",
-    "Thomas Rowlandson satirical print, rotund figures, red-faced excess, Georgian era mockery",
-    "Sans-culottes propaganda broadsheet, fierce revolutionary spirit, woodcut boldness",
-    "Philipon pear-head style, transformative caricature, subversive wit, pen and ink grotesque",
-    "William Hogarth moral satire, exaggerated expressions, crowded composition, social critique",
-    "George Cruikshank political cartoon, sharp angular features, dramatic gestures, copper engraving",
-    "French Revolutionary playing card, reversed hierarchy, commoner as king, satirical inversion",
-    "Père Duchesne pamphlet illustration, angry populist figure, crude woodcut energy",
-    "Physiognomic study gone wrong, Lavater nightmare, distorted proportions, pseudo-scientific grotesque"
-];
-
+// ============================================
 // STYLES
 // ============================================
 const styles = {
@@ -1684,7 +1664,7 @@ function log(msg, type = '') {
 // Find next empty slot and capture to it
 function captureNextSlot() {
     let targetSlot = null;
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 10; i++) {
         if (!capturedStills[i]) {
             targetSlot = i;
             break;
@@ -1706,7 +1686,7 @@ function updateMobileRecentStill(dataUrl, slotNumber) {
             recentStill.classList.add('has-image');
         }
         const totalCaptures = Object.keys(capturedStills).length;
-        counter.textContent = totalCaptures + '/12';
+        counter.textContent = totalCaptures + '/10';
     }
 }
 
@@ -2424,6 +2404,14 @@ document.getElementById('particleDensitySlider').oninput = function() {
 document.getElementById('startBtn').onclick = start;
 document.getElementById('stopBtn').onclick = stop;
 
+// Mobile session buttons (sync with desktop)
+if (document.getElementById('mobileStartBtn')) {
+    document.getElementById('mobileStartBtn').onclick = start;
+}
+if (document.getElementById('mobileStopBtn')) {
+    document.getElementById('mobileStopBtn').onclick = stop;
+}
+
 // Fullscreen toggle
 document.getElementById('fullscreenBtn').onclick = toggleFullscreen;
 
@@ -2500,116 +2488,6 @@ function buildPrompt() {
 async function start() {
     document.getElementById('startBtn').disabled = true;
     
-    // ============================================
-    // 50/50 CARICATURE MODE - ANIMATE UI
-    // ============================================
-    const isCaricatureMode = Math.random() < 0.5;
-    
-    if (isCaricatureMode) {
-        log('🎭 CARICATURE MODE - Initializing...', 'info');
-        
-        // Step 1: Animate dice button click
-        const shuffleBtn = document.getElementById('shuffleBtn');
-        shuffleBtn.classList.add('active');
-        shuffleBtn.style.transform = 'scale(1.2)';
-        shuffleBtn.style.transition = 'transform 0.15s';
-        
-        await new Promise(r => setTimeout(r, 200));
-        
-        // Set caricature prompt
-        const caricaturePrompt = caricaturePrompts[Math.floor(Math.random() * caricaturePrompts.length)];
-        document.getElementById('promptInput').value = caricaturePrompt;
-        customPrompt = caricaturePrompt;
-        
-        shuffleBtn.style.transform = 'scale(1)';
-        shuffleBtn.classList.remove('active');
-        
-        await new Promise(r => setTimeout(r, 150));
-        
-        // Step 2: Animate apply button click
-        const applyBtn = document.getElementById('applyPromptBtn');
-        applyBtn.classList.add('active');
-        applyBtn.style.transform = 'scale(1.1)';
-        applyBtn.style.background = 'rgba(212,175,55,0.4)';
-        applyBtn.style.transition = 'all 0.15s';
-        
-        await new Promise(r => setTimeout(r, 200));
-        
-        applyBtn.style.transform = 'scale(1)';
-        applyBtn.style.background = '';
-        applyBtn.classList.remove('active');
-        
-        await new Promise(r => setTimeout(r, 150));
-        
-        // Step 3: Animate mode slider to caricature (85-99)
-        const modeSlider = document.getElementById('modeSlider');
-        const targetMode = 85 + Math.floor(Math.random() * 15);
-        const modeLabels = ['Pure Classical', 'Traditional', 'Classical Fusion', 'Balanced', 'Satirical Blend', 'Bold Satire', 'Revolutionary Satire'];
-        
-        // Animate slider movement
-        const startMode = parseInt(modeSlider.value);
-        const modeSteps = 20;
-        for (let i = 0; i <= modeSteps; i++) {
-            await new Promise(r => setTimeout(r, 15));
-            const val = Math.round(startMode + (targetMode - startMode) * (i / modeSteps));
-            modeSlider.value = val;
-            modeValue = val;
-            document.getElementById('modeValue').textContent = modeLabels[Math.min(Math.floor(val / 100 * 7), 6)];
-        }
-        
-        await new Promise(r => setTimeout(r, 100));
-        
-        // Step 4: Animate strength slider DOWN (5-8)
-        const strengthSlider = document.getElementById('strengthSlider');
-        const targetStrength = 5 + Math.floor(Math.random() * 4);
-        const startStrength = parseInt(strengthSlider.value);
-        const strengthSteps = 15;
-        
-        for (let i = 0; i <= strengthSteps; i++) {
-            await new Promise(r => setTimeout(r, 20));
-            const val = Math.round(startStrength + (targetStrength - startStrength) * (i / strengthSteps));
-            strengthSlider.value = val;
-            params.strength = val;
-            document.getElementById('strengthVal').textContent = val;
-        }
-        
-        await new Promise(r => setTimeout(r, 100));
-        
-        // Step 5: Animate prompt weight UP (90-97)
-        const promptWeight = 90 + Math.floor(Math.random() * 8);
-        const pwSlider = document.getElementById('promptWeightSlider');
-        const pwSlider2 = document.getElementById('promptWeightSlider2');
-        const startPW = parseInt(pwSlider.value);
-        const pwSteps = 10;
-        
-        for (let i = 0; i <= pwSteps; i++) {
-            await new Promise(r => setTimeout(r, 20));
-            const val = Math.round(startPW + (promptWeight - startPW) * (i / pwSteps));
-            pwSlider.value = val;
-            pwSlider2.value = val;
-            const pw = val / 100;
-            params.promptWeight = pw;
-            document.getElementById('promptWeightVal').textContent = pw.toFixed(2);
-            document.getElementById('promptWeightVal2').textContent = pw.toFixed(2);
-        }
-        
-        log('🎭 Revolutionary portrait mode ready!', 'success');
-        await new Promise(r => setTimeout(r, 200));
-        
-    } else {
-        log('🎨 Classical mode selected', 'info');
-        
-        // Just set strength low for gentler start
-        const strengthSlider = document.getElementById('strengthSlider');
-        const targetStrength = 6 + Math.floor(Math.random() * 4);
-        strengthSlider.value = targetStrength;
-        params.strength = targetStrength;
-        document.getElementById('strengthVal').textContent = targetStrength;
-    }
-    
-    // ============================================
-    // CONTINUE WITH NORMAL START
-    // ============================================
     try {
         log('Getting camera...', 'info');
         localStream = await navigator.mediaDevices.getUserMedia({
@@ -2649,7 +2527,6 @@ async function start() {
         playbackId = data.output_playback_id;
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
 
-
         log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
         log('Video streaming to AI', 'success');
@@ -2663,6 +2540,11 @@ async function start() {
         log('Waiting for output...', 'info');
         document.getElementById('startBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
+        // Sync mobile buttons
+        if (document.getElementById('mobileStartBtn')) {
+            document.getElementById('mobileStartBtn').style.display = 'none';
+            document.getElementById('mobileStopBtn').style.display = 'block';
+        }
         startPolling();
 
     } catch (e) {
@@ -2908,6 +2790,12 @@ function stop() {
     document.getElementById('startBtn').disabled = false;
     document.getElementById('startBtn').style.display = 'block';
     document.getElementById('stopBtn').style.display = 'none';
+    // Sync mobile buttons
+    if (document.getElementById('mobileStartBtn')) {
+        document.getElementById('mobileStartBtn').disabled = false;
+        document.getElementById('mobileStartBtn').style.display = 'block';
+        document.getElementById('mobileStopBtn').style.display = 'none';
+    }
     
     streamId = null;
     playbackId = null;
@@ -2929,7 +2817,7 @@ window.addEventListener('load', () => {
     // Load any previously captured stills
     loadCapturedStills();
     
-    
+    // Start with a static background preview
     drawBackground = initBackground();
     drawParticles = initParticles();
     drawVideoOverlay = initVideoOverlay();
@@ -2958,9 +2846,9 @@ window.addEventListener('load', () => {
     const mobileCaptureBtn = document.getElementById('mobileCaptureBtn');
     if (mobileCaptureBtn) {
         mobileCaptureBtn.addEventListener('click', () => {
-            // Find next empty capture slot (1-12)
+            // Find next empty capture slot (1-10)
             let targetSlot = null;
-            for (let i = 1; i <= 12; i++) {
+            for (let i = 1; i <= 10; i++) {
                 const key = `baroqueMirror_still_${i}`;
                 if (!localStorage.getItem(key)) {
                     targetSlot = i;
