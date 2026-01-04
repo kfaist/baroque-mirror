@@ -966,7 +966,7 @@
             }
             
             /* HIDE HALF THE SECTIONS */
-            .section:nth-child(n+4) {
+            .section:nth-child(n+6) {
                 display: none;
             }
             
@@ -1027,9 +1027,9 @@
                 min-height: 65px;
             }
             
-            /* Hide statement on mobile */
+            /* Statement visible on mobile */
             .shimmer-block {
-                display: none;
+                padding: 24px 20px;
             }
         }
         
@@ -1103,6 +1103,8 @@
                 padding: 12px 10px;
                 background: rgba(10,6,8,0.95);
                 border-bottom: 2px solid rgba(212,175,55,0.4);
+                order: -9;
+                width: 100%;
             }
             
             .mobile-action-btn {
