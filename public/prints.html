@@ -138,7 +138,7 @@
             font-size: 0.85rem;
         }
         
-        /* Category Grid - 8 boxes with inline dropdowns */
+        /* Category Grid */
         .categories-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -161,6 +161,7 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
         
         .category-box:hover {
@@ -170,10 +171,24 @@
         
         .category-box.active {
             border-color: #d4af37;
-            background: rgba(212,175,55,0.15);
-            box-shadow: 0 0 25px rgba(212,175,55,0.2);
+            border-width: 2px;
+            background: linear-gradient(180deg, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.08) 100%);
+            box-shadow: 0 0 30px rgba(212,175,55,0.3), inset 0 0 20px rgba(212,175,55,0.1);
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
+            border-bottom-color: transparent;
+        }
+        
+        /* Arrow indicator on active category */
+        .category-box.active::after {
+            content: '▼';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #d4af37;
+            font-size: 0.7rem;
+            text-shadow: 0 0 10px rgba(212,175,55,0.8);
         }
         
         .category-name {
@@ -183,6 +198,11 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             margin-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .category-box.active .category-name {
+            text-shadow: 0 0 15px rgba(212,175,55,0.6);
         }
         
         .category-tagline {
@@ -198,12 +218,12 @@
             font-weight: 600;
         }
         
-        /* Dropdown panel - spans full width, appears after clicked category */
+        /* Dropdown panel */
         .dropdown-panel {
             display: none;
             grid-column: 1 / -1;
-            background: rgba(10,6,8,0.95);
-            border: 1px solid rgba(212,175,55,0.5);
+            background: linear-gradient(180deg, rgba(212,175,55,0.12) 0%, rgba(10,6,8,0.95) 15%);
+            border: 2px solid #d4af37;
             border-top: none;
             border-radius: 0 0 12px 12px;
             margin-top: -15px;
@@ -222,21 +242,30 @@
         }
         
         .dropdown-header {
-            background: rgba(212,175,55,0.1);
-            padding: 12px 20px;
+            background: rgba(212,175,55,0.15);
+            padding: 15px 20px;
             border-bottom: 1px solid rgba(212,175,55,0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .dropdown-icon {
+            font-size: 1.5rem;
+            color: #d4af37;
         }
         
         .dropdown-title {
             color: #d4af37;
             font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(212,175,55,0.4);
         }
         
         .dropdown-desc {
-            color: rgba(244,228,186,0.8);
-            font-size: 0.85rem;
+            color: rgba(244,228,186,0.85);
+            font-size: 0.9rem;
             margin-top: 4px;
         }
         
@@ -261,12 +290,19 @@
         
         .product-option:hover {
             border-color: #d4af37;
-            background: rgba(212,175,55,0.1);
+            background: rgba(212,175,55,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
         .product-option.disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+        
+        .product-option.disabled:hover {
+            transform: none;
+            box-shadow: none;
         }
         
         .product-details { flex: 1; }
@@ -335,9 +371,7 @@
             
             <div class="products-section">
                 <h2 class="section-title">⚜ Available Print Options ⚜</h2>
-                <div id="categoriesContainer" class="categories-container">
-                    <!-- Categories and dropdowns populated by JS -->
-                </div>
+                <div id="categoriesContainer" class="categories-container"></div>
             </div>
         </div>
     </div>
@@ -349,6 +383,17 @@ let catalog = [];
 let selectedCapture = null;
 let selectedSlot = null;
 let activeCategory = null;
+
+const CATEGORY_ICONS = {
+    'stationery': '✉',
+    'prints': '🖼',
+    'premium-paper': '📜',
+    'canvas': '🎨',
+    'framed': '🖽',
+    'acrylic': '💎',
+    'metal': '⚙',
+    'museum': '🏛'
+};
 
 const CATEGORY_INFO = {
     'stationery': 'Premium card stock with envelopes included.',
@@ -382,7 +427,6 @@ function renderCategories() {
         const maxPrice = Math.max(...prices);
         const priceRange = minPrice === maxPrice ? `$${minPrice}` : `$${minPrice} - $${maxPrice}`;
         
-        // Category box
         html += `
             <div class="category-box" data-category="${cat.id}" onclick="toggleCategory('${cat.id}')">
                 <div class="category-name">${cat.name}</div>
@@ -391,14 +435,14 @@ function renderCategories() {
             </div>
         `;
         
-        // Dropdown panel (hidden by default) - inserted after each category
-        // On desktop (4 cols), we insert after positions 3,7 (end of each row)
-        // But we'll use JS to position it correctly
         html += `
             <div class="dropdown-panel" id="dropdown-${cat.id}">
                 <div class="dropdown-header">
-                    <div class="dropdown-title">${cat.name}</div>
-                    <div class="dropdown-desc">${CATEGORY_INFO[cat.id] || cat.tagline}</div>
+                    <div class="dropdown-icon">${CATEGORY_ICONS[cat.id] || '⚜'}</div>
+                    <div>
+                        <div class="dropdown-title">${cat.name}</div>
+                        <div class="dropdown-desc">${CATEGORY_INFO[cat.id] || cat.tagline}</div>
+                    </div>
                 </div>
                 <div class="products-list">
                     ${cat.products.map(p => `
@@ -419,39 +463,31 @@ function renderCategories() {
 }
 
 function toggleCategory(categoryId) {
-    const container = document.getElementById('categoriesContainer');
     const boxes = document.querySelectorAll('.category-box');
     const clickedBox = document.querySelector(`[data-category="${categoryId}"]`);
     const dropdown = document.getElementById(`dropdown-${categoryId}`);
     
-    // Close all dropdowns and remove active state
     document.querySelectorAll('.dropdown-panel').forEach(d => d.classList.remove('open'));
     boxes.forEach(b => b.classList.remove('active'));
     
-    // If clicking same category, just close
     if (activeCategory === categoryId) {
         activeCategory = null;
         return;
     }
     
-    // Open clicked dropdown
     activeCategory = categoryId;
     clickedBox.classList.add('active');
     dropdown.classList.add('open');
     
-    // Move dropdown to appear right after the clicked box
     clickedBox.after(dropdown);
     
-    // Update disabled state based on capture selection
     const options = dropdown.querySelectorAll('.product-option');
     options.forEach(opt => {
         opt.classList.toggle('disabled', !selectedCapture);
     });
     
-    // Show reminder if no capture
     document.getElementById('selectionReminder').classList.toggle('show', !selectedCapture);
     
-    // Scroll into view
     setTimeout(() => {
         dropdown.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 100);
