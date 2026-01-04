@@ -1267,6 +1267,11 @@
                     <div class="prompt-container">
                         <button class="prompt-btn shuffle" id="shuffleBtn" title="Random Prompt">🎲</button>
                         <textarea class="prompt-input" id="promptInput" placeholder="Enter custom style prompt or shuffle for inspiration..." rows="2"></textarea>
+                        <button class="prompt-btn apply" id="applyPromptBtn" title="Apply Prompt">Apply</button>
+                    </div>
+                    <div class="slider-row" style="margin-top: 12px;">
+                        <label>Prompt Weight <span class="val" id="promptWeightVal2">0.80</span></label>
+                        <input type="range" id="promptWeightSlider2" min="0" max="100" value="80">
                     </div>
                 </div>
                 
@@ -1348,28 +1353,6 @@
                     </div>
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
-                </div>
-                
-
-                
-                <!-- Statement Section - Two Tiered Shimmer Layers -->
-                <div class="statement-section">
-                    <div class="shimmer-bg">
-                        <div class="shimmer-block">
-                            <h2>Statement</h2>
-                            <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses. It learns motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
-                            <p>French Revolutionary caricature was uniquely ferocious, more violent, more confrontational, and more visually ruthless than anything produced before it. It emerged during years when grotesque mockery and extravagant displays of wealth existed in the same rooms, and for a time no one blinked.</p>
-                            <div class="section-divider">. . .</div>
-                            <h2>About</h2>
-                            <p>Historically, jesters entertained elites beneath gilded ceilings (see the <a href="https://www.vam.ac.uk/articles/court-fools-and-jesters" target="_blank">Victoria and Albert Museum's overview</a>). Later, caricature artists appeared at salons and masquerades, where exaggerated portraits were commissioned by the same people who might dismiss them as vulgar in public. Early traditions are richly documented in sources like the <a href="https://www.metmuseum.org/toah/hd/crrn/hd_crrn.htm" target="_blank">Met's survey of caricature</a> and the <a href="https://www.britishmuseum.org/collection/galleries/political-satire" target="_blank">British Museum's political satire collection</a>.</p>
-                            <p>Wealthy patrons often paid handsomely for grotesque works of art that the lowest rung of the hoi polloi would judge tacky at a carnival. Taste, ego, and humor have always been unstable companions. AI heightens this tension: fragile ego is still the best subject, and a robust sense of humor remains the only safe compass. In glamorous rooms, as in history, opulence and satire continue their strange partnership.</p>
-                            <p class="license-note">The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development. Exhibition licenses and institutional partnerships support the continued evolution of networked digital art practices.</p>
-                            <div class="contact-info">
-                                <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
-                                <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             
@@ -1496,6 +1479,26 @@
                         <span class="capture-slot-number">EXP_12</span>
                         <img src="" alt="Captured still 12">
                         <button class="capture-btn" onclick="captureStill(12)">Capture Still</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statement Section - At Bottom -->
+            <div class="statement-section" style="order: 100; width: 100%; margin-top: 20px;">
+                <div class="shimmer-bg">
+                    <div class="shimmer-block">
+                        <h2>Statement</h2>
+                        <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses. It learns motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
+                        <p>French Revolutionary caricature was uniquely ferocious, more violent, more confrontational, and more visually ruthless than anything produced before it. It emerged during years when grotesque mockery and extravagant displays of wealth existed in the same rooms, and for a time no one blinked.</p>
+                        <div class="section-divider">. . .</div>
+                        <h2>About</h2>
+                        <p>Historically, jesters entertained elites beneath gilded ceilings (see the <a href="https://www.vam.ac.uk/articles/court-fools-and-jesters" target="_blank">Victoria and Albert Museum's overview</a>). Later, caricature artists appeared at salons and masquerades, where exaggerated portraits were commissioned by the same people who might dismiss them as vulgar in public. Early traditions are richly documented in sources like the <a href="https://www.metmuseum.org/toah/hd/crrn/hd_crrn.htm" target="_blank">Met's survey of caricature</a> and the <a href="https://www.britishmuseum.org/collection/galleries/political-satire" target="_blank">British Museum's political satire collection</a>.</p>
+                        <p>Wealthy patrons often paid handsomely for grotesque works of art that the lowest rung of the hoi polloi would judge tacky at a carnival. Taste, ego, and humor have always been unstable companions. AI heightens this tension: fragile ego is still the best subject, and a robust sense of humor remains the only safe compass. In glamorous rooms, as in history, opulence and satire continue their strange partnership.</p>
+                        <p class="license-note">The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development. Exhibition licenses and institutional partnerships support the continued evolution of networked digital art practices.</p>
+                        <div class="contact-info">
+                            <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+                            <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2286,7 +2289,35 @@ document.getElementById('strengthSlider').oninput = function() {
 document.getElementById('promptWeightSlider').oninput = function() {
     params.promptWeight = parseInt(this.value) / 100;
     document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2);
+    // Sync with prompt section slider
+    document.getElementById('promptWeightSlider2').value = this.value;
+    document.getElementById('promptWeightVal2').textContent = params.promptWeight.toFixed(2);
     if (streamId) setParams();
+};
+
+// Prompt section weight slider (syncs with Transform Controls slider)
+document.getElementById('promptWeightSlider2').oninput = function() {
+    params.promptWeight = parseInt(this.value) / 100;
+    document.getElementById('promptWeightVal2').textContent = params.promptWeight.toFixed(2);
+    // Sync with Transform Controls slider
+    document.getElementById('promptWeightSlider').value = this.value;
+    document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2);
+    if (streamId) setParams();
+};
+
+// Apply button - applies current prompt immediately
+document.getElementById('applyPromptBtn').onclick = function() {
+    customPrompt = document.getElementById('promptInput').value.trim();
+    if (streamId) setParams();
+    // Visual feedback
+    this.textContent = '✓';
+    this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)';
+    this.style.color = '#0a0608';
+    setTimeout(() => {
+        this.textContent = 'Apply';
+        this.style.background = '';
+        this.style.color = '';
+    }, 1000);
 };
 
 document.getElementById('poseSlider').oninput = function() {
