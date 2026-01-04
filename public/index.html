@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Baroque Mirror: Self-Portrait - CMA Wonderball 2026</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
@@ -358,6 +359,29 @@
         .prompt-input::placeholder {
             color: rgba(244,228,186,0.4);
             font-style: italic;
+        }
+        
+        .prompt-weight-row {
+            margin-top: 12px;
+        }
+        
+        .prompt-weight-row label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            color: rgba(244,228,186,0.9);
+        }
+        
+        .prompt-weight-row .val {
+            color: #d4af37;
+            font-weight: 700;
+            min-width: 40px;
+            text-align: right;
+        }
+        
+        .prompt-weight-row input[type="range"] {
+            width: 100%;
         }
         
         .style-grid { 
@@ -921,6 +945,12 @@
         .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
         
         /* ========== MOBILE RESPONSIVE ========== */
+
+        /* ===========================================
+           MOBILE OPTIMIZATIONS
+           =========================================== */
+
+        /* Tablet - 1200px */
         @media (max-width: 1200px) {
             .main {
                 grid-template-columns: 1fr 200px;
@@ -931,7 +961,8 @@
                 grid-row: 1;
             }
         }
-        
+
+        /* Large Mobile / Small Tablet - 900px */
         @media (max-width: 900px) {
             .main {
                 grid-template-columns: 1fr;
@@ -945,12 +976,6 @@
                 width: 100vw;
                 margin-left: calc(-50vw + 50%);
             }
-            
-            /* Hide statement on mobile */
-            .statement-section {
-                display: none !important;
-            }
-            
             .video-container {
                 border-radius: 0 !important;
                 border-left: none !important;
@@ -966,31 +991,43 @@
                 margin: 10px;
                 border-radius: 12px;
             }
+            
+
         }
-        
+
+        /* Mobile - 768px */
         @media (max-width: 768px) {
-            /* MINIMAL HEADER */
+            /* STICKY MINIMAL HEADER */
             .header {
-                padding: 10px;
+                padding: 12px 15px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
             }
             .header-top {
                 display: none;
             }
             .header h1 {
-                font-size: 1.4rem;
+                font-size: 1.3rem;
                 letter-spacing: 2px;
             }
-            .header-sub, .header-credit {
-                font-size: 0.9rem;
+            .header-sub {
+                font-size: 0.85rem;
+                margin-top: 4px;
+            }
+            .header-credit {
+                font-size: 0.8rem;
             }
             
-            /* HIDE HALF THE SECTIONS */
-            .section:nth-child(n+4) {
-                display: none;
+            /* Video fills more screen */
+            .video-wrapper {
+                aspect-ratio: 4/3;
             }
             
+            /* Streamlined controls */
             .controls {
                 padding: 16px;
+                margin: 8px;
             }
             
             .section {
@@ -998,99 +1035,411 @@
                 padding-bottom: 16px;
             }
             
-            /* DOUBLE SIZE HEADINGS */
             .section h3 {
-                font-size: 1.2rem;
-                margin-bottom: 14px;
+                font-size: 1.1rem;
+                margin-bottom: 12px;
             }
             
             /* GIANT SESSION BUTTON */
             .session-btn {
-                padding: 24px 28px;
-                font-size: 1.4rem;
-                letter-spacing: 3px;
-                min-height: 70px;
+                padding: 22px 24px;
+                font-size: 1.3rem;
+                letter-spacing: 2px;
+                min-height: 65px;
+                border-radius: 10px;
             }
             
-            /* BIGGER STYLE BUTTONS - 2 columns only */
+            /* BIGGER STYLE BUTTONS - 2 columns */
             .style-buttons {
                 grid-template-columns: repeat(2, 1fr) !important;
-                gap: 12px !important;
+                gap: 10px !important;
             }
             .style-btn {
-                padding: 20px 14px !important;
+                padding: 18px 12px !important;
                 font-size: 1rem !important;
-                min-height: 65px;
+                min-height: 60px;
+                border-radius: 8px !important;
+            }
+            .style-btn .icon {
+                font-size: 1.4rem !important;
+                margin-bottom: 4px;
             }
             
-            /* BIGGER SLIDERS */
+            /* Bigger sliders */
             .slider-row {
-                margin-bottom: 20px;
+                margin-bottom: 18px;
             }
             .slider-row label {
-                font-size: 1rem;
-                margin-bottom: 12px;
+                font-size: 0.95rem;
+                margin-bottom: 10px;
             }
             input[type="range"] {
-                height: 12px;
+                height: 10px;
+                border-radius: 5px;
             }
             input[type="range"]::-webkit-slider-thumb {
-                width: 32px;
-                height: 32px;
+                width: 28px;
+                height: 28px;
             }
             
-            /* Shop prints - BIG */
+            /* Shop prints button */
             .shop-prints-btn {
-                padding: 20px 24px !important;
-                font-size: 1.2rem !important;
-                min-height: 65px;
+                padding: 20px 22px !important;
+                font-size: 1.1rem !important;
+                min-height: 60px;
+                border-radius: 10px !important;
             }
             
-            /* Hide statement on mobile */
-            .shimmer-block {
+            /* Hide advanced controls */
+            .section:nth-child(n+4) {
                 display: none;
             }
         }
-        
+
+        /* Small Mobile - 480px */
         @media (max-width: 480px) {
+            .header {
+                padding: 10px 12px;
+            }
             .header h1 {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
+                letter-spacing: 1px;
             }
             .header-sub, .header-credit {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
             }
             
             .controls {
-                margin: 8px;
-                padding: 14px;
+                margin: 6px;
+                padding: 12px;
+                border-radius: 10px;
+            }
+            
+            .section {
+                margin-bottom: 14px;
+                padding-bottom: 14px;
             }
             
             .section h3 {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
             
             .session-btn {
-                padding: 20px 24px;
-                font-size: 1.2rem;
-                min-height: 60px;
+                padding: 18px 20px;
+                font-size: 1.15rem;
+                min-height: 58px;
             }
             
             .style-btn {
-                padding: 16px 10px !important;
+                padding: 14px 8px !important;
                 font-size: 0.9rem !important;
-                min-height: 55px;
+                min-height: 52px;
+            }
+            .style-btn .icon {
+                font-size: 1.2rem !important;
             }
             
-            .slider-row label {
-                font-size: 0.9rem;
+            input[type="range"]::-webkit-slider-thumb {
+                width: 24px;
+                height: 24px;
             }
             
             .shop-prints-btn {
-                padding: 18px 20px !important;
+                padding: 16px 18px !important;
                 font-size: 1rem !important;
-                min-height: 55px;
+                min-height: 52px;
             }
         }
+
+        /* Landscape mobile */
+        @media (max-width: 900px) and (orientation: landscape) {
+            .video-wrapper {
+                aspect-ratio: 16/9;
+                max-height: 60vh;
+            }
+            
+            .header {
+                padding: 8px 15px;
+            }
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            .header-sub, .header-credit {
+                display: none;
+            }
+        }
+
+
+    
+        /* ====== MOBILE OVERRIDE - FINAL VERSION ====== */
+        @media screen and (max-width: 900px) {
+            .main {
+                display: flex !important;
+                flex-direction: column !important;
+                grid-template-columns: unset !important;
+                padding: 0 !important;
+                gap: 0 !important;
+            }
+            
+            .header {
+                position: sticky !important;
+                top: 0 !important;
+                z-index: 100 !important;
+                background: linear-gradient(180deg, rgba(114,47,55,0.98) 0%, rgba(10,6,8,0.99) 100%) !important;
+            }
+            
+            /* Flatten controls to allow child ordering */
+            .controls {
+                display: contents !important;
+            }
+            
+            /* Session section (Begin button) - ORDER 1 */
+            .session-section {
+                order: 1 !important;
+                margin: 10px !important;
+                padding: 15px !important;
+                background: rgba(15,10,12,0.85) !important;
+                border: 1px solid rgba(212,175,55,0.4) !important;
+                border-radius: 12px !important;
+                backdrop-filter: blur(15px) !important;
+            }
+            
+            /* Video right after session button - ORDER 2 */
+            .output-area {
+                order: 2 !important;
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            
+            /* Mobile action bar - ORDER 3 (right after video) */
+            .mobile-action-bar {
+                display: flex !important;
+                order: 3 !important;
+            }
+            
+            .video-container {
+                border-radius: 0 !important;
+                border-left: none !important;
+                border-right: none !important;
+            }
+            
+            /* All other sections - ORDER 3+ */
+            .prompt-section {
+                order: 4 !important;
+                margin: 10px !important;
+                padding: 15px !important;
+                background: rgba(15,10,12,0.85) !important;
+                border: 1px solid rgba(212,175,55,0.4) !important;
+                border-radius: 12px !important;
+                backdrop-filter: blur(15px) !important;
+            }
+            
+            .section {
+                order: 5 !important;
+                margin: 0 10px 10px 10px !important;
+                padding: 15px !important;
+                background: rgba(15,10,12,0.85) !important;
+                border: 1px solid rgba(212,175,55,0.4) !important;
+                border-radius: 12px !important;
+                backdrop-filter: blur(15px) !important;
+            }
+            
+            #log {
+                order: 7 !important;
+                margin: 0 10px 10px 10px !important;
+            }
+            
+            /* Hide capture panel on mobile */
+            .capture-panel {
+                display: none !important;
+            }
+            
+            /* Prompt section mobile layout */
+            .prompt-container {
+                flex-wrap: nowrap !important;
+                gap: 8px !important;
+            }
+            
+            .prompt-btn {
+                width: 50px !important;
+                height: 50px !important;
+                font-size: 1.3rem !important;
+            }
+            
+            .prompt-btn.apply {
+                font-size: 1.1rem !important;
+            }
+            
+            .capture-panel {
+                display: none !important;
+            }
+            
+            .session-btn {
+                padding: 20px 24px !important;
+                font-size: 1.2rem !important;
+                min-height: 65px !important;
+            }
+            
+            .style-btn, .gold-btn {
+                padding: 14px 12px !important;
+                font-size: 1rem !important;
+                min-height: 55px !important;
+            }
+            
+            .section h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            input[type="range"]::-webkit-slider-thumb {
+                width: 28px !important;
+                height: 28px !important;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .header h1 {
+                font-size: 1rem !important;
+            }
+            
+            .header-top {
+                display: none !important;
+            }
+            
+            .controls {
+                margin: 8px !important;
+                padding: 12px !important;
+            }
+        }
+
+    
+        /* Mobile Action Bar - 3 columns: Capture | Recent Still | Shop */
+        .mobile-action-bar {
+            display: none;
+        }
+        
+        .mobile-action-bar {
+            gap: 10px;
+            padding: 12px 10px;
+            background: rgba(15,10,12,0.95);
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 12px;
+            margin: 10px;
+            align-items: stretch;
+        }
+        
+        .mobile-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 14px 12px;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            min-height: 70px;
+            transition: all 0.2s ease;
+        }
+        
+        .mobile-action-btn.capture {
+            flex: 1;
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+        }
+        
+        .mobile-action-btn.capture:active {
+            transform: scale(0.97);
+        }
+        
+        .mobile-recent-still {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(212,175,55,0.5);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.6);
+            min-height: 70px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .mobile-recent-still img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        
+        .mobile-recent-still.has-image img {
+            display: block;
+        }
+        
+        .mobile-recent-still .still-counter {
+            position: absolute;
+            bottom: 4px;
+            right: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: #d4af37;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .mobile-recent-still .placeholder-text {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            color: rgba(212,175,55,0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .mobile-recent-still.has-image .placeholder-text {
+            display: none;
+        }
+        
+        .mobile-action-btn.shop {
+            flex: 1.5;
+            background: rgba(20,15,18,0.9);
+            color: #d4af37;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 0.75rem;
+        }
+        
+        .mobile-action-btn.shop:active {
+            background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
+        }
+        
+        .mobile-action-btn.shop .shop-line {
+            display: block;
+        }
+        
+        .mobile-action-btn.shop .shop-divider {
+            font-size: 0.6rem;
+            opacity: 0.6;
+        }
+
+        /* Statement/About Sections */
+        .info-sections-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; max-width: 1900px; margin: 0 auto; padding: 25px; }
+        .statement-container, .about-container { background: rgba(15,10,12,0.85); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 25px 30px; backdrop-filter: blur(15px); height: 100%; }
+        .info-sections-wrapper h2 { color: #d4af37; font-size: 1.3rem; font-family: 'Cinzel', serif; letter-spacing: 3px; text-align: center; margin: 0 0 20px 0; }
+        .statement-container p, .about-container p { color: rgba(244,228,186,0.9); font-size: 1rem; line-height: 1.7; margin-bottom: 15px; }
+        .statement-divider { text-align: center; color: #d4af37; letter-spacing: 8px; }
+        .about-container a { color: #d4af37; }
+        .contact-info { margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(212,175,55,0.3); }
+        .contact-info strong { color: #d4af37; }
+        @media (max-width: 1100px) { .info-sections-wrapper { grid-template-columns: 1fr; max-width: 800px; } }
+        @media (max-width: 600px) { .info-sections-wrapper { padding: 15px; } .statement-container, .about-container { padding: 20px; } }
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -1127,6 +1476,11 @@
                     <div class="prompt-container">
                         <button class="prompt-btn shuffle" id="shuffleBtn" title="Random Prompt">🎲</button>
                         <textarea class="prompt-input" id="promptInput" placeholder="Enter custom style prompt or shuffle for inspiration..." rows="2"></textarea>
+                        <button class="prompt-btn apply" id="applyBtn" title="Apply Prompt">✓</button>
+                    </div>
+                    <div class="prompt-weight-row">
+                        <label>Prompt Weight <span class="val" id="promptWeightVal">0.50</span></label>
+                        <input type="range" id="promptWeightSlider" min="0" max="100" value="50">
                     </div>
                 </div>
                 
@@ -1205,24 +1559,29 @@
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
                 </div>
-                
-                <!-- Pink Preamble / Statement Section -->
-                <div class="statement-section" style="margin-top: 25px; padding: 35px 40px; background: rgba(20, 15, 25, 0.4); border: 1px solid rgba(212,175,55,0.25); border-radius: 16px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1); position: relative; overflow: hidden;">
-                    <h2 style="color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 4px; text-transform: uppercase; margin: 0 0 15px 0;">✦ THE MIRROR'S ECHO ✦</h2>
-                    <p style="color: #f4e4ba; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin: 0 0 12px 0;">Speak, and watch your words transform into living landscapes. This AI-powered mirror captures your voice through advanced speech recognition, extracting the essence of your words to generate real-time visual poetry.</p>
-                    <p style="color: #f4e4ba; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin: 0 0 12px 0;">The system uses Whisper AI and natural language processing to find compound nouns in your speech—"mountain stream," "golden sunset," "ancient forest"—then renders them as baroque dreamscapes through StreamDiffusion.</p>
-                    <p style="color: #d4af37; font-style: italic; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin: 0 0 12px 0;">Speak. Dream. Become the landscape.</p>
-                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(212,175,55,0.3); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.75rem; color: rgba(244,228,186,0.7);">
-                        <span style="color: rgba(212,175,55,0.8); letter-spacing: 2px; display: block; margin-bottom: 4px;">ARTIST</span>
-                        <span style="display: block;">Krista Faist</span>
-                        <span style="display: block;">krista@kristafaist.com</span>
-                        <span style="display: block;">kristafaist.com</span>
-                    </div>
-                </div>
             </div>
             
+            <!-- Floating Mobile Capture Button -->
+            
+            
             <!-- Capture Panel - NEW -->
-            <div class="capture-panel">
+            
+            <!-- Mobile Action Bar: Capture | Recent Still | Shop -->
+            <div class="mobile-action-bar" id="mobileActionBar">
+                <button class="mobile-action-btn capture" onclick="captureNextSlot()">📸<br>Capture</button>
+                <div class="mobile-recent-still" id="mobileRecentStill">
+                    <span class="placeholder-text">No stills</span>
+                    <img src="" alt="Recent capture">
+                    <span class="still-counter" id="stillCounter">0/10</span>
+                </div>
+                <a href="/prints" class="mobile-action-btn shop">
+                    <span class="shop-line">🛒 Shop Prints</span>
+                    <span class="shop-divider">⚜</span>
+                    <span class="shop-line">Mint NFTs</span>
+                </a>
+            </div>
+            
+<div class="capture-panel">
                 <!-- Input Preview -->
                 <div class="input-preview-section">
                     <h4>⚜ Live Input</h4>
@@ -1329,6 +1688,26 @@
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Statement and About -->
+        <div class="info-sections-wrapper">
+            <div class="statement-section"><div class="statement-container">
+                <h2>⚜ Statement</h2>
+                <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses. It learns motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
+                <p>French Revolutionary caricature was uniquely ferocious, more violent, more confrontational, and more visually ruthless than anything produced before it. It emerged during years when grotesque mockery and extravagant displays of wealth existed in the same rooms, and for a time no one blinked.</p>
+                <p class="statement-divider">. . .</p>
+            </div></div>
+            <div class="about-section"><div class="about-container">
+                <h2>⚜ About</h2>
+                <p>Historically, jesters entertained elites beneath gilded ceilings (see the <a href="https://www.vam.ac.uk/articles/court-fools-and-jesters" target="_blank">Victoria and Albert Museum's overview</a>). Later, caricature artists appeared at salons and masquerades, where exaggerated portraits were commissioned by the same people who might dismiss them as vulgar in public.</p>
+                <p>Wealthy patrons often paid handsomely for grotesque works of art that the lowest rung of the hoi polloi would judge tacky at a carnival. Taste, ego, and humor have always been unstable companions. AI heightens this tension: fragile ego is still the best subject, and a robust sense of humor remains the only safe compass.</p>
+                <p>The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development.</p>
+                <div class="contact-info">
+                    <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+                    <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
+                </div>
+            </div></div>
         </div>
     </div>
 
@@ -1503,6 +1882,19 @@ function captureStill(slotNumber) {
 }
 
 // Load existing captures on page load
+// Update mobile recent still display
+function updateMobileRecentStill(dataUrl, slotNumber) {
+    const recentStill = document.getElementById('mobileRecentStill');
+    const counter = document.getElementById('stillCounter');
+    if (recentStill && counter) {
+        const img = recentStill.querySelector('img');
+        img.src = dataUrl;
+        recentStill.classList.add('has-image');
+        const totalCaptures = Object.keys(capturedStills).length;
+        counter.textContent = totalCaptures + '/10';
+    }
+}
+
 function loadCapturedStills() {
     // Clear old captures on each new session
     localStorage.removeItem('baroqueCaptures');
@@ -2037,6 +2429,11 @@ function animate() {
 // Prompt controls
 let promptDebounceTimer = null;
 document.getElementById('shuffleBtn').onclick = shufflePrompt;
+document.getElementById('applyBtn').onclick = applyCustomPrompt;
+document.getElementById('promptWeightSlider').oninput = function(e) {
+    const val = (e.target.value / 100).toFixed(2);
+    document.getElementById('promptWeightVal').textContent = val;
+};
 document.getElementById('promptInput').addEventListener('input', (e) => {
     // Debounce: wait 800ms after user stops typing before applying
     if (promptDebounceTimer) clearTimeout(promptDebounceTimer);
@@ -2541,6 +2938,24 @@ window.addEventListener('load', () => {
         }
     }
     
+    
+    // Mobile capture button handler
+    const mobileCaptureBtn = document.getElementById('mobileCaptureBtn');
+    if (mobileCaptureBtn) {
+        mobileCaptureBtn.addEventListener('click', function() {
+            // Find next empty slot
+            for (let i = 1; i <= 12; i++) {
+                const slot = document.querySelector(`.capture-slot[data-slot="${i}"]`);
+                if (slot && !slot.classList.contains('has-image')) {
+                    captureStill(i);
+                    return;
+                }
+            }
+            // All slots full - overwrite slot 1
+            captureStill(1);
+        });
+    }
+
     demoAnimate();
 });
 </script>
