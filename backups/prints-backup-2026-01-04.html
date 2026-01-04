@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Shop Prints - Baroque Mirror</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #0a0608; 
+            color: #fff; 
+            font-family: 'Cormorant Garamond', Georgia, serif; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header { 
+            text-align: center; 
+            padding: 20px; 
+            border-bottom: 1px solid rgba(212,175,55,0.3); 
+            background: linear-gradient(180deg, rgba(114,47,55,0.4) 0%, rgba(10,6,8,0.9) 100%);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-top { 
+            display: flex; 
+            justify-content: center; 
+            gap: 40px; 
+            margin-bottom: 10px; 
+            font-size: 0.8rem; 
+            letter-spacing: 4px; 
+            color: #f4e4ba; 
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+        }
+        
+        .header h1 { 
+            color: #d4af37; 
+            font-size: 2.5rem; 
+            margin: 0; 
+            letter-spacing: 6px; 
+            font-family: 'Cinzel', serif;
+            text-shadow: 0 0 30px rgba(212,175,55,0.5);
+        }
+        
+        .header-sub { 
+            font-size: 1rem; 
+            color: rgba(244,228,186,0.8); 
+            margin-top: 8px; 
+            font-style: italic;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #d4af37;
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            padding: 8px 20px;
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: rgba(212,175,55,0.2);
+            box-shadow: 0 0 20px rgba(212,175,55,0.3);
+        }
+        
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        
+        .no-captures {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(244,228,186,0.7);
+            font-size: 1.2rem;
+        }
+        
+        .no-captures a {
+            color: #d4af37;
+        }
+        
+        .captures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .capture-card {
+            background: rgba(15,10,12,0.85);
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+        }
+        
+        .capture-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 30px rgba(212,175,55,0.2);
+            transform: translateY(-5px);
+        }
+        
+        .capture-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .capture-info {
+            padding: 20px;
+        }
+        
+        .capture-info h3 {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .capture-meta {
+            color: rgba(244,228,186,0.7);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .print-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .print-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(114,47,55,0.3);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 6px;
+            color: #f4e4ba;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+        }
+        
+        .print-btn:hover {
+            background: rgba(212,175,55,0.2);
+            border-color: #d4af37;
+        }
+        
+        .print-btn .price {
+            color: #d4af37;
+            font-weight: 600;
+        }
+        
+        .section-title {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+        
+        /* Products section for when no captures */
+        .products-section {
+            margin-top: 40px;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            background: rgba(15,10,12,0.85);
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 30px rgba(212,175,55,0.2);
+        }
+        
+        .product-card h3 {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            margin-bottom: 10px;
+        }
+        
+        .product-card .size {
+            color: rgba(244,228,186,0.7);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .product-card .price {
+            color: #f4e4ba;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+                letter-spacing: 3px;
+            }
+            .header-top {
+                gap: 15px;
+                font-size: 0.65rem;
+            }
+            .main {
+                padding: 15px;
+            }
+            .captures-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="header">
+            <div class="header-top">
+                <span>BAROQUE MIRROR</span>
+                <span>⚜</span>
+                <span>PRINT SHOP</span>
+            </div>
+            <h1>⚜ YOUR PORTRAITS ⚜</h1>
+            <div class="header-sub">Select a capture to purchase prints</div>
+            <a href="/" class="back-link">← Back to Mirror</a>
+        </div>
+        
+        <div class="main">
+            <div id="capturesContainer">
+                <!-- Populated by JS -->
+            </div>
+            
+            <div class="products-section">
+                <h2 class="section-title">⚜ Available Print Sizes ⚜</h2>
+                <div class="products-grid">
+                    <div class="product-card">
+                        <h3>Postcard Set</h3>
+                        <div class="size">4×6" (Set of 4)</div>
+                        <div class="price">$15</div>
+                    </div>
+                    <div class="product-card">
+                        <h3>Mini Print</h3>
+                        <div class="size">5×7"</div>
+                        <div class="price">$25</div>
+                    </div>
+                    <div class="product-card">
+                        <h3>Standard</h3>
+                        <div class="size">8×10"</div>
+                        <div class="price">$45</div>
+                    </div>
+                    <div class="product-card">
+                        <h3>Poster</h3>
+                        <div class="size">11×14"</div>
+                        <div class="price">$65</div>
+                    </div>
+                    <div class="product-card">
+                        <h3>Large Poster</h3>
+                        <div class="size">18×24"</div>
+                        <div class="price">$95</div>
+                    </div>
+                    <div class="product-card">
+                        <h3>Gallery Print</h3>
+                        <div class="size">16×20"</div>
+                        <div class="price">$125</div>
+                    </div>
+                    <div class="product-card">
+                        <h3>Collector</h3>
+                        <div class="size">16" Canvas</div>
+                        <div class="price">$195</div>
+                    </div>
+                    <div class="product-card">
+                        <h3>Museum</h3>
+                        <div class="size">24×36"</div>
+                        <div class="price">$295</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const API_BASE = 'https://api-production-d80a.up.railway.app';
+
+const PRODUCTS = [
+    { id: 'postcard-set', name: 'Postcard Set', size: '4×6" (Set of 4)', price: 15 },
+    { id: 'mini-print', name: 'Mini Print', size: '5×7"', price: 25 },
+    { id: 'poster-8x10', name: 'Standard', size: '8×10"', price: 45 },
+    { id: 'poster-11x14', name: 'Poster', size: '11×14"', price: 65 },
+    { id: 'poster-18x24', name: 'Large Poster', size: '18×24"', price: 95 },
+    { id: 'gallery-16x20', name: 'Gallery Print', size: '16×20"', price: 125 },
+    { id: 'collector-16', name: 'Collector', size: '16" Canvas', price: 195 },
+    { id: 'museum-24x36', name: 'Museum', size: '24×36"', price: 295 }
+];
+
+function loadCaptures() {
+    const container = document.getElementById('capturesContainer');
+    let captures = {};
+    
+    try {
+        const stored = localStorage.getItem('baroqueCaptures');
+        if (stored) {
+            captures = JSON.parse(stored);
+        }
+    } catch (e) {
+        console.error('Error loading captures:', e);
+    }
+    
+    const slots = Object.keys(captures);
+    
+    if (slots.length === 0) {
+        container.innerHTML = `
+            <div class="no-captures">
+                <p>No portraits captured yet.</p>
+                <p style="margin-top: 15px;">
+                    <a href="/">Return to the Mirror</a> to create your baroque portrait, 
+                    then use the Capture button to save it.
+                </p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = `<h2 class="section-title">⚜ Your Captured Portraits ⚜</h2><div class="captures-grid"></div>`;
+    const grid = container.querySelector('.captures-grid');
+    
+    slots.forEach(slot => {
+        const capture = captures[slot];
+        const card = document.createElement('div');
+        card.className = 'capture-card';
+        
+        const date = new Date(capture.timestamp);
+        const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        
+        card.innerHTML = `
+            <img src="${capture.image}" alt="Capture ${slot}">
+            <div class="capture-info">
+                <h3>Portrait #${slot}</h3>
+                <div class="capture-meta">
+                    <div>Style: ${capture.style || 'Baroque'}</div>
+                    <div>Captured: ${dateStr}</div>
+                </div>
+                <div class="print-options">
+                    ${PRODUCTS.slice(0, 4).map(p => `
+                        <button class="print-btn" onclick="orderPrint('${slot}', '${p.id}')">
+                            <span>${p.name} (${p.size})</span>
+                            <span class="price">$${p.price}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        grid.appendChild(card);
+    });
+}
+
+async function orderPrint(slot, productId) {
+    const captures = JSON.parse(localStorage.getItem('baroqueCaptures') || '{}');
+    const capture = captures[slot];
+    
+    if (!capture) {
+        alert('Capture not found');
+        return;
+    }
+    
+    const product = PRODUCTS.find(p => p.id === productId);
+    
+    try {
+        // Create checkout with image data directly
+        const checkoutRes = await fetch(`${API_BASE}/create-checkout`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                productId: productId,
+                imageData: capture.image,
+                returnUrl: window.location.href
+            })
+        });
+        
+        if (!checkoutRes.ok) {
+            const err = await checkoutRes.json();
+            throw new Error(err.error || 'Checkout creation failed');
+        }
+        
+        const { url } = await checkoutRes.json();
+        window.location.href = url;
+        
+    } catch (e) {
+        console.error('Order error:', e);
+        alert('Unable to process order. Please try again or contact support.');
+    }
+}
+
+// Load on page ready
+document.addEventListener('DOMContentLoaded', loadCaptures);
+</script>
+</body>
+</html>
