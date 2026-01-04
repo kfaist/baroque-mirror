@@ -87,12 +87,19 @@
         
         .main { 
             display: grid; 
-            grid-template-columns: 400px 1fr 200px; 
+            grid-template-columns: 400px 1fr; 
             gap: 25px; 
             padding: 25px; 
             max-width: 1900px; 
             margin: 0 auto;
             align-items: start; /* Prevent columns from stretching to match tallest */
+        }
+        
+        /* Right content: video + captures side by side, statement below */
+        .right-content {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 25px;
         }
         
         .controls, .capture-panel { 
@@ -843,12 +850,9 @@
         
         /* Statement section - TWO TIERED SHIMMER LAYERS */
         .statement-section { 
-            margin-top: 25px; 
+            margin-top: 0; 
             position: relative; 
-            max-width: 1900px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0 25px;
+            grid-column: 1 / -1; /* Span both columns in right-content */
             width: 100%;
             box-sizing: border-box;
         }
@@ -1367,6 +1371,8 @@
                 <div id="log">⚜ Baroque Mirror ready...</div>
             </div>
             
+            <!-- Right content area: video + captures + statement -->
+            <div class="right-content">
             <div class="output-area">
                 <div class="video-container" id="videoContainer">
                     <div class="video-wrapper">
@@ -1501,10 +1507,9 @@
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Statement Section - Outside grid for proper full-width layout -->
-        <div class="statement-section">
+            
+            <!-- Statement Section - In grid row 2, spanning all columns -->
+            <div class="statement-section">
                 <div class="shimmer-bg">
                     <div class="shimmer-block">
                         <h2>Statement</h2>
@@ -1522,7 +1527,8 @@
                     </div>
                 </div>
             </div>
-    </div>
+            </div> <!-- close right-content -->
+        </div> <!-- close main -->
 
     <!-- Hidden canvas for capturing -->
     <canvas id="captureCanvas" style="display:none;"></canvas>
