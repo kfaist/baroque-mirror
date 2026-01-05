@@ -2504,73 +2504,114 @@ async function start() {
     document.getElementById('startBtn').disabled = true;
     
     // ============================================
-    // 50/50 CARICATURE MODE - INSTANT UI JUMPS
+    // 50/50 CARICATURE MODE - DRAMATIC ANIMATION
     // ============================================
     const isCaricatureMode = Math.random() < 0.5;
     
     if (isCaricatureMode) {
         log('🎭 CARICATURE MODE!', 'success');
         
-        // Flash dice button
-        const shuffleBtn = document.getElementById('shuffleBtn');
-        shuffleBtn.style.transform = 'scale(1.3)';
-        shuffleBtn.style.background = 'rgba(212,175,55,0.5)';
-        shuffleBtn.style.transition = 'all 0.1s';
+        // Scroll controls into view
+        document.querySelector('.prompt-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        await new Promise(r => setTimeout(r, 300));
         
-        // INSTANT: Set caricature prompt
+        // === DICE BUTTON FLASH ===
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        shuffleBtn.style.transition = 'all 0.15s ease';
+        shuffleBtn.style.transform = 'scale(1.5) rotate(15deg)';
+        shuffleBtn.style.background = 'rgba(212,175,55,0.8)';
+        shuffleBtn.style.boxShadow = '0 0 30px rgba(212,175,55,1)';
+        
+        await new Promise(r => setTimeout(r, 250));
+        
+        // Set caricature prompt
         const caricaturePrompt = caricaturePrompts[Math.floor(Math.random() * caricaturePrompts.length)];
         document.getElementById('promptInput').value = caricaturePrompt;
         customPrompt = caricaturePrompt;
         
-        await new Promise(r => setTimeout(r, 150));
-        shuffleBtn.style.transform = 'scale(1)';
+        await new Promise(r => setTimeout(r, 200));
+        shuffleBtn.style.transform = 'scale(1) rotate(0deg)';
         shuffleBtn.style.background = '';
+        shuffleBtn.style.boxShadow = '';
         
-        // Flash apply button
+        await new Promise(r => setTimeout(r, 200));
+        
+        // === APPLY BUTTON FLASH ===
         const applyBtn = document.getElementById('applyPromptBtn');
-        applyBtn.style.transform = 'scale(1.2)';
-        applyBtn.style.background = 'rgba(212,175,55,0.6)';
-        applyBtn.style.boxShadow = '0 0 20px rgba(212,175,55,0.8)';
+        applyBtn.style.transition = 'all 0.15s ease';
+        applyBtn.style.transform = 'scale(1.3)';
+        applyBtn.style.background = '#d4af37';
+        applyBtn.style.color = '#0a0608';
+        applyBtn.style.boxShadow = '0 0 40px rgba(212,175,55,1)';
         
-        await new Promise(r => setTimeout(r, 150));
+        await new Promise(r => setTimeout(r, 300));
         applyBtn.style.transform = 'scale(1)';
         applyBtn.style.background = '';
+        applyBtn.style.color = '';
         applyBtn.style.boxShadow = '';
         
-        // INSTANT JUMP: Mode slider to caricature
+        await new Promise(r => setTimeout(r, 300));
+        
+        // === MODE SLIDER JUMP ===
         const modeSlider = document.getElementById('modeSlider');
+        const modeLabel = document.getElementById('modeValue');
+        modeLabel.style.transition = 'all 0.2s';
+        modeLabel.style.color = '#ff6b6b';
+        modeLabel.style.transform = 'scale(1.2)';
+        
         const targetMode = 85 + Math.floor(Math.random() * 15);
         modeSlider.value = targetMode;
         modeValue = targetMode;
-        document.getElementById('modeValue').textContent = 'Revolutionary Satire';
-        modeSlider.style.transition = 'none';
+        modeLabel.textContent = 'Revolutionary Satire';
         
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 300));
+        modeLabel.style.color = '';
+        modeLabel.style.transform = 'scale(1)';
         
-        // INSTANT JUMP: Strength slider DOWN
+        await new Promise(r => setTimeout(r, 200));
+        
+        // === STRENGTH SLIDER JUMP ===
         const strengthSlider = document.getElementById('strengthSlider');
+        const strengthLabel = document.getElementById('strengthVal');
+        strengthLabel.style.transition = 'all 0.2s';
+        strengthLabel.style.color = '#4ecdc4';
+        strengthLabel.style.transform = 'scale(1.3)';
+        
         const targetStrength = 5 + Math.floor(Math.random() * 4);
         strengthSlider.value = targetStrength;
         params.strength = targetStrength;
-        document.getElementById('strengthVal').textContent = targetStrength;
+        strengthLabel.textContent = targetStrength;
         
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 300));
+        strengthLabel.style.color = '';
+        strengthLabel.style.transform = 'scale(1)';
         
-        // INSTANT JUMP: Prompt weight UP
+        await new Promise(r => setTimeout(r, 200));
+        
+        // === PROMPT WEIGHT JUMP ===
+        const pwLabel = document.getElementById('promptWeightVal');
+        const pwLabel2 = document.getElementById('promptWeightVal2');
+        pwLabel.style.transition = 'all 0.2s';
+        pwLabel.style.color = '#f39c12';
+        pwLabel.style.transform = 'scale(1.3)';
+        
         const promptWeight = 90 + Math.floor(Math.random() * 8);
         document.getElementById('promptWeightSlider').value = promptWeight;
         document.getElementById('promptWeightSlider2').value = promptWeight;
         const pw = promptWeight / 100;
         params.promptWeight = pw;
-        document.getElementById('promptWeightVal').textContent = pw.toFixed(2);
-        document.getElementById('promptWeightVal2').textContent = pw.toFixed(2);
+        pwLabel.textContent = pw.toFixed(2);
+        pwLabel2.textContent = pw.toFixed(2);
+        
+        await new Promise(r => setTimeout(r, 300));
+        pwLabel.style.color = '';
+        pwLabel.style.transform = 'scale(1)';
         
         log('🎭 Revolutionary portrait ready!', 'success');
+        await new Promise(r => setTimeout(r, 200));
         
     } else {
         log('🎨 Classical mode', 'info');
-        
-        // Just set strength low
         const strengthSlider = document.getElementById('strengthSlider');
         const targetStrength = 6 + Math.floor(Math.random() * 4);
         strengthSlider.value = targetStrength;
@@ -2589,13 +2630,6 @@ async function start() {
         });
         document.getElementById('local').srcObject = localStream;
         log('Camera ready', 'success');
-
-        // Initialize audio analysis
-        initAudio(localStream);
-        
-        // Initialize motion detection
-        initMotionDetection();
-        
         // Initialize visual systems
         drawBackground = initBackground();
         drawParticles = initParticles();
