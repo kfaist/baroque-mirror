@@ -1608,17 +1608,6 @@ const promptInspirations = [
     "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects"
 ];
 
-// Caricature prompts for 50/50 mode
-const caricaturePrompts = [
-    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features, lithograph texture",
-    "James Gillray caricature, bulging eyes, elongated nose, mocking aristocracy, hand-colored etching",
-    "Thomas Rowlandson satirical print, rotund figures, red-faced excess, Georgian era mockery",
-    "Sans-culottes propaganda broadsheet, fierce revolutionary spirit, woodcut boldness",
-    "William Hogarth moral satire, exaggerated expressions, crowded composition, social critique",
-    "George Cruikshank political cartoon, sharp angular features, dramatic gestures, copper engraving"
-];
-
-
 // ============================================
 // STYLES
 // ============================================
@@ -2499,23 +2488,6 @@ function buildPrompt() {
 async function start() {
     document.getElementById('startBtn').disabled = true;
     
-    // Pick random prompt (50/50 caricature vs classical)
-    const allPrompts = Math.random() < 0.5 ? caricaturePrompts : promptInspirations;
-    const randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
-    document.getElementById('promptInput').value = randomPrompt;
-    customPrompt = randomPrompt;
-    
-    // Prompt Weight 100%, AI Strength minimum
-    document.getElementById('promptWeightSlider').value = 100;
-    document.getElementById('promptWeightSlider2').value = 100;
-    document.getElementById('promptWeightVal').textContent = '1.00';
-    document.getElementById('promptWeightVal2').textContent = '1.00';
-    params.promptWeight = 1.0;
-    
-    document.getElementById('strengthSlider').value = 1;
-    document.getElementById('strengthVal').textContent = '1';
-    params.strength = 1;
-    
     try {
         log('Getting camera...', 'info');
         localStream = await navigator.mediaDevices.getUserMedia({
@@ -2525,15 +2497,23 @@ async function start() {
         document.getElementById('local').srcObject = localStream;
         log('Camera ready', 'success');
 
+        // Initialize audio analysis
         initAudio(localStream);
+        
+        // Initialize motion detection
         initMotionDetection();
+        
+        // Initialize visual systems
         drawBackground = initBackground();
         drawParticles = initParticles();
         drawVideoOverlay = initVideoOverlay();
         
-        if (!animationId) animate();
+        // Start animation loop
+        if (!animationId) {
+            animate();
+        }
 
-        log('Creating stream...', 'info');
+        log('Creating Daydream stream...', 'info');
         const createRes = await fetch(`${API_BASE}/streams`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
@@ -2545,18 +2525,22 @@ async function start() {
         const data = await createRes.json();
         streamId = data.id;
         playbackId = data.output_playback_id;
-        log(`Stream: ${streamId.slice(-8)}`, 'success');
+        log(`Stream created: ${streamId.slice(-8)}`, 'success');
 
-        log('Connecting...', 'info');
+        log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
-        log('Connected', 'success');
+        log('Video streaming to AI', 'success');
 
+        log('AI initializing...', 'info');
         await new Promise(r => setTimeout(r, 3000));
+        
         await setParams();
         log('Style applied', 'success');
 
+        log('Waiting for output...', 'info');
         document.getElementById('startBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
+        // Sync mobile buttons
         if (document.getElementById('mobileStartBtn')) {
             document.getElementById('mobileStartBtn').style.display = 'none';
             document.getElementById('mobileStopBtn').style.display = 'block';
@@ -2569,7 +2553,6 @@ async function start() {
         document.getElementById('startBtn').disabled = false;
     }
 }
-
 
 // ============================================
 // WEBRTC CONNECTION
