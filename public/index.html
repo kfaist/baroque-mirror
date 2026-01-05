@@ -408,6 +408,59 @@ const promptInspirations = [
 ];
 
 
+const satireCaptions = [
+    "grotesquely enlarged features emphasizing vanity and pride",
+    "exaggerated aristocratic pose mocking pretension",
+    "symbolic objects orbiting figure in allegorical chaos",
+    "towering powdered wig defying architectural logic",
+    "medals and ribbons multiplied to absurd profusion",
+    "bloated proportions suggesting moral excess",
+    "caricatured expression revealing inner corruption",
+    "satirical props undermining dignified pretense",
+    "cartoonish rendering of pompous self-importance",
+    "symbolic animals commenting on human folly",
+    "exaggerated costume overwhelming diminished figure",
+    "ironic juxtaposition of grandeur and absurdity",
+    "grotesque physiognomy exposing character flaws",
+    "theatrical staging pushed to ridiculous extreme",
+    "symbolic decay beneath surface of opulence",
+    "exaggerated gesture suggesting empty rhetoric",
+    "cartoonish embellishments mocking social climbing",
+    "absurd accessories revealing misplaced priorities",
+    "grotesque distortion of aristocratic conventions",
+    "satirical commentary through visual exaggeration",
+    "inflated ego rendered in literal physical terms",
+    "symbolic weight of office crushing bearer",
+    "exaggerated finery contrasting with base nature",
+    "cartoonish simplification exposing essential character",
+    "grotesque amalgamation of status symbols",
+    "satirical reversal of portrait conventions",
+    "exaggerated shadow suggesting hidden nature",
+    "symbolic props commenting on abuse of power",
+    "cartoonish rendering of social pretension",
+    "grotesque physiognomy revealing moral character",
+    "absurdly tall wig sprouting candelabras as visual satire",
+    "aristocratic vanity exaggerated through reflective surfaces",
+    "cartoonish embellishments amplifying pomp and self-importance",
+    "ridiculous footwear featuring miniature staircases for humor",
+    "ornamental chaos symbolizing excess and decline",
+    "caricatured expression highlighting arrogance and fragility",
+    "symbolic animals acting as allegorical companions",
+    "decorative overload turning costume into comedic punishment",
+    "swirling cartoon lines exaggerating dramatic gesture",
+    "satirical props metaphorically capturing misguided ambition",
+    "exaggerated facial features echoing political-cartoon tradition",
+    "ornate patterns swallowing the character in symbolic excess",
+    "character weighed down by absurd decorative accessories",
+    "figure surrounded by floating allegorical symbols",
+    "vanity portrayed through multiple hand-held mirrors",
+    "satirical exaggeration of status through decorative clutter",
+    "collapsing wig structure symbolizing pretension",
+    "cartoon metaphor rendered through rococo ornament",
+    "exaggerated gesture implying pompous self-importance",
+    "rococo excess weaponized as humorous critique"
+];
+
 const caricaturePrompts = [
     "Gillray-style biting satire, chin retreating from responsibility, buttons multiplied beyond sanity, mice nibbling at the foundations, velvet curtains revealing emptiness behind",
     "exaggerated physiognomy, nose bulging with inherited hauteur, wig bending under the weight of hubris, thrones buckling under bloated egos",
@@ -571,7 +624,14 @@ function captureStill(slotNumber) {
 function loadCapturedStills() { localStorage.removeItem('baroqueCaptures'); capturedStills = {}; }
 
 function shufflePrompt() {
-    const allPrompts = Math.random() < 0.5 ? caricaturePrompts : promptInspirations;
+    let allPrompts;
+    if (modeValue < 50) {
+        allPrompts = promptInspirations;
+    } else if (modeValue > 50) {
+        allPrompts = satireCaptions;
+    } else {
+        allPrompts = Math.random() < 0.5 ? satireCaptions : promptInspirations;
+    }
     const randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
     document.getElementById('promptInput').value = randomPrompt;
     customPrompt = randomPrompt;
