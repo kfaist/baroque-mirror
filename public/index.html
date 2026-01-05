@@ -234,8 +234,19 @@
         
         /* Session Bar - ALWAYS VISIBLE above video */
         .session-bar {
+            display: flex;
+            align-items: stretch;
+            gap: 15px;
             grid-column: 1 / -1;
             margin-bottom: 15px;
+        }
+        
+        .session-bar #log {
+            flex: 1;
+            margin: 0;
+            height: auto;
+            min-height: 50px;
+            max-height: 80px;
         }
         
         .session-bar .session-btn {
@@ -912,6 +923,9 @@
             
             /* Session bar spans full width */
             .session-bar {
+            display: flex;
+            align-items: stretch;
+            gap: 15px;
                 order: 0 !important;
                 width: 100%;
                 padding: 10px 15px;
@@ -1317,7 +1331,6 @@
                     </div>
                 </div>
                 
-                <div id="log">⚜ Baroque Mirror ready...</div>
             </div>
             
             <!-- Right content area -->
@@ -1325,6 +1338,7 @@
             
             <!-- Session Bar - ALWAYS VISIBLE above video -->
             <div class="session-bar">
+                <div id="log">⚜ Baroque Mirror ready...</div>
                 <button class="session-btn" id="startBtn2">Begin Session ⚜</button>
                 <button class="session-btn stop" id="stopBtn2" style="display:none;">End Session ■</button>
             </div>
