@@ -87,27 +87,11 @@
         
         .main { 
             display: grid; 
-            grid-template-columns: 400px 1fr; 
+            grid-template-columns: 400px 1fr 200px; 
             gap: 25px; 
             padding: 25px; 
             max-width: 1900px; 
-            margin: 0 auto;
-            align-items: start; /* Prevent columns from stretching to match tallest */
-        }
-        
-        /* Right content: video + captures side by side, statement below */
-        .right-content {
-            display: grid;
-            grid-template-columns: 1fr 200px;
-            gap: 25px;
-            align-items: start;
-        }
-        
-        /* Wrapper keeps video and statement stacked together, independent of capture panel height */
-        .video-statement-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
+            margin: 0 auto; 
         }
         
         .controls, .capture-panel { 
@@ -233,11 +217,6 @@
             background: linear-gradient(180deg, #8b0000, #4a0000);
             color: #fff;
             box-shadow: 0 0 35px rgba(139,0,0,0.5);
-        }
-        
-        /* Mobile Session Bar - spans above video on mobile only */
-        .mobile-session-bar {
-            display: none; /* Hidden on desktop */
         }
         
         .section h3 { 
@@ -547,6 +526,17 @@
             background: linear-gradient(180deg, #8b0000, #4a0000);
             color: #fff;
             box-shadow: 0 0 30px rgba(139,0,0,0.5);
+        }
+        
+        /* Session row - spans above video and capture panel */
+        .session-row {
+            grid-column: 2 / -1;
+            margin-bottom: 15px;
+        }
+        .session-row .session-btn {
+            width: 100%;
+            padding: 18px 30px;
+            font-size: 1.2rem;
         }
         
         .output-area { 
@@ -862,12 +852,7 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
         
         /* Statement section - TWO TIERED SHIMMER LAYERS */
-        .statement-section { 
-            margin-top: 0; 
-            position: relative; 
-            width: 100%;
-            box-sizing: border-box;
-        }
+        .statement-section { margin-top: 12px; width: 100%; position: relative; }
         
         /* Layer 1: LIGHTER/more transparent outer shimmer background */
         .shimmer-bg {
@@ -953,22 +938,15 @@
                 gap: 0;
             }
             
-            /* Hide desktop session button on mobile */
-            .session-section {
-                display: none !important;
-            }
-            
-            /* Mobile session bar spans full width above video */
-            .mobile-session-bar {
-                display: block !important;
+            /* Session row at very top on mobile */
+            .session-row {
                 order: 0 !important;
-                width: 100%;
-                padding: 10px 15px;
-                box-sizing: border-box;
+                padding: 10px;
+                margin: 0;
             }
-            
-            .mobile-session-bar .session-btn {
-                width: 100%;
+            .session-row .session-btn {
+                padding: 14px 20px;
+                font-size: 1.1rem;
             }
             
             /* FULL SCREEN VIDEO AT TOP */
@@ -1311,8 +1289,8 @@
         
         <div class="main">
             <div class="controls">
-                <!-- Begin Session Button - Top -->
-                <div class="session-section">
+                <!-- Session buttons moved to session-row above video -->
+                <div class="session-section" style="display:none;">
                     <button class="session-btn" id="startBtn">Begin Session ⚜</button>
                     <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ■</button>
                 </div>
@@ -1401,17 +1379,12 @@
                 <div id="log">⚜ Baroque Mirror ready...</div>
             </div>
             
-            <!-- Right content area: video + captures + statement -->
-            <div class="right-content">
-            
-            <!-- Mobile Session Bar - Above video on mobile only -->
-            <div class="mobile-session-bar">
-                <button class="session-btn mobile-start" id="mobileStartBtn">Begin Session ⚜</button>
-                <button class="session-btn stop mobile-stop" id="mobileStopBtn" style="display:none;">End Session ■</button>
+            <!-- Session button row - above video -->
+            <div class="session-row">
+                <button class="session-btn" id="startBtn2">Begin Session ⚜</button>
+                <button class="session-btn stop" id="stopBtn2" style="display:none;">End Session ■</button>
             </div>
             
-            <!-- Video and Statement wrapper - keeps them stacked regardless of capture panel height -->
-            <div class="video-statement-wrapper">
             <div class="output-area">
                 <div class="video-container" id="videoContainer">
                     <div class="video-wrapper">
@@ -1423,28 +1396,22 @@
                 </div>
             </div>
             
-            <!-- Statement Section - Inside wrapper, directly below video -->
-            <div class="statement-section">
-                <div class="shimmer-bg">
-                    <div class="shimmer-block">
-                        <h2>Statement</h2>
-                        <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses. It learns motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
-                        <p>French Revolutionary caricature was uniquely ferocious, more violent, more confrontational, and more visually ruthless than anything produced before it. It emerged during years when grotesque mockery and extravagant displays of wealth existed in the same rooms, and for a time no one blinked.</p>
-                        <div class="section-divider">. . .</div>
-                        <h2>About</h2>
-                        <p>Historically, jesters entertained elites beneath gilded ceilings (see the <a href="https://www.vam.ac.uk/articles/court-fools-and-jesters" target="_blank">Victoria and Albert Museum's overview</a>). Later, caricature artists appeared at salons and masquerades, where exaggerated portraits were commissioned by the same people who might dismiss them as vulgar in public. Early traditions are richly documented in sources like the <a href="https://www.metmuseum.org/toah/hd/crrn/hd_crrn.htm" target="_blank">Met's survey of caricature</a> and the <a href="https://www.britishmuseum.org/collection/galleries/political-satire" target="_blank">British Museum's political satire collection</a>.</p>
-                        <p>Wealthy patrons often paid handsomely for grotesque works of art that the lowest rung of the hoi polloi would judge tacky at a carnival. Taste, ego, and humor have always been unstable companions. AI heightens this tension: fragile ego is still the best subject, and a robust sense of humor remains the only safe compass. In glamorous rooms, as in history, opulence and satire continue their strange partnership.</p>
-                        <p class="license-note">The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development. Exhibition licenses and institutional partnerships support the continued evolution of networked digital art practices.</p>
-                        <div class="contact-info">
-                            <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
-                            <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
-                        </div>
-                    </div>
+            <!-- Mobile Action Bar: Capture | Recent Still | Shop -->
+            <div class="mobile-action-bar" id="mobileActionBar">
+                <button class="mobile-action-btn capture" onclick="captureNextSlot()">📸<br>Capture</button>
+                <div class="mobile-recent-still" id="mobileRecentStill">
+                    <span class="placeholder-text">No stills</span>
+                    <img src="" alt="Recent capture">
+                    <span class="still-counter" id="stillCounter">0/12</span>
                 </div>
+                <a href="/prints" class="mobile-action-btn shop">
+                    <span class="shop-line">🛒 Shop Prints</span>
+                    <span class="shop-divider">⚜</span>
+                    <span class="shop-line">Mint NFTs</span>
+                </a>
             </div>
-            </div> <!-- close video-statement-wrapper -->
             
-            <!-- Capture Panel - Right sidebar -->
+            <!-- Capture Panel - NEW -->
             <div class="capture-panel">
                 <!-- Input Preview -->
                 <div class="input-preview-section">
@@ -1540,10 +1507,40 @@
                         <img src="" alt="Captured still 10">
                         <button class="capture-btn" onclick="captureStill(10)">Capture Still</button>
                     </div>
+                    <div class="capture-slot" data-slot="11">
+                        <span class="capture-slot-number">EXP_11</span>
+                        <img src="" alt="Captured still 11">
+                        <button class="capture-btn" onclick="captureStill(11)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="12">
+                        <span class="capture-slot-number">EXP_12</span>
+                        <img src="" alt="Captured still 12">
+                        <button class="capture-btn" onclick="captureStill(12)">Capture Still</button>
+                    </div>
                 </div>
             </div>
-            </div> <!-- close right-content -->
-        </div> <!-- close main -->
+            
+            <!-- Statement Section - At Bottom -->
+            <div class="statement-section" style="order: 100; width: 100%; margin-top: 20px;">
+                <div class="shimmer-bg">
+                    <div class="shimmer-block">
+                        <h2>Statement</h2>
+                        <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses. It learns motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
+                        <p>French Revolutionary caricature was uniquely ferocious, more violent, more confrontational, and more visually ruthless than anything produced before it. It emerged during years when grotesque mockery and extravagant displays of wealth existed in the same rooms, and for a time no one blinked.</p>
+                        <div class="section-divider">. . .</div>
+                        <h2>About</h2>
+                        <p>Historically, jesters entertained elites beneath gilded ceilings (see the <a href="https://www.vam.ac.uk/articles/court-fools-and-jesters" target="_blank">Victoria and Albert Museum's overview</a>). Later, caricature artists appeared at salons and masquerades, where exaggerated portraits were commissioned by the same people who might dismiss them as vulgar in public. Early traditions are richly documented in sources like the <a href="https://www.metmuseum.org/toah/hd/crrn/hd_crrn.htm" target="_blank">Met's survey of caricature</a> and the <a href="https://www.britishmuseum.org/collection/galleries/political-satire" target="_blank">British Museum's political satire collection</a>.</p>
+                        <p>Wealthy patrons often paid handsomely for grotesque works of art that the lowest rung of the hoi polloi would judge tacky at a carnival. Taste, ego, and humor have always been unstable companions. AI heightens this tension: fragile ego is still the best subject, and a robust sense of humor remains the only safe compass. In glamorous rooms, as in history, opulence and satire continue their strange partnership.</p>
+                        <p class="license-note">The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development. Exhibition licenses and institutional partnerships support the continued evolution of networked digital art practices.</p>
+                        <div class="contact-info">
+                            <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+                            <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Hidden canvas for capturing -->
     <canvas id="captureCanvas" style="display:none;"></canvas>
@@ -1608,17 +1605,6 @@ const promptInspirations = [
     "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects"
 ];
 
-// Caricature prompts for 50/50 mode
-const caricaturePrompts = [
-    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features",
-    "James Gillray caricature, bulging eyes, elongated nose, mocking aristocracy",
-    "Thomas Rowlandson satirical print, rotund figures, red-faced excess",
-    "Sans-culottes propaganda broadsheet, fierce revolutionary spirit, woodcut boldness",
-    "William Hogarth moral satire, exaggerated expressions, social critique",
-    "George Cruikshank political cartoon, sharp angular features, copper engraving"
-];
-
-
 // ============================================
 // STYLES
 // ============================================
@@ -1675,7 +1661,7 @@ function log(msg, type = '') {
 // Find next empty slot and capture to it
 function captureNextSlot() {
     let targetSlot = null;
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 12; i++) {
         if (!capturedStills[i]) {
             targetSlot = i;
             break;
@@ -1697,7 +1683,7 @@ function updateMobileRecentStill(dataUrl, slotNumber) {
             recentStill.classList.add('has-image');
         }
         const totalCaptures = Object.keys(capturedStills).length;
-        counter.textContent = totalCaptures + '/10';
+        counter.textContent = totalCaptures + '/12';
     }
 }
 
@@ -2411,17 +2397,11 @@ document.getElementById('particleDensitySlider').oninput = function() {
     document.getElementById('particleDensityVal').textContent = this.value + '%';
 };
 
-// Start/Stop buttons
+// Start/Stop buttons - both locations
 document.getElementById('startBtn').onclick = start;
 document.getElementById('stopBtn').onclick = stop;
-
-// Mobile session buttons (sync with desktop)
-if (document.getElementById('mobileStartBtn')) {
-    document.getElementById('mobileStartBtn').onclick = start;
-}
-if (document.getElementById('mobileStopBtn')) {
-    document.getElementById('mobileStopBtn').onclick = stop;
-}
+document.getElementById('startBtn2').onclick = start;
+document.getElementById('stopBtn2').onclick = stop;
 
 // Fullscreen toggle
 document.getElementById('fullscreenBtn').onclick = toggleFullscreen;
@@ -2499,24 +2479,6 @@ function buildPrompt() {
 async function start() {
     document.getElementById('startBtn').disabled = true;
     
-    // 50/50 pick caricature or classical prompt
-    var allPrompts = Math.random() < 0.5 ? caricaturePrompts : promptInspirations;
-    var randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
-    document.getElementById('promptInput').value = randomPrompt;
-    customPrompt = randomPrompt;
-    
-    // Set Prompt Weight to 100%
-    document.getElementById('promptWeightSlider').value = 100;
-    document.getElementById('promptWeightSlider2').value = 100;
-    document.getElementById('promptWeightVal').textContent = '1.00';
-    document.getElementById('promptWeightVal2').textContent = '1.00';
-    params.promptWeight = 1.0;
-    
-    // Set AI Strength to minimum (1)
-    document.getElementById('strengthSlider').value = 1;
-    document.getElementById('strengthVal').textContent = '1';
-    params.strength = 1;
-    
     try {
         log('Getting camera...', 'info');
         localStream = await navigator.mediaDevices.getUserMedia({
@@ -2526,36 +2488,42 @@ async function start() {
         document.getElementById('local').srcObject = localStream;
         log('Camera ready', 'success');
 
+        // Initialize audio analysis
         initAudio(localStream);
+        
+        // Initialize motion detection
         initMotionDetection();
+        
+        // Initialize visual systems
         drawBackground = initBackground();
         drawParticles = initParticles();
         drawVideoOverlay = initVideoOverlay();
         
+        // Start animation loop
         if (!animationId) {
             animate();
         }
 
-        log('Creating stream...', 'info');
-        var createRes = await fetch(API_BASE + '/streams', {
+        log('Creating Daydream stream...', 'info');
+        const createRes = await fetch(`${API_BASE}/streams`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + API_KEY },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
             body: JSON.stringify({ pipeline_id: PIPELINE_ID })
         });
         
-        if (!createRes.ok) throw new Error('Create failed: ' + createRes.status);
+        if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         
-        var data = await createRes.json();
+        const data = await createRes.json();
         streamId = data.id;
         playbackId = data.output_playback_id;
-        log('Stream created', 'success');
+        log(`Stream created: ${streamId.slice(-8)}`, 'success');
 
         log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
-        log('Video streaming', 'success');
+        log('Video streaming to AI', 'success');
 
         log('AI initializing...', 'info');
-        await new Promise(function(r) { setTimeout(r, 3000); });
+        await new Promise(r => setTimeout(r, 3000));
         
         await setParams();
         log('Style applied', 'success');
@@ -2563,19 +2531,16 @@ async function start() {
         log('Waiting for output...', 'info');
         document.getElementById('startBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
-        if (document.getElementById('mobileStartBtn')) {
-            document.getElementById('mobileStartBtn').style.display = 'none';
-            document.getElementById('mobileStopBtn').style.display = 'block';
-        }
+        document.getElementById('startBtn2').style.display = 'none';
+        document.getElementById('stopBtn2').style.display = 'block';
         startPolling();
 
     } catch (e) {
-        log('ERROR: ' + e.message, 'error');
+        log(`ERROR: ${e.message}`, 'error');
         console.error(e);
         document.getElementById('startBtn').disabled = false;
     }
 }
-
 
 // ============================================
 // WEBRTC CONNECTION
@@ -2813,12 +2778,9 @@ function stop() {
     document.getElementById('startBtn').disabled = false;
     document.getElementById('startBtn').style.display = 'block';
     document.getElementById('stopBtn').style.display = 'none';
-    // Sync mobile buttons
-    if (document.getElementById('mobileStartBtn')) {
-        document.getElementById('mobileStartBtn').disabled = false;
-        document.getElementById('mobileStartBtn').style.display = 'block';
-        document.getElementById('mobileStopBtn').style.display = 'none';
-    }
+    document.getElementById('startBtn2').disabled = false;
+    document.getElementById('startBtn2').style.display = 'block';
+    document.getElementById('stopBtn2').style.display = 'none';
     
     streamId = null;
     playbackId = null;
@@ -2869,9 +2831,9 @@ window.addEventListener('load', () => {
     const mobileCaptureBtn = document.getElementById('mobileCaptureBtn');
     if (mobileCaptureBtn) {
         mobileCaptureBtn.addEventListener('click', () => {
-            // Find next empty capture slot (1-10)
+            // Find next empty capture slot (1-12)
             let targetSlot = null;
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= 12; i++) {
                 const key = `baroqueMirror_still_${i}`;
                 if (!localStorage.getItem(key)) {
                     targetSlot = i;
