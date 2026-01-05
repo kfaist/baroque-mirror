@@ -89,6 +89,13 @@
         .video-container:fullscreen .video-animation-overlay { display: none; }
         .frame-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; border: 8px solid transparent; border-image: linear-gradient(135deg, #d4af37 0%, #8b6914 25%, #d4af37 50%, #8b6914 75%, #d4af37 100%) 1; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
         
+        .status-overlay { position: absolute; top: 15px; left: 15px; z-index: 50; display: none; font-family: 'Courier New', monospace; font-size: 0.7rem; max-width: 350px; }
+        .status-overlay.active { display: block; }
+        .status-message { color: #ff69b4; animation: pinkFlash 1s ease-in-out infinite; margin-bottom: 8px; text-shadow: 0 0 10px rgba(255,105,180,0.5); }
+        @keyframes pinkFlash { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .status-debug { color: rgba(255,105,180,0.8); font-size: 0.65rem; line-height: 1.4; }
+        .status-debug-line { margin-bottom: 2px; }
+        
         .input-preview-section { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(212,175,55,0.3); }
         .input-preview-section h4 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; text-align: center; text-transform: uppercase; }
         .webcam-pip { position: relative; width: 100%; border: 2px solid rgba(212,175,55,0.5); border-radius: 6px; overflow: hidden; background: #000; box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3); aspect-ratio: 4/3; }
@@ -288,6 +295,10 @@
                         <video class="output-video" id="output" autoplay playsinline></video>
                         <canvas class="video-animation-overlay" id="videoOverlay"></canvas>
                     </div>
+                    <div class="status-overlay" id="statusOverlay">
+                        <div class="status-message" id="statusMessage">Negotiating with pixels. Please wait up to 45 seconds...</div>
+                        <div class="status-debug" id="statusDebug"></div>
+                    </div>
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
                 </div>
@@ -370,6 +381,9 @@ const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
 // STATE
 // ============================================
 let localStream, inputPC, streamId, playbackId, hls, pollTimer;
+let countdownTimer = null;
+let countdownValue = 45;
+let statusDebugLines = [];
 let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
 let modeValue = 50;
@@ -576,10 +590,47 @@ function log(msg, type = '') {
     const div = document.getElementById('log');
     const line = document.createElement('div');
     line.className = type;
-    line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+    const timeStr = new Date().toLocaleTimeString();
+    line.textContent = `[${timeStr}] ${msg}`;
     div.appendChild(line);
     div.scrollTop = div.scrollHeight;
     console.log(msg);
+    // Update status debug overlay
+    const statusDebug = document.getElementById('statusDebug');
+    if (statusDebug && document.getElementById('statusOverlay').classList.contains('active')) {
+        statusDebugLines.push(`[${timeStr}] ${msg}`);
+        if (statusDebugLines.length > 5) statusDebugLines.shift();
+        statusDebug.innerHTML = statusDebugLines.map(l => `<div class="status-debug-line">${l}</div>`).join('');
+    }
+}
+
+function showStatusOverlay() {
+    const overlay = document.getElementById('statusOverlay');
+    overlay.classList.add('active');
+    countdownValue = 45;
+    statusDebugLines = [];
+    updateCountdown();
+    countdownTimer = setInterval(updateCountdown, 1000);
+}
+
+function updateCountdown() {
+    const msg = document.getElementById('statusMessage');
+    if (countdownValue > 0) {
+        msg.textContent = `Negotiating with pixels. Please wait up to ${countdownValue} seconds...`;
+        countdownValue--;
+    } else {
+        msg.textContent = 'Almost there...';
+    }
+}
+
+function hideStatusOverlay() {
+    const overlay = document.getElementById('statusOverlay');
+    overlay.classList.remove('active');
+    if (countdownTimer) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+    }
+    statusDebugLines = [];
 }
 
 function captureNextSlot() {
@@ -974,6 +1025,7 @@ function buildPrompt() {
 
 async function start() {
     document.getElementById('startBtn').disabled = true;
+    showStatusOverlay();
     try {
         log('Getting camera...', 'info');
         localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, audio: true });
@@ -1006,6 +1058,7 @@ async function start() {
     } catch (e) {
         log(`ERROR: ${e.message}`, 'error');
         console.error(e);
+        hideStatusOverlay();
         document.getElementById('startBtn').disabled = false;
     }
 }
@@ -1059,7 +1112,7 @@ function connectHLS(url) {
         hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 1, liveMaxLatencyDuration: 5, liveDurationInfinity: true, highBufferWatchdogPeriod: 2, manifestLoadingTimeOut: 20000, manifestLoadingMaxRetry: 6, manifestLoadingRetryDelay: 1000, levelLoadingTimeOut: 20000, levelLoadingMaxRetry: 6, levelLoadingRetryDelay: 1000, fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 6, fragLoadingRetryDelay: 1000, enableWorker: true, startLevel: -1 });
         hls.loadSource(url);
         hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); video.muted = true; video.play().catch(() => {}); }); });
+        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); hideStatusOverlay(); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); hideStatusOverlay(); video.muted = true; video.play().catch(() => {}); }); });
         hls.on(Hls.Events.ERROR, (e, data) => { log(`HLS: ${data.type} - ${data.details}`, 'info'); if (data.fatal) { switch (data.type) { case Hls.ErrorTypes.NETWORK_ERROR: log('Network error - retrying...', 'info'); setTimeout(() => { hls.startLoad(); }, 2000); break; case Hls.ErrorTypes.MEDIA_ERROR: log('Media error - recovering...', 'info'); hls.recoverMediaError(); break; default: log('Fatal error - please restart', 'error'); break; } } });
         hls.on(Hls.Events.FRAG_LOADED, () => { if (!video.playing) video.play().catch(() => {}); });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; video.addEventListener('loadedmetadata', () => { video.play().catch(() => { video.muted = true; video.play(); }); }); log('Native HLS playing', 'success'); }
@@ -1067,6 +1120,7 @@ function connectHLS(url) {
 
 function stop() {
     if (pollTimer) clearTimeout(pollTimer);
+    hideStatusOverlay();
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
     if (inputPC) { inputPC.close(); inputPC = null; }
     if (hls) { hls.destroy(); hls = null; }
