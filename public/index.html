@@ -1606,20 +1606,18 @@ const promptInspirations = [
     "Pre-Raphaelite romanticism, flowing hair, medieval legends, vivid colors",
     "Venetian veduta cityscape, grand canals, gondolas, atmospheric perspective",
     "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects"
+];
 
 // Caricature prompts for 50/50 mode
 const caricaturePrompts = [
-    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features, lithograph texture",
-    "James Gillray caricature, bulging eyes, elongated nose, mocking aristocracy, hand-colored etching",
-    "Thomas Rowlandson satirical print, rotund figures, red-faced excess, Georgian era mockery",
+    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features",
+    "James Gillray caricature, bulging eyes, elongated nose, mocking aristocracy",
+    "Thomas Rowlandson satirical print, rotund figures, red-faced excess",
     "Sans-culottes propaganda broadsheet, fierce revolutionary spirit, woodcut boldness",
-    "Philipon pear-head style, transformative caricature, subversive wit, pen and ink grotesque",
-    "William Hogarth moral satire, exaggerated expressions, crowded composition, social critique",
-    "George Cruikshank political cartoon, sharp angular features, dramatic gestures, copper engraving",
-    "French Revolutionary playing card, reversed hierarchy, commoner as king, satirical inversion"
+    "William Hogarth moral satire, exaggerated expressions, social critique",
+    "George Cruikshank political cartoon, sharp angular features, copper engraving"
 ];
 
-];
 
 // ============================================
 // STYLES
@@ -2501,24 +2499,24 @@ function buildPrompt() {
 async function start() {
     document.getElementById('startBtn').disabled = true;
     
-    // === DICE + APPLY: Pick random prompt (50/50 caricature) ===
-    const allPrompts = Math.random() < 0.5 ? caricaturePrompts : promptInspirations;
-    const randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
+    // 50/50 pick caricature or classical prompt
+    var allPrompts = Math.random() < 0.5 ? caricaturePrompts : promptInspirations;
+    var randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
     document.getElementById('promptInput').value = randomPrompt;
     customPrompt = randomPrompt;
     
-    // === Set sliders: Prompt Weight 100%, AI Strength minimum ===
+    // Set Prompt Weight to 100%
     document.getElementById('promptWeightSlider').value = 100;
     document.getElementById('promptWeightSlider2').value = 100;
     document.getElementById('promptWeightVal').textContent = '1.00';
     document.getElementById('promptWeightVal2').textContent = '1.00';
     params.promptWeight = 1.0;
     
+    // Set AI Strength to minimum (1)
     document.getElementById('strengthSlider').value = 1;
     document.getElementById('strengthVal').textContent = '1';
     params.strength = 1;
     
-    // === Continue with camera/stream ===
     try {
         log('Getting camera...', 'info');
         localStream = await navigator.mediaDevices.getUserMedia({
@@ -2528,42 +2526,36 @@ async function start() {
         document.getElementById('local').srcObject = localStream;
         log('Camera ready', 'success');
 
-        // Initialize audio analysis
         initAudio(localStream);
-        
-        // Initialize motion detection
         initMotionDetection();
-        
-        // Initialize visual systems
         drawBackground = initBackground();
         drawParticles = initParticles();
         drawVideoOverlay = initVideoOverlay();
         
-        // Start animation loop
         if (!animationId) {
             animate();
         }
 
         log('Creating stream...', 'info');
-        const createRes = await fetch(`${API_BASE}/streams`, {
+        var createRes = await fetch(API_BASE + '/streams', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + API_KEY },
             body: JSON.stringify({ pipeline_id: PIPELINE_ID })
         });
         
-        if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
+        if (!createRes.ok) throw new Error('Create failed: ' + createRes.status);
         
-        const data = await createRes.json();
+        var data = await createRes.json();
         streamId = data.id;
         playbackId = data.output_playback_id;
-        log(`Stream created: ${streamId.slice(-8)}`, 'success');
+        log('Stream created', 'success');
 
         log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
-        log('Video streaming to AI', 'success');
+        log('Video streaming', 'success');
 
         log('AI initializing...', 'info');
-        await new Promise(r => setTimeout(r, 3000));
+        await new Promise(function(r) { setTimeout(r, 3000); });
         
         await setParams();
         log('Style applied', 'success');
@@ -2578,7 +2570,7 @@ async function start() {
         startPolling();
 
     } catch (e) {
-        log(`ERROR: ${e.message}`, 'error');
+        log('ERROR: ' + e.message, 'error');
         console.error(e);
         document.getElementById('startBtn').disabled = false;
     }
