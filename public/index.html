@@ -1211,6 +1211,56 @@
                 z-index: 100;
             }
         }
+
+        /* Waiting overlay */
+        .waiting-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 6, 8, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px;
+            z-index: 10;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .waiting-overlay.hidden {
+            display: none;
+        }
+        .waiting-title {
+            color: #ff69b4;
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+        }
+        .waiting-countdown {
+            color: #ff69b4;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        .waiting-log {
+            color: #ff69b4;
+            font-size: 0.9rem;
+            font-family: monospace;
+            max-height: 150px;
+            overflow-y: auto;
+            width: 100%;
+            opacity: 0.7;
+        }
+        .waiting-log div {
+            margin: 4px 0;
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255, 105, 180, 0.2);
+        }
+        .waiting-log .success { color: #90EE90; }
+        .waiting-log .error { color: #ff6b6b; }
+        .waiting-log .info { color: #ff69b4; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -1334,6 +1384,12 @@
             <div class="output-area">
                 <div class="video-container" id="videoContainer">
                     <div class="video-wrapper">
+                    <!-- Waiting overlay -->
+                    <div class="waiting-overlay" id="waitingOverlay">
+                        <div class="waiting-title">Negotiating with pixels...</div>
+                        <div class="waiting-countdown" id="waitingCountdown">Please wait up to 40 seconds...</div>
+                        <div class="waiting-log" id="waitingLog"></div>
+                    </div>
                         <video class="output-video" id="output" autoplay playsinline></video>
                         <canvas class="video-animation-overlay" id="videoOverlay"></canvas>
                     </div>
@@ -1549,13 +1605,53 @@ const styles = {
 };
 
 function log(msg, type = '') {
-    const div = document.getElementById('log');
-    const line = document.createElement('div');
-    line.className = type;
-    line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-    div.appendChild(line);
-    div.scrollTop = div.scrollHeight;
-    console.log(msg);
+    const colors = { success: '#90EE90', error: '#ff6b6b', info: '#d4af37' };
+    console.log(`%c${msg}`, `color: ${colors[type] || '#fff'}`);
+    
+    // Mirror to waiting overlay log
+    const waitingLog = document.getElementById('waitingLog');
+    if (waitingLog) {
+        const entry = document.createElement('div');
+        entry.className = type;
+        entry.textContent = msg;
+        waitingLog.appendChild(entry);
+        waitingLog.scrollTop = waitingLog.scrollHeight;
+    }
+}
+
+// Countdown timer
+let countdownInterval = null;
+function startWaitingCountdown() {
+    const overlay = document.getElementById('waitingOverlay');
+    const countdownEl = document.getElementById('waitingCountdown');
+    const logEl = document.getElementById('waitingLog');
+    
+    // Clear previous
+    if (logEl) logEl.innerHTML = '';
+    if (overlay) overlay.classList.remove('hidden');
+    
+    let seconds = 40;
+    countdownEl.textContent = `Please wait up to ${seconds} seconds...`;
+    
+    countdownInterval = setInterval(() => {
+        seconds--;
+        if (seconds > 0) {
+            countdownEl.textContent = `Please wait up to ${seconds} seconds...`;
+        } else {
+            countdownEl.textContent = 'Almost there...';
+        }
+    }, 1000);
+}
+
+function hideWaitingOverlay() {
+    const overlay = document.getElementById('waitingOverlay');
+    if (overlay) overlay.classList.add('hidden');
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }
+}
+
 }
 
 function captureNextSlot() {
@@ -1947,6 +2043,7 @@ function buildPrompt() {
 
 async function start() {
     document.getElementById('startBtn').disabled = true;
+    startWaitingCountdown();
     document.getElementById('startBtn2').disabled = true;
     try {
         log('Getting camera...', 'info');
@@ -2036,13 +2133,14 @@ function connectHLS(url) {
         hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 1, liveMaxLatencyDuration: 5, liveDurationInfinity: true, highBufferWatchdogPeriod: 2, manifestLoadingTimeOut: 20000, manifestLoadingMaxRetry: 6, manifestLoadingRetryDelay: 1000, levelLoadingTimeOut: 20000, levelLoadingMaxRetry: 6, levelLoadingRetryDelay: 1000, fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 6, fragLoadingRetryDelay: 1000, enableWorker: true, startLevel: -1 });
         hls.loadSource(url);
         hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); video.muted = true; video.play().catch(() => {}); }); });
+        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); hideWaitingOverlay(); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); video.muted = true; video.play().catch(() => {}); }); });
         hls.on(Hls.Events.ERROR, (e, data) => { log(`HLS: ${data.type} - ${data.details}`, 'info'); if (data.fatal) { switch (data.type) { case Hls.ErrorTypes.NETWORK_ERROR: log('Network error - retrying...', 'info'); setTimeout(() => { hls.startLoad(); }, 2000); break; case Hls.ErrorTypes.MEDIA_ERROR: log('Media error - recovering...', 'info'); hls.recoverMediaError(); break; default: log('Fatal error - please restart', 'error'); break; } } });
         hls.on(Hls.Events.FRAG_LOADED, () => { if (!video.playing) video.play().catch(() => {}); });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; video.addEventListener('loadedmetadata', () => { video.play().catch(() => { video.muted = true; video.play(); }); }); log('Native HLS playing', 'success'); }
 }
 
 function stop() {
+    hideWaitingOverlay();
     if (pollTimer) clearTimeout(pollTimer);
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
     if (inputPC) { inputPC.close(); inputPC = null; }
