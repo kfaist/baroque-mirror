@@ -92,7 +92,7 @@
             padding: 25px; 
             max-width: 1900px; 
             margin: 0 auto;
-            align-items: start;
+            align-items: stretch;
         }
         
         /* Right content: video + captures side by side, statement below */
@@ -100,7 +100,7 @@
             display: grid;
             grid-template-columns: 1fr 200px;
             gap: 25px;
-            align-items: start;
+            align-items: stretch;
         }
         
         /* Wrapper keeps video and statement stacked together, independent of capture panel height */
@@ -111,6 +111,9 @@
         }
         
         .controls, .capture-panel { 
+            width: 100%;
+            box-sizing: border-box;
+
             background: rgba(15,10,12,0.85); 
             border: 1px solid rgba(212,175,55,0.4); 
             border-radius: 12px; 
@@ -1548,107 +1551,45 @@ const promptInspirations = [
 
 // Caricature prompts - 50/50 chance on dice roll
 const caricaturePrompts = [
-    "Gillray-style biting satire, eyes bulging with aristocratic entitlement, buttons multiplied beyond sanity, storm clouds gathering beyond the window",
-    "revolutionary fervor, eyes bulging with aristocratic entitlement, lace collar sharp enough to decapitate, gilded frames cracking at the edges",
-    "theatrical illumination, wig sprouting architectural fantasies, masterful rendering, trompe l\'oeil pretension",
-    "harsh light revealing all flaws, velvet so deep one could drown in it, masterful rendering, diagonal dynamism, gold leaf peeling to reveal rot beneath",
-    "Hogarth moral commentary, nose bulging with inherited hauteur, jewels weighing down the absurdly overdressed, putti struggling to lift collapsing crowns, chandeliers swaying ominously",
-    "candlelit intimacy, wig sprouting architectural fantasies, alla prima confidence, isolated figure against void",
-    "divine light piercing darkness, jewels weighing down the absurdly overdressed, oil painting texture, pyramidal arrangement",
-    "Gillray-style biting satire, nose bulging with inherited hauteur, buttons multiplied beyond sanity, serpents coiled in courtly corners, hourglass running out in the background",
-    "Caravaggesque spotlight, periwig cascading like frozen waterfalls, oil painting texture, isolated figure against void",
-    "aristocratic absurdity exposed, lips pursed in performative disdain, velvet so deep one could drown in it, thrones buckling under bloated egos",
-    "revolutionary fervor, eyes bulging with aristocratic entitlement, lace collar sharp enough to decapitate, serpents coiled in courtly corners, cracks spreading through marble floors",
-    "Caravaggesque spotlight, brocade drowning the figure in golden excess, visible brushwork, theatrical composition",
-    "harsh light revealing all flaws, powdered tower of hair defying gravity, oil painting texture, centralized vanity, parrots repeating empty platitudes",
-    "Hogarth moral commentary, nose bulging with inherited hauteur, jewels weighing down the absurdly overdressed, scepters wilting in weak grips",
-    "Hogarth moral commentary, lips pursed in performative disdain, periwig cascading like frozen waterfalls, scepters wilting in weak grips",
-    "Caravaggesque spotlight, jewels weighing down the absurdly overdressed, sfumato edges, processional grandeur",
-    "exaggerated physiognomy, cheeks flushed with champagne hubris, fabric patterns swallowing the wearer whole, gilded frames cracking at the edges",
-    "symbolic objects of corruption, eyes bulging with aristocratic entitlement, wig bending under the weight of hubris, butterflies representing fleeting power, thrones buckling under bloated egos",
-    "candlelit intimacy, fabric patterns swallowing the wearer whole, academic technique, intimate chamber scene, chandeliers swaying ominously",
-    "Gillray-style biting satire, neck craning toward imagined importance, golden threads spelling out inherited shame, chandeliers swaying ominously",
-    "Hogarth moral commentary, hands clutching invisible scepters, golden threads spelling out inherited shame, scepters wilting in weak grips",
-    "Hogarthian moral narrative, sequential storytelling, symbolic detail, social critique, aristocratic absurdity exposed, lips pursed in performative disdain, wig bending under the weight of hubris, parrots repeating empty platitudes, gold leaf peeling to reveal rot beneath",
-    "Caravaggesque spotlight, silk ribbons multiplying like courtly parasites, glazed shadows, crowded courtly chaos",
-    "divine light piercing darkness, lace collar sharp enough to decapitate, oil painting texture, diagonal dynamism, parrots repeating empty platitudes",
-    "harsh light revealing all flaws, embroidery depicting delusions of grandeur, academic technique, centralized vanity",
-    "speech bubbles of pompous nonsense, cheeks flushed with champagne hubris, brocade drowning the figure in golden excess, chandeliers swaying ominously",
-    "harsh light revealing all flaws, embroidery depicting delusions of grandeur, impasto highlights, intimate chamber scene",
-    "aristocratic absurdity exposed, brow furrowed with dynastic concerns, velvet so deep one could drown in it, monkeys with mirrors reflecting truth, hourglass running out in the background",
-    "harsh light revealing all flaws, ruffles blooming into textile madness, visible brushwork, centralized vanity",
-    "revolutionary fervor, nose bulging with inherited hauteur, jewels weighing down the absurdly overdressed, butterflies representing fleeting power, velvet curtains revealing emptiness behind",
+    "golden hour of empire, ermine trim suggesting borrowed majesty, alla prima confidence, intimate chamber scene",
+    "theatrical illumination, wig sprouting architectural fantasies, masterful rendering, trompe l'oeil pretension",
+    "tenebrism chiaroscuro, ermine trim suggesting borrowed majesty, sfumato edges, theatrical composition, velvet curtains revealing emptiness behind",
+    "Gillray-style biting satire, nose bulging with inherited hauteur, silk ribbons multiplying like courtly parasites, scepters wilting in weak grips",
+    "grotesque aristocratic features, eyes bulging with aristocratic entitlement, golden threads spelling out inherited shame, crowns slipping from unworthy heads",
+    "candlelit intimacy, periwig cascading like frozen waterfalls, masterful rendering, theatrical composition",
     "exaggerated physiognomy, chin retreating from responsibility, fabric patterns swallowing the wearer whole, cracks spreading through marble floors",
-    "Hogarth moral commentary, cheeks flushed with champagne hubris, powdered tower of hair defying gravity, serpents coiled in courtly corners, gilded frames cracking at the edges",
-    "speech bubbles of pompous nonsense, eyes bulging with aristocratic entitlement, embroidery depicting delusions of grandeur, hourglass running out in the background",
-    "revolutionary fervor, lips pursed in performative disdain, velvet so deep one could drown in it, velvet curtains revealing emptiness behind",
-    "ancien regime mockery, eyes bulging with aristocratic entitlement, powdered tower of hair defying gravity, cherubs overhead with knowing smirks, gilded frames cracking at the edges",
-    "harsh light revealing all flaws, wig bending under the weight of hubris, glazed shadows, intimate chamber scene, mice nibbling at the foundations",
-    "political caricature, nose bulging with inherited hauteur, ruffles blooming into textile madness, cracks spreading through marble floors",
-    "exaggerated physiognomy, chin retreating from responsibility, silk ribbons multiplying like courtly parasites, cake towers threatening to collapse",
-    "Hogarth moral commentary, lips pursed in performative disdain, buttons multiplied beyond sanity, columns listing toward inevitable fall",
-    "candlelit intimacy, velvet so deep one could drown in it, academic technique, centralized vanity",
-    "revolutionary fervor, cheeks flushed with champagne hubris, ruffles blooming into textile madness, putti struggling to lift collapsing crowns, crowns slipping from unworthy heads",
-    "ancien regime mockery, eyes bulging with aristocratic entitlement, golden threads spelling out inherited shame, chandeliers swaying ominously",
-    "dramatic Baroque lighting, brocade drowning the figure in golden excess, glazed shadows, centralized vanity, cracks spreading through marble floors",
-    "political caricature, jowls trembling with indignation, ermine trim suggesting borrowed majesty, gold leaf peeling to reveal rot beneath",
-    "exaggerated physiognomy, nose bulging with inherited hauteur, wig bending under the weight of hubris, thrones buckling under bloated egos",
-    "Gillray-style biting satire, chin retreating from responsibility, ermine trim suggesting borrowed majesty, chandeliers swaying ominously",
-    "ancien regime mockery, hands clutching invisible scepters, periwig cascading like frozen waterfalls, serpents coiled in courtly corners, cracks spreading through marble floors",
-    "grotesque aristocratic features, hands clutching invisible scepters, silk ribbons multiplying like courtly parasites, cherubs overhead with knowing smirks, cracks spreading through marble floors",
-    "symbolic objects of corruption, lips pursed in performative disdain, ermine trim suggesting borrowed majesty, columns listing toward inevitable fall",
-    "political caricature, hands clutching invisible scepters, powdered tower of hair defying gravity, peacocks of vanity preening nearby, gilded frames cracking at the edges",
-    "exaggerated physiognomy, neck craning toward imagined importance, brocade drowning the figure in golden excess, crowns slipping from unworthy heads",
-    "Gillray-style biting satire, chin retreating from responsibility, fabric patterns swallowing the wearer whole, velvet curtains revealing emptiness behind",
-    "harsh light revealing all flaws, powdered tower of hair defying gravity, academic technique, intimate chamber scene",
-    "speech bubbles of pompous nonsense, cheeks flushed with champagne hubris, fabric patterns swallowing the wearer whole, gilded frames cracking at the edges",
-    "divine light piercing darkness, wig bending under the weight of hubris, impasto highlights, processional grandeur, gold leaf peeling to reveal rot beneath",
-    "revolutionary fervor, neck craning toward imagined importance, lace collar sharp enough to decapitate, storm clouds gathering beyond the window",
-    "divine light piercing darkness, lace collar sharp enough to decapitate, oil painting texture, intimate chamber scene",
-    "theatrical illumination, wig bending under the weight of hubris, rich oil pigments, isolated figure against void",
-    "speech bubbles of pompous nonsense, chin retreating from responsibility, buttons multiplied beyond sanity, cracks spreading through marble floors",
-    "exaggerated physiognomy, lips pursed in performative disdain, embroidery depicting delusions of grandeur, gold leaf peeling to reveal rot beneath",
-    "grotesque aristocratic features, posture rigid with false dignity, fabric patterns swallowing the wearer whole, monkeys with mirrors reflecting truth, crowns slipping from unworthy heads",
-    "ancien regime mockery, brow furrowed with dynastic concerns, powdered tower of hair defying gravity, hourglass running out in the background",
-    "golden hour of empire, wig sprouting architectural fantasies, oil painting texture, centralized vanity",
-    "aristocratic absurdity exposed, chin retreating from responsibility, fabric patterns swallowing the wearer whole, monkeys with mirrors reflecting truth, gilded frames cracking at the edges",
-    "Caravaggesque spotlight, velvet so deep one could drown in it, masterful rendering, crowded courtly chaos, putti struggling to lift collapsing crowns, hourglass running out in the background",
-    "ancien regime mockery, cheeks flushed with champagne hubris, fabric patterns swallowing the wearer whole, parrots repeating empty platitudes, thrones buckling under bloated egos",
-    "candlelit intimacy, golden threads spelling out inherited shame, visible brushwork, trompe l\'oeil pretension",
-    "exaggerated physiognomy, chin retreating from responsibility, ermine trim suggesting borrowed majesty, storm clouds gathering beyond the window",
-    "dramatic Baroque lighting, powdered tower of hair defying gravity, visible brushwork, swirling Baroque drama",
-    "tenebrism chiaroscuro, jewels weighing down the absurdly overdressed, rich oil pigments, crowded courtly chaos",
-    "dramatic Baroque lighting, fabric patterns swallowing the wearer whole, layered translucency, crowded courtly chaos",
-    "symbolic objects of corruption, jowls trembling with indignation, golden threads spelling out inherited shame, storm clouds gathering beyond the window",
-    "ancien regime mockery, eyes bulging with aristocratic entitlement, buttons multiplied beyond sanity, putti struggling to lift collapsing crowns, storm clouds gathering beyond the window",
-    "Caravaggesque spotlight, embroidery depicting delusions of grandeur, layered translucency, pyramidal arrangement",
-    "speech bubbles of pompous nonsense, nose bulging with inherited hauteur, powdered tower of hair defying gravity, gilded frames cracking at the edges",
-    "Caravaggesque spotlight, fabric patterns swallowing the wearer whole, visible brushwork, pyramidal arrangement, ravens waiting with patient hunger",
-    "candlelit intimacy, periwig cascading like frozen waterfalls, academic technique, crowded courtly chaos",
-    "exaggerated physiognomy, lips pursed in performative disdain, golden threads spelling out inherited shame, scepters wilting in weak grips",
-    "exaggerated physiognomy, neck craning toward imagined importance, brocade drowning the figure in golden excess, thrones buckling under bloated egos",
-    "Gillray-style biting satire, hands clutching invisible scepters, embroidery depicting delusions of grandeur, velvet curtains revealing emptiness behind",
-    "symbolic objects of corruption, jowls trembling with indignation, periwig cascading like frozen waterfalls, cherubs overhead with knowing smirks, velvet curtains revealing emptiness behind",
-    "candlelit intimacy, lace collar sharp enough to decapitate, sfumato edges, crowded courtly chaos",
-    "ancien regime mockery, cheeks flushed with champagne hubris, jewels weighing down the absurdly overdressed, chandeliers swaying ominously",
-    "divine light piercing darkness, silk ribbons multiplying like courtly parasites, oil painting texture, centralized vanity",
-    "Hogarth moral commentary, neck craning toward imagined importance, ermine trim suggesting borrowed majesty, cake towers threatening to collapse",
-    "speech bubbles of pompous nonsense, eyes bulging with aristocratic entitlement, wig bending under the weight of hubris, velvet curtains revealing emptiness behind",
-    "tenebrism chiaroscuro, ruffles blooming into textile madness, layered translucency, centralized vanity, ravens waiting with patient hunger",
-    "golden hour of empire, jewels weighing down the absurdly overdressed, glazed shadows, trompe l\'oeil pretension",
-    "golden hour of empire, wig bending under the weight of hubris, rich oil pigments, swirling Baroque drama, gilded frames cracking at the edges",
-    "aristocratic absurdity exposed, nose bulging with inherited hauteur, periwig cascading like frozen waterfalls, scepters wilting in weak grips",
-    "exaggerated physiognomy, lips pursed in performative disdain, periwig cascading like frozen waterfalls, chandeliers swaying ominously",
-    "harsh light revealing all flaws, brocade drowning the figure in golden excess, layered translucency, swirling Baroque drama",
-    "divine light piercing darkness, ermine trim suggesting borrowed majesty, alla prima confidence, intimate chamber scene, putti struggling to lift collapsing crowns",
     "speech bubbles of pompous nonsense, chin retreating from responsibility, velvet so deep one could drown in it, crowns slipping from unworthy heads",
-    "Gillray-style biting satire, posture rigid with false dignity, golden threads spelling out inherited shame, cracks spreading through marble floors",
+    "political caricature, lips pursed in performative disdain, silk ribbons multiplying like courtly parasites, cake towers threatening to collapse",
+    "aristocratic absurdity exposed, lips pursed in performative disdain, wig bending under the weight of hubris, lap dogs more dignified than their owners",
+    "ancien regime mockery, hands clutching invisible scepters, velvet so deep one could drown in it, velvet curtains revealing emptiness behind",
+    "grotesque aristocratic features, cheeks flushed with champagne hubris, periwig cascading like frozen waterfalls, scepters wilting in weak grips",
+    "revolutionary fervor, eyes bulging with aristocratic entitlement, lace collar sharp enough to decapitate, serpents coiled in courtly corners",
+    "divine light piercing darkness, silk ribbons multiplying like courtly parasites, impasto highlights, ravens waiting with patient hunger",
+    "speech bubbles of pompous nonsense, eyes bulging with aristocratic entitlement, periwig cascading like frozen waterfalls, cake towers threatening to collapse",
+    "Hogarth moral commentary, eyes bulging with aristocratic entitlement, ermine trim suggesting borrowed majesty, hourglass running out in the background",
+    "harsh light revealing all flaws, velvet so deep one could drown in it, masterful rendering, gold leaf peeling to reveal rot beneath",
+    "candlelit intimacy, brocade drowning the figure in golden excess, academic technique, swirling Baroque drama",
+    "Caravaggesque spotlight, periwig cascading like frozen waterfalls, oil painting texture, isolated figure against void",
     "shadow play of moral ambiguity, buttons multiplied beyond sanity, alla prima confidence, theatrical composition",
-    "symbolic objects of corruption, neck craning toward imagined importance, golden threads spelling out inherited shame, cake towers threatening to collapse",
-    "grotesque aristocratic features, hands clutching invisible scepters, jewels weighing down the absurdly overdressed, chandeliers swaying ominously",
-    "golden hour of empire, silk ribbons multiplying like courtly parasites, impasto highlights, trompe l\'oeil pretension",
-    "theatrical illumination, ermine trim suggesting borrowed majesty, academic technique, swirling Baroque drama",
+    "golden hour of empire, ruffles blooming into textile madness, oil painting texture, peacocks of vanity preening nearby, thrones buckling under bloated egos",
+    "dramatic Baroque lighting, powdered tower of hair defying gravity, visible brushwork, swirling Baroque drama",
+    "harsh light revealing all flaws, wig sprouting architectural fantasies, alla prima confidence, trompe l'oeil pretension",
+    "Caravaggesque spotlight, silk ribbons multiplying like courtly parasites, rich oil pigments, serpents coiled in courtly corners",
+    "theatrical illumination, jewels weighing down the absurdly overdressed, masterful rendering, pyramidal arrangement",
+    "shadow play of moral ambiguity, brocade drowning the figure in golden excess, layered translucency, diagonal dynamism",
+    "candlelit intimacy, ruffles blooming into textile madness, visible brushwork, trompe l'oeil pretension",
+    "Caravaggesque spotlight, powdered tower of hair defying gravity, oil painting texture, columns listing toward inevitable fall",
+    "tenebrism chiaroscuro, powdered tower of hair defying gravity, visible brushwork, serpents coiled in courtly corners, cracks spreading through marble floors",
+    "political caricature, brow furrowed with dynastic concerns, wig sprouting architectural fantasies, lap dogs more dignified than their owners, columns listing toward inevitable fall",
+    "exaggerated physiognomy, cheeks flushed with champagne hubris, powdered tower of hair defying gravity, butterflies representing fleeting power, cake towers threatening to collapse",
+    "aristocratic absurdity exposed, jowls trembling with indignation, embroidery depicting delusions of grandeur, storm clouds gathering beyond the window",
+    "symbolic objects of corruption, nose bulging with inherited hauteur, embroidery depicting delusions of grandeur, thrones buckling under bloated egos",
+    "Gillray-style biting satire, posture rigid with false dignity, golden threads spelling out inherited shame, cracks spreading through marble floors",
+    "aristocratic absurdity exposed, nose bulging with inherited hauteur, periwig cascading like frozen waterfalls, scepters wilting in weak grips"
 ];
+
+];
+
 const styles = {
     baroque: { 
         base: "baroque masterpiece, dramatic chiaroscuro lighting, Rubens influence, rich oil paint textures, gold leaf accents", 
