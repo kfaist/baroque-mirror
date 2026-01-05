@@ -1606,6 +1606,21 @@ const promptInspirations = [
     "Pre-Raphaelite romanticism, flowing hair, medieval legends, vivid colors",
     "Venetian veduta cityscape, grand canals, gondolas, atmospheric perspective",
     "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects"
+
+// Caricature prompts for 50/50 mode - French Revolutionary style
+const caricaturePrompts = [
+    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features, lithograph texture",
+    "James Gillray caricature, bulging eyes, elongated nose, mocking aristocracy, hand-colored etching",
+    "Thomas Rowlandson satirical print, rotund figures, red-faced excess, Georgian era mockery",
+    "Sans-culottes propaganda broadsheet, fierce revolutionary spirit, woodcut boldness",
+    "Philipon pear-head style, transformative caricature, subversive wit, pen and ink grotesque",
+    "William Hogarth moral satire, exaggerated expressions, crowded composition, social critique",
+    "George Cruikshank political cartoon, sharp angular features, dramatic gestures, copper engraving",
+    "French Revolutionary playing card, reversed hierarchy, commoner as king, satirical inversion",
+    "Père Duchesne pamphlet illustration, angry populist figure, crude woodcut energy",
+    "Physiognomic study gone wrong, Lavater nightmare, distorted proportions, pseudo-scientific grotesque"
+];
+
 ];
 
 // ============================================
@@ -2488,6 +2503,84 @@ function buildPrompt() {
 async function start() {
     document.getElementById('startBtn').disabled = true;
     
+    // ============================================
+    // 50/50 CARICATURE MODE - INSTANT UI JUMPS
+    // ============================================
+    const isCaricatureMode = Math.random() < 0.5;
+    
+    if (isCaricatureMode) {
+        log('🎭 CARICATURE MODE!', 'success');
+        
+        // Flash dice button
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        shuffleBtn.style.transform = 'scale(1.3)';
+        shuffleBtn.style.background = 'rgba(212,175,55,0.5)';
+        shuffleBtn.style.transition = 'all 0.1s';
+        
+        // INSTANT: Set caricature prompt
+        const caricaturePrompt = caricaturePrompts[Math.floor(Math.random() * caricaturePrompts.length)];
+        document.getElementById('promptInput').value = caricaturePrompt;
+        customPrompt = caricaturePrompt;
+        
+        await new Promise(r => setTimeout(r, 150));
+        shuffleBtn.style.transform = 'scale(1)';
+        shuffleBtn.style.background = '';
+        
+        // Flash apply button
+        const applyBtn = document.getElementById('applyPromptBtn');
+        applyBtn.style.transform = 'scale(1.2)';
+        applyBtn.style.background = 'rgba(212,175,55,0.6)';
+        applyBtn.style.boxShadow = '0 0 20px rgba(212,175,55,0.8)';
+        
+        await new Promise(r => setTimeout(r, 150));
+        applyBtn.style.transform = 'scale(1)';
+        applyBtn.style.background = '';
+        applyBtn.style.boxShadow = '';
+        
+        // INSTANT JUMP: Mode slider to caricature
+        const modeSlider = document.getElementById('modeSlider');
+        const targetMode = 85 + Math.floor(Math.random() * 15);
+        modeSlider.value = targetMode;
+        modeValue = targetMode;
+        document.getElementById('modeValue').textContent = 'Revolutionary Satire';
+        modeSlider.style.transition = 'none';
+        
+        await new Promise(r => setTimeout(r, 100));
+        
+        // INSTANT JUMP: Strength slider DOWN
+        const strengthSlider = document.getElementById('strengthSlider');
+        const targetStrength = 5 + Math.floor(Math.random() * 4);
+        strengthSlider.value = targetStrength;
+        params.strength = targetStrength;
+        document.getElementById('strengthVal').textContent = targetStrength;
+        
+        await new Promise(r => setTimeout(r, 100));
+        
+        // INSTANT JUMP: Prompt weight UP
+        const promptWeight = 90 + Math.floor(Math.random() * 8);
+        document.getElementById('promptWeightSlider').value = promptWeight;
+        document.getElementById('promptWeightSlider2').value = promptWeight;
+        const pw = promptWeight / 100;
+        params.promptWeight = pw;
+        document.getElementById('promptWeightVal').textContent = pw.toFixed(2);
+        document.getElementById('promptWeightVal2').textContent = pw.toFixed(2);
+        
+        log('🎭 Revolutionary portrait ready!', 'success');
+        
+    } else {
+        log('🎨 Classical mode', 'info');
+        
+        // Just set strength low
+        const strengthSlider = document.getElementById('strengthSlider');
+        const targetStrength = 6 + Math.floor(Math.random() * 4);
+        strengthSlider.value = targetStrength;
+        params.strength = targetStrength;
+        document.getElementById('strengthVal').textContent = targetStrength;
+    }
+    
+    // ============================================
+    // CAMERA ACCESS
+    // ============================================
     try {
         log('Getting camera...', 'info');
         localStream = await navigator.mediaDevices.getUserMedia({
