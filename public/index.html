@@ -91,13 +91,14 @@
         
         .status-overlay { position: absolute; top: 15px; left: 15px; z-index: 50; display: none; font-family: 'Courier New', monospace; font-size: 0.7rem; max-width: 350px; }
         .status-overlay.active { display: block; }
-        .status-message { color: #ff1493; animation: pinkFlash 1s ease-in-out infinite; margin-bottom: 8px; text-shadow: 0 0 10px rgba(255,20,147,0.5); }
+        .status-message { color: #ff1493; font-weight: bold; font-size: 0.85rem; animation: pinkFlash 1s ease-in-out infinite; margin-bottom: 8px; text-shadow: 0 0 10px rgba(255,20,147,0.5); }
         @keyframes pinkFlash { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .status-debug { color: #88ffaa; font-size: 0.65rem; line-height: 1.4; }
         .status-debug-line { margin-bottom: 2px; }
         .status-debug-line.info { color: #88ccff; }
         .status-debug-line.success { color: #88ffaa; }
         .status-debug-line.error { color: #ff6b6b; }
+        .status-hint { color: #ff8c00; font-weight: bold; margin-top: 4px; font-size: 0.7rem; }
         
         .input-preview-section { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(212,175,55,0.3); }
         .input-preview-section h4 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; text-align: center; text-transform: uppercase; }
@@ -301,6 +302,7 @@
                     <div class="status-overlay" id="statusOverlay">
                         <div class="status-message" id="statusMessage">Negotiating with pixels. Please wait up to 45 seconds...</div>
                         <div class="status-debug" id="statusDebug"></div>
+                        <div class="status-hint" id="statusHint"></div>
                     </div>
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
@@ -589,6 +591,26 @@ const styles = {
     artemisia: { base: "Artemisia Gentileschi style, powerful feminine subjects, dramatic baroque lighting, intense emotional expression", caricature: "Revolutionary feminist pamphlet, fierce women warriors, Liberty Leading the People energy", colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] } }
 };
 
+function getErrorHint(msg) {
+    const hints = {
+        'videoinput failed': 'Make sure your camera isn\'t in use by another app',
+        'NotAllowedError': 'Camera permission was denied - check browser settings',
+        'NotFoundError': 'No camera detected on this device',
+        'NotReadableError': 'Camera may be in use by another application',
+        'OverconstrainedError': 'Camera doesn\'t support the requested resolution',
+        'Permission denied': 'Please allow camera access when prompted',
+        'Could not start video source': 'Close other apps using your camera and try again',
+        'network': 'Check your internet connection',
+        'Create failed': 'AI service may be busy - try again in a moment',
+        'WebRTC': 'Connection issue - try refreshing the page',
+        'WHIP': 'Stream connection failed - check your network'
+    };
+    for (const [key, hint] of Object.entries(hints)) {
+        if (msg.toLowerCase().includes(key.toLowerCase())) return hint;
+    }
+    return '';
+}
+
 function log(msg, type = '') {
     const div = document.getElementById('log');
     const line = document.createElement('div');
@@ -600,12 +622,19 @@ function log(msg, type = '') {
     console.log(msg);
     // Update status debug overlay
     const statusDebug = document.getElementById('statusDebug');
+    const statusHint = document.getElementById('statusHint');
     if (statusDebug && document.getElementById('statusOverlay').classList.contains('active')) {
         statusDebugLines.push({text: `[${timeStr}] ${msg}`, type: type});
         if (statusDebugLines.length > 5) statusDebugLines.shift();
         statusDebug.innerHTML = statusDebugLines.map(l => `<div class="status-debug-line ${l.type}">${l.text}</div>`).join('');
+        // Show hint for errors
+        if (type === 'error' && statusHint) {
+            const hint = getErrorHint(msg);
+            statusHint.textContent = hint;
+        }
     }
 }
+
 
 function showStatusOverlay() {
     const overlay = document.getElementById('statusOverlay');
