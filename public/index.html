@@ -1545,6 +1545,46 @@ const promptInspirations = [
     "Pre-Raphaelite romanticism, flowing hair, medieval legends, vivid colors",
     "Venetian veduta cityscape, grand canals, gondolas, atmospheric perspective",
     "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects"
+
+// Caricature prompts - 50/50 chance on dice roll
+const caricaturePrompts = [
+    "golden hour of empire, ermine trim suggesting borrowed majesty, alla prima confidence, intimate chamber scene",
+    "theatrical illumination, wig sprouting architectural fantasies, masterful rendering, trompe l'oeil pretension",
+    "tenebrism chiaroscuro, ermine trim suggesting borrowed majesty, sfumato edges, theatrical composition, velvet curtains revealing emptiness behind",
+    "Gillray-style biting satire, nose bulging with inherited hauteur, silk ribbons multiplying like courtly parasites, scepters wilting in weak grips",
+    "grotesque aristocratic features, eyes bulging with aristocratic entitlement, golden threads spelling out inherited shame, crowns slipping from unworthy heads",
+    "candlelit intimacy, periwig cascading like frozen waterfalls, masterful rendering, theatrical composition",
+    "exaggerated physiognomy, chin retreating from responsibility, fabric patterns swallowing the wearer whole, cracks spreading through marble floors",
+    "speech bubbles of pompous nonsense, chin retreating from responsibility, velvet so deep one could drown in it, crowns slipping from unworthy heads",
+    "political caricature, lips pursed in performative disdain, silk ribbons multiplying like courtly parasites, cake towers threatening to collapse",
+    "aristocratic absurdity exposed, lips pursed in performative disdain, wig bending under the weight of hubris, lap dogs more dignified than their owners",
+    "ancien regime mockery, hands clutching invisible scepters, velvet so deep one could drown in it, velvet curtains revealing emptiness behind",
+    "grotesque aristocratic features, cheeks flushed with champagne hubris, periwig cascading like frozen waterfalls, scepters wilting in weak grips",
+    "revolutionary fervor, eyes bulging with aristocratic entitlement, lace collar sharp enough to decapitate, serpents coiled in courtly corners",
+    "divine light piercing darkness, silk ribbons multiplying like courtly parasites, impasto highlights, ravens waiting with patient hunger",
+    "speech bubbles of pompous nonsense, eyes bulging with aristocratic entitlement, periwig cascading like frozen waterfalls, cake towers threatening to collapse",
+    "Hogarth moral commentary, eyes bulging with aristocratic entitlement, ermine trim suggesting borrowed majesty, hourglass running out in the background",
+    "harsh light revealing all flaws, velvet so deep one could drown in it, masterful rendering, gold leaf peeling to reveal rot beneath",
+    "candlelit intimacy, brocade drowning the figure in golden excess, academic technique, swirling Baroque drama",
+    "Caravaggesque spotlight, periwig cascading like frozen waterfalls, oil painting texture, isolated figure against void",
+    "shadow play of moral ambiguity, buttons multiplied beyond sanity, alla prima confidence, theatrical composition",
+    "golden hour of empire, ruffles blooming into textile madness, oil painting texture, peacocks of vanity preening nearby, thrones buckling under bloated egos",
+    "dramatic Baroque lighting, powdered tower of hair defying gravity, visible brushwork, swirling Baroque drama",
+    "harsh light revealing all flaws, wig sprouting architectural fantasies, alla prima confidence, trompe l'oeil pretension",
+    "Caravaggesque spotlight, silk ribbons multiplying like courtly parasites, rich oil pigments, serpents coiled in courtly corners",
+    "theatrical illumination, jewels weighing down the absurdly overdressed, masterful rendering, pyramidal arrangement",
+    "shadow play of moral ambiguity, brocade drowning the figure in golden excess, layered translucency, diagonal dynamism",
+    "candlelit intimacy, ruffles blooming into textile madness, visible brushwork, trompe l'oeil pretension",
+    "Caravaggesque spotlight, powdered tower of hair defying gravity, oil painting texture, columns listing toward inevitable fall",
+    "tenebrism chiaroscuro, powdered tower of hair defying gravity, visible brushwork, serpents coiled in courtly corners, cracks spreading through marble floors",
+    "political caricature, brow furrowed with dynastic concerns, wig sprouting architectural fantasies, lap dogs more dignified than their owners, columns listing toward inevitable fall",
+    "exaggerated physiognomy, cheeks flushed with champagne hubris, powdered tower of hair defying gravity, butterflies representing fleeting power, cake towers threatening to collapse",
+    "aristocratic absurdity exposed, jowls trembling with indignation, embroidery depicting delusions of grandeur, storm clouds gathering beyond the window",
+    "symbolic objects of corruption, nose bulging with inherited hauteur, embroidery depicting delusions of grandeur, thrones buckling under bloated egos",
+    "Gillray-style biting satire, posture rigid with false dignity, golden threads spelling out inherited shame, cracks spreading through marble floors",
+    "aristocratic absurdity exposed, nose bulging with inherited hauteur, periwig cascading like frozen waterfalls, scepters wilting in weak grips"
+];
+
 ];
 
 const styles = {
@@ -1634,11 +1674,15 @@ function captureStill(slotNumber) {
 function loadCapturedStills() { localStorage.removeItem('baroqueCaptures'); capturedStills = {}; }
 
 function shufflePrompt() {
-    const randomPrompt = promptInspirations[Math.floor(Math.random() * promptInspirations.length)];
+    // 50/50 caricature vs classical
+    const allPrompts = Math.random() < 0.5 ? caricaturePrompts : promptInspirations;
+    const randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
     document.getElementById('promptInput').value = randomPrompt;
     customPrompt = randomPrompt;
-    log('Prompt shuffled', 'info');
+    log('Prompt rolled & applied', 'success');
+    if (streamId) setParams();
 }
+
 
 function applyCustomPrompt() {
     customPrompt = document.getElementById('promptInput').value.trim();
