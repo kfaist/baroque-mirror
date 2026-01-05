@@ -15,875 +15,113 @@
             overflow-x: hidden;
         }
         
-        /* Embossed shimmer background canvas */
-        #bgCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .content { position: relative; z-index: 10; }
         
-        /* Particle overlay canvas */
-        #particleCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
+        .header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(212,175,55,0.3); background: linear-gradient(180deg, rgba(114,47,55,0.4) 0%, rgba(10,6,8,0.9) 100%); backdrop-filter: blur(10px); }
+        .header-top { display: flex; justify-content: center; gap: 40px; margin-bottom: 10px; font-size: 0.8rem; letter-spacing: 4px; color: #f4e4ba; font-family: 'Cinzel', serif; text-transform: uppercase; }
+        .header h1 { color: #d4af37; font-size: 2.5rem; margin: 0; letter-spacing: 6px; font-family: 'Cinzel', serif; text-shadow: 0 0 30px rgba(212,175,55,0.5); }
+        .header-sub { font-size: 1rem; color: rgba(244,228,186,0.8); margin-top: 8px; font-style: italic; }
+        .header-credit { font-size: 0.9rem; color: #d4af37; margin-top: 5px; font-weight: 600; }
         
-        .content {
-            position: relative;
-            z-index: 10;
-        }
+        /* FLAT 3-COLUMN GRID - EXACTLY LIKE DANCE */
+        .main { display: grid; grid-template-columns: 400px 1fr 200px; gap: 25px; padding: 25px; max-width: 1900px; margin: 0 auto; }
         
-        .header { 
-            text-align: center; 
-            padding: 20px; 
-            border-bottom: 1px solid rgba(212,175,55,0.3); 
-            background: linear-gradient(180deg, rgba(114,47,55,0.4) 0%, rgba(10,6,8,0.9) 100%);
-            backdrop-filter: blur(10px);
-        }
+        .controls, .capture-panel { background: rgba(15,10,12,0.85); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5); }
+        .capture-panel { padding: 15px; }
         
-        .header-top { 
-            display: flex; 
-            justify-content: center; 
-            gap: 40px; 
-            margin-bottom: 10px; 
-            font-size: 0.8rem; 
-            letter-spacing: 4px; 
-            color: #f4e4ba; 
-            font-family: 'Cinzel', serif;
-            text-transform: uppercase;
-        }
-        
-        .header h1 { 
-            color: #d4af37; 
-            font-size: 2.5rem; 
-            margin: 0; 
-            letter-spacing: 6px; 
-            font-family: 'Cinzel', serif;
-            text-shadow: 0 0 30px rgba(212,175,55,0.5);
-        }
-        
-        .header-sub { 
-            font-size: 1rem; 
-            color: rgba(244,228,186,0.8); 
-            margin-top: 8px; 
-            font-style: italic;
-        }
-        
-        .header-credit { 
-            font-size: 0.9rem; 
-            color: #d4af37; 
-            margin-top: 5px; 
-            font-weight: 600;
-        }
-        
-        .main { 
-            display: grid; 
-            grid-template-columns: 400px 1fr; 
-            gap: 25px; 
-            padding: 25px; 
-            max-width: 1900px; 
-            margin: 0 auto;
-            align-items: stretch;
-        }
-        
-        /* Right content: video + captures side by side, statement below */
-        .right-content {
-            display: grid;
-            grid-template-columns: 1fr 200px;
-            gap: 25px;
-            align-items: stretch;
-        }
-        
-        /* Wrapper keeps video and statement stacked together, independent of capture panel height */
-        .video-statement-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-        
-        .controls, .capture-panel { 
-            width: 100%;
-            box-sizing: border-box;
-
-            background: rgba(15,10,12,0.85); 
-            border: 1px solid rgba(212,175,55,0.4); 
-            border-radius: 12px; 
-            padding: 20px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5);
-        }
-        
-        /* Film Strip Styling for Capture Panel */
-        .capture-panel {
-            padding: 15px;
-            background: linear-gradient(180deg, #1a1412 0%, #0d0a09 50%, #1a1412 100%) !important;
-            border: 1px solid rgba(212,175,55,0.3) !important;
-            position: relative;
-            padding-left: 28px !important;
-            padding-right: 28px !important;
-            border-radius: 4px !important;
-        }
-        
-        /* Sprocket track containers */
-        .capture-panel::before,
-        .capture-panel::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 18px;
-            background: 
-                repeating-linear-gradient(
-                    45deg,
-                    rgba(30,25,20,0.9) 0px,
-                    rgba(30,25,20,0.9) 4px,
-                    rgba(15,12,10,0.9) 4px,
-                    rgba(15,12,10,0.9) 8px
-                );
-            z-index: 0;
-        }
-        .capture-panel::before { left: 0; border-right: 1px solid rgba(139,105,20,0.4); }
-        .capture-panel::after { right: 0; border-left: 1px solid rgba(139,105,20,0.4); }
-        
-        /* Sprocket holes */
-        .sprocket-track {
-            position: absolute;
-            top: 10px;
-            bottom: 10px;
-            width: 18px;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 5px 0;
-        }
-        .sprocket-track.left { left: 0; }
-        .sprocket-track.right { right: 0; }
-        
-        .sprocket-hole {
-            width: 10px;
-            height: 14px;
-            background: rgba(0,0,0,0.95);
-            border-radius: 2px;
-            box-shadow: 
-                inset 0 1px 2px rgba(255,255,255,0.1),
-                0 0 3px rgba(0,0,0,0.8);
-            flex-shrink: 0;
-        }
-        
-        .section { 
-            margin-bottom: 20px; 
-            padding-bottom: 18px; 
-            border-bottom: 1px solid rgba(212,175,55,0.2); 
-        }
-        
+        .section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
         .section:last-child { border-bottom: none; margin-bottom: 0; }
+        .section h3 { color: #d4af37; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; }
         
-        /* Session Button - HIDDEN on desktop (moved to session-bar) */
-        .session-section {
-            display: none;
-        }
+        .session-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .session-btn { width: 100%; padding: 16px 20px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(114,47,55,0.85), rgba(74,31,36,0.95)); color: #d4af37; font-size: 1rem; cursor: pointer; border-radius: 8px; font-family: 'Cinzel', serif; letter-spacing: 3px; transition: all 0.3s ease; text-transform: uppercase; box-shadow: 0 0 20px rgba(212,175,55,0.15); }
+        .session-btn:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 35px rgba(212,175,55,0.5); transform: translateY(-2px); }
+        .session-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .session-btn.stop { background: linear-gradient(180deg, rgba(139,0,0,0.85), rgba(74,0,0,0.95)); border-color: #8b0000; color: #ff6b6b; }
+        .session-btn.stop:hover { background: linear-gradient(180deg, #8b0000, #4a0000); color: #fff; box-shadow: 0 0 35px rgba(139,0,0,0.5); }
         
-        .session-btn {
-            width: 100%;
-            padding: 16px 20px;
-            border: 2px solid #d4af37;
-            background: linear-gradient(180deg, rgba(114,47,55,0.85), rgba(74,31,36,0.95));
-            color: #d4af37;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 8px;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 3px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            box-shadow: 0 0 20px rgba(212,175,55,0.15);
-        }
+        .prompt-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .prompt-section h3 { margin-bottom: 12px; color: #d4af37; font-size: 0.95rem; font-family: 'Cinzel', serif; letter-spacing: 2px; }
+        .prompt-container { display: flex; gap: 8px; align-items: stretch; }
+        .prompt-btn { width: 44px; height: 44px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.2rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .prompt-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.3); transform: scale(1.05); }
+        .prompt-btn.apply { background: linear-gradient(135deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9)); font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 1px; }
+        .prompt-btn.apply:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; }
+        .prompt-input { flex: 1; padding: 12px 14px; border: 1px solid rgba(212,175,55,0.4); background: rgba(0,0,0,0.5); color: #f4e4ba; border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; resize: none; min-height: 44px; transition: all 0.3s ease; }
+        .prompt-input:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.2); }
+        .prompt-input::placeholder { color: rgba(244,228,186,0.4); font-style: italic; }
         
-        .session-btn:hover {
-            background: linear-gradient(180deg, #d4af37, #8b6914);
-            color: #0a0608;
-            box-shadow: 0 0 35px rgba(212,175,55,0.5);
-            transform: translateY(-2px);
-        }
+        .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .style-btn { padding: 10px 12px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #f4e4ba; cursor: pointer; border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; transition: all 0.3s ease; }
+        .style-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+        .style-btn.active { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; font-weight: 700; border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); }
         
-        .session-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .session-btn.stop {
-            background: linear-gradient(180deg, rgba(139,0,0,0.85), rgba(74,0,0,0.95));
-            border-color: #8b0000;
-            color: #ff6b6b;
-        }
-        
-        .session-btn.stop:hover {
-            background: linear-gradient(180deg, #8b0000, #4a0000);
-            color: #fff;
-            box-shadow: 0 0 35px rgba(139,0,0,0.5);
-        }
-        
-        /* Session Bar - ALWAYS VISIBLE above video */
-        .session-bar {
-            display: flex;
-            align-items: stretch;
-            gap: 15px;
-            grid-column: 1 / -1;
-            margin-bottom: 15px;
-        }
-        
-        .session-bar #log {
-            flex: 1;
-            margin: 0;
-            height: auto;
-            min-height: 50px;
-            max-height: 80px;
-        }
-        
-        .session-bar .session-btn {
-            padding: 18px 30px;
-            font-size: 1.1rem;
-        }
-        
-        .section h3 { 
-            color: #d4af37; 
-            font-size: 0.95rem; 
-            margin: 0 0 14px 0; 
-            font-family: 'Cinzel', serif;
-            letter-spacing: 2px;
-        }
-        
-        /* Banner-style section headers */
-        .section-banner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-        
-        .section-banner h3 {
-            margin: 0;
-        }
-        
-        .banner-btn {
-            padding: 8px 16px;
-            border: 1px solid #d4af37;
-            background: linear-gradient(180deg, rgba(114,47,55,0.9), rgba(74,31,36,0.95));
-            color: #d4af37;
-            font-size: 0.7rem;
-            cursor: pointer;
-            border-radius: 5px;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-        
-        .banner-btn:hover {
-            background: linear-gradient(180deg, #d4af37, #8b6914);
-            color: #0a0608;
-            box-shadow: 0 0 20px rgba(212,175,55,0.4);
-            transform: translateY(-1px);
-        }
-        
-        /* Prompt Section */
-        .prompt-section {
-            margin-bottom: 20px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid rgba(212,175,55,0.2);
-        }
-        
-        .prompt-section h3 {
-            margin-bottom: 12px;
-        }
-        
-        .prompt-container {
-            display: flex;
-            gap: 8px;
-            align-items: stretch;
-        }
-        
-        .prompt-btn {
-            width: 44px;
-            height: 44px;
-            border: 1px solid rgba(212,175,55,0.5);
-            background: rgba(20,15,18,0.8);
-            color: #d4af37;
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .prompt-btn:hover {
-            background: rgba(212,175,55,0.15);
-            border-color: #d4af37;
-            box-shadow: 0 0 15px rgba(212,175,55,0.3);
-            transform: scale(1.05);
-        }
-        
-        .prompt-btn.apply {
-            background: linear-gradient(135deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9));
-            font-family: 'Cinzel', serif;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-        }
-        
-        .prompt-btn.apply:hover {
-            background: linear-gradient(135deg, #d4af37, #8b6914);
-            color: #0a0608;
-        }
-        
-        .prompt-input {
-            flex: 1;
-            padding: 12px 14px;
-            border: 1px solid rgba(212,175,55,0.4);
-            background: rgba(0,0,0,0.5);
-            color: #f4e4ba;
-            border-radius: 6px;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 0.9rem;
-            resize: none;
-            min-height: 44px;
-            transition: all 0.3s ease;
-        }
-        
-        .prompt-input:focus {
-            outline: none;
-            border-color: #d4af37;
-            box-shadow: 0 0 20px rgba(212,175,55,0.2);
-        }
-        
-        .prompt-input::placeholder {
-            color: rgba(244,228,186,0.4);
-            font-style: italic;
-        }
-        
-        .style-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 8px; 
-        }
-        
-        .style-btn { 
-            padding: 10px 12px; 
-            border: 1px solid rgba(212,175,55,0.5); 
-            background: rgba(20,15,18,0.8); 
-            color: #f4e4ba; 
-            cursor: pointer; 
-            border-radius: 6px; 
-            font-family: 'Cormorant Garamond', serif; 
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-        
-        .style-btn:hover { 
-            background: rgba(212,175,55,0.15); 
-            border-color: #d4af37;
-            box-shadow: 0 0 15px rgba(212,175,55,0.2);
-        }
-        
-        .style-btn.active { 
-            background: linear-gradient(135deg, #d4af37, #8b6914); 
-            color: #0a0608; 
-            font-weight: 700; 
-            border-color: #d4af37;
-            box-shadow: 0 0 20px rgba(212,175,55,0.4);
-        }
-        
-        .mode-box { 
-            margin-top: 14px; 
-            padding: 12px; 
-            background: rgba(0,0,0,0.4); 
-            border-radius: 8px;
-            border: 1px solid rgba(212,175,55,0.15);
-        }
-        
-        .mode-labels { 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 0.75rem; 
-            color: rgba(244,228,186,0.7); 
-            margin-bottom: 10px; 
-        }
-        
-        .mode-value { 
-            text-align: center; 
-            color: #d4af37; 
-            font-size: 0.9rem; 
-            margin-top: 8px;
-            font-weight: 600;
-        }
+        .mode-box { margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(212,175,55,0.15); }
+        .mode-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(244,228,186,0.7); margin-bottom: 10px; }
+        .mode-value { text-align: center; color: #d4af37; font-size: 0.9rem; margin-top: 8px; font-weight: 600; }
         
         .slider-row { margin-bottom: 14px; }
+        .slider-row label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; color: rgba(244,228,186,0.9); }
+        .slider-row .val { color: #d4af37; font-weight: 700; min-width: 40px; text-align: right; }
+        input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #722f37, #d4af37); -webkit-appearance: none; cursor: pointer; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37); cursor: pointer; box-shadow: 0 0 10px rgba(212,175,55,0.6); transition: transform 0.2s; }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
         
-        .slider-row label { 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 0.85rem; 
-            margin-bottom: 6px;
-            color: rgba(244,228,186,0.9);
-        }
+        .audio-section { background: rgba(114,47,55,0.2); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; margin-top: 12px; }
+        .audio-section h4 { color: #d4af37; font-size: 0.85rem; margin-bottom: 10px; font-family: 'Cinzel', serif; }
+        .audio-meter { height: 40px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; display: flex; align-items: flex-end; gap: 2px; padding: 4px; }
+        .audio-bar { flex: 1; background: linear-gradient(180deg, #d4af37, #722f37, #2a1015); border-radius: 2px; transition: height 0.05s ease-out; }
         
-        .slider-row .val { 
-            color: #d4af37; 
-            font-weight: 700;
-            min-width: 40px;
-            text-align: right;
-        }
+        .output-area { position: relative; }
+        .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: #000; }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
+        .output-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .video-animation-overlay { position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; pointer-events: none; z-index: 2; opacity: 0.4; mix-blend-mode: overlay; }
+        .fullscreen-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.6); background: rgba(10,6,8,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.1rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(5px); }
+        .fullscreen-btn:hover { background: rgba(212,175,55,0.3); border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); transform: scale(1.1); }
+        .video-container:fullscreen { border-radius: 0; border: none; }
+        .video-container:fullscreen .video-wrapper { aspect-ratio: auto; width: 100vw; height: 100vh; }
+        .video-container:fullscreen .output-video { object-fit: contain; background: #000; }
+        .video-container:fullscreen .fullscreen-btn { top: 25px; right: 25px; }
+        .video-container:fullscreen .frame-overlay { display: none; }
+        .video-container:fullscreen .video-animation-overlay { display: none; }
+        .frame-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; border: 8px solid transparent; border-image: linear-gradient(135deg, #d4af37 0%, #8b6914 25%, #d4af37 50%, #8b6914 75%, #d4af37 100%) 1; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
         
-        input[type="range"] { 
-            width: 100%; 
-            height: 6px; 
-            border-radius: 3px; 
-            background: linear-gradient(90deg, #722f37, #d4af37); 
-            -webkit-appearance: none;
-            cursor: pointer;
-        }
+        .input-preview-section { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(212,175,55,0.3); }
+        .input-preview-section h4 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; text-align: center; text-transform: uppercase; }
+        .webcam-pip { position: relative; width: 100%; border: 2px solid rgba(212,175,55,0.5); border-radius: 6px; overflow: hidden; background: #000; box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3); aspect-ratio: 4/3; }
+        .webcam-pip video { width: 100%; height: 100%; object-fit: cover; display: block; }
         
-        input[type="range"]::-webkit-slider-thumb { 
-            -webkit-appearance: none; 
-            width: 18px; 
-            height: 18px; 
-            border-radius: 50%; 
-            background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37);
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(212,175,55,0.6);
-            transition: transform 0.2s;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-        
-        /* Audio reactivity section */
-        .audio-section {
-            background: rgba(114,47,55,0.2);
-            border: 1px solid rgba(212,175,55,0.3);
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 12px;
-        }
-        
-        .audio-section h4 {
-            color: #d4af37;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
-            font-family: 'Cinzel', serif;
-        }
-        
-        .audio-meter {
-            height: 40px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-            align-items: flex-end;
-            gap: 2px;
-            padding: 4px;
-        }
-        
-        .audio-bar {
-            flex: 1;
-            background: linear-gradient(180deg, #d4af37, #722f37, #2a1015);
-            border-radius: 2px;
-            transition: height 0.05s ease-out;
-        }
-        
-        .action-btn { 
-            width: 100%; 
-            padding: 16px; 
-            border: 2px solid #d4af37; 
-            background: linear-gradient(180deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9)); 
-            color: #d4af37; 
-            font-size: 1rem; 
-            cursor: pointer; 
-            border-radius: 8px; 
-            font-family: 'Cinzel', serif;
-            letter-spacing: 2px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-        
-        .action-btn:hover { 
-            background: linear-gradient(180deg, #d4af37, #8b6914); 
-            color: #0a0608;
-            box-shadow: 0 0 30px rgba(212,175,55,0.5);
-            transform: translateY(-2px);
-        }
-        
-        .action-btn:disabled { 
-            opacity: 0.4; 
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .output-area { 
-            position: relative;
-        }
-        
-        .video-container {
-            position: relative;
-            border: 2px solid rgba(212,175,55,0.6);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8);
-            background: #000;
-        }
-        
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-        }
-        
-        .output-video { 
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .video-animation-overlay {
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
-            pointer-events: none;
-            z-index: 2;
-            opacity: 0.4;
-            mix-blend-mode: overlay;
-        }
-        
-        .fullscreen-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 40px;
-            height: 40px;
-            border: 1px solid rgba(212,175,55,0.6);
-            background: rgba(10,6,8,0.8);
-            color: #d4af37;
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 20;
-            backdrop-filter: blur(5px);
-        }
-        
-        .fullscreen-btn:hover {
-            background: rgba(212,175,55,0.3);
-            border-color: #d4af37;
-            box-shadow: 0 0 20px rgba(212,175,55,0.4);
-            transform: scale(1.1);
-        }
-        
-        .video-container:fullscreen {
-            border-radius: 0;
-            border: none;
-        }
-        
-        .video-container:fullscreen .video-wrapper {
-            aspect-ratio: auto;
-            width: 100vw;
-            height: 100vh;
-        }
-        
-        .video-container:fullscreen .output-video {
-            object-fit: contain;
-            background: #000;
-        }
-        
-        .video-container:fullscreen .fullscreen-btn {
-            top: 25px;
-            right: 25px;
-        }
-        
-        .video-container:fullscreen .frame-overlay {
-            display: none;
-        }
-        
-        .video-container:fullscreen .video-animation-overlay {
-            display: none;
-        }
-        
-        .frame-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            border: 8px solid transparent;
-            border-image: linear-gradient(135deg, #d4af37 0%, #8b6914 25%, #d4af37 50%, #8b6914 75%, #d4af37 100%) 1;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
-        }
-        
-        /* Input Preview */
-        .input-preview-section {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(212,175,55,0.3);
-        }
-        .input-preview-section h4 {
-            color: #d4af37;
-            font-family: 'Cinzel', serif;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            margin-bottom: 8px;
-            text-align: center;
-            text-transform: uppercase;
-        }
-        .webcam-pip { 
-            position: relative;
-            width: 100%;
-            border: 2px solid rgba(212,175,55,0.5); 
-            border-radius: 6px; 
-            overflow: hidden; 
-            background: #000;
-            box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3);
-            aspect-ratio: 4/3;
-        }
-        .webcam-pip video { 
-            width: 100%; 
-            height: 100%;
-            object-fit: cover;
-            display: block; 
-        }
-        
-        #log { 
-            background: rgba(0,0,0,0.6); 
-            padding: 12px; 
-            height: 100px; 
-            overflow-y: auto; 
-            font-family: 'Courier New', monospace; 
-            font-size: 0.7rem; 
-            border: 1px solid rgba(212,175,55,0.2); 
-            border-radius: 6px; 
-            margin-top: 15px;
-        }
-        
+        #log { background: rgba(0,0,0,0.6); padding: 12px; height: 100px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.7rem; border: 1px solid rgba(212,175,55,0.2); border-radius: 6px; margin-top: 15px; }
         .success { color: #4ade80; }
         .error { color: #f87171; }
         .info { color: #60a5fa; }
         
-        /* Capture Panel Styles */
-        .capture-panel-header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(212,175,55,0.2);
-        }
+        .capture-panel-header { display: flex; justify-content: center; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .capture-panel-header h3 { color: #d4af37; font-size: 0.8rem; font-family: 'Cinzel', serif; letter-spacing: 2px; margin: 0; }
+        .purchase-btn-large { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 12px 10px; margin-bottom: 15px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35)); color: #d4af37; cursor: pointer; border-radius: 6px; font-family: 'Cinzel', serif; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; text-align: center; gap: 2px; }
+        .purchase-btn-large:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 25px rgba(212,175,55,0.5); transform: translateY(-2px); }
+        .purchase-btn-large .purchase-line { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; }
+        .purchase-btn-large .purchase-divider { font-size: 0.6rem; opacity: 0.7; line-height: 1; }
+        .capture-grid { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 3; }
+        .capture-slot { aspect-ratio: 16/10; border: 1px solid rgba(139,105,20,0.5); border-radius: 2px; background: rgba(10,8,6,0.95); overflow: hidden; position: relative; transition: all 0.3s ease; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
+        .capture-slot:hover { border-color: #d4af37; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3); }
+        .capture-slot-number { position: absolute; top: 4px; left: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.55rem; color: rgba(212,175,55,0.6); letter-spacing: 1px; z-index: 2; }
+        .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .capture-slot.has-image img { display: block; }
+        .capture-slot.has-image .capture-btn { opacity: 0; }
+        .capture-slot.has-image:hover .capture-btn { opacity: 1; }
+        .capture-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 8px 12px; border: 1px solid rgba(212,175,55,0.6); background: rgba(15,10,12,0.9); color: #d4af37; font-size: 0.6rem; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; white-space: nowrap; }
+        .capture-btn:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
         
-        .capture-panel-header h3 {
-            color: #d4af37;
-            font-size: 0.8rem;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 2px;
-            margin: 0;
-        }
-        
-        .purchase-btn-large {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 12px 10px;
-            margin-bottom: 15px;
-            border: 2px solid #d4af37;
-            background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35));
-            color: #d4af37;
-            cursor: pointer;
-            border-radius: 6px;
-            font-family: 'Cinzel', serif;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            text-decoration: none;
-            text-align: center;
-            gap: 2px;
-        }
-        
-        .purchase-btn-large:hover {
-            background: linear-gradient(180deg, #d4af37, #8b6914);
-            color: #0a0608;
-            box-shadow: 0 0 25px rgba(212,175,55,0.5);
-            transform: translateY(-2px);
-        }
-        
-        .purchase-btn-large .purchase-line {
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
-        
-        .purchase-btn-large .purchase-divider {
-            font-size: 0.6rem;
-            opacity: 0.7;
-            line-height: 1;
-        }
-        
-        .capture-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            position: relative;
-            z-index: 3;
-        }
-        
-        .capture-slot {
-            aspect-ratio: 16/10;
-            border: 1px solid rgba(139,105,20,0.5);
-            border-radius: 2px;
-            background: rgba(10,8,6,0.95);
-            overflow: hidden;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
-        }
-        
-        .capture-slot:hover {
-            border-color: #d4af37;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3);
-        }
-        
-        .capture-slot-number {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
-            font-size: 0.55rem;
-            color: rgba(212,175,55,0.6);
-            letter-spacing: 1px;
-            z-index: 2;
-        }
-        
-        .capture-slot img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-        
-        .capture-slot.has-image img {
-            display: block;
-        }
-        
-        .capture-slot.has-image .capture-btn {
-            opacity: 0;
-        }
-        
-        .capture-slot.has-image:hover .capture-btn {
-            opacity: 1;
-        }
-        
-        .capture-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 8px 12px;
-            border: 1px solid rgba(212,175,55,0.6);
-            background: rgba(15,10,12,0.9);
-            color: #d4af37;
-            font-size: 0.6rem;
-            cursor: pointer;
-            border-radius: 4px;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-        
-        .capture-btn:hover {
-            background: linear-gradient(135deg, #d4af37, #8b6914);
-            color: #0a0608;
-            box-shadow: 0 0 15px rgba(212,175,55,0.4);
-        }
-        
-        /* Scrollbar styling */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
-        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
-        
-        /* Statement section */
-        .statement-section { 
-            margin-top: 0; 
-            position: relative; 
-            width: 100%;
-            box-sizing: border-box;
-        }
-        
-        .shimmer-bg {
-            position: relative;
-            padding: 20px;
-            background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(255,255,255,0.06));
-            overflow: hidden;
-        }
-        .shimmer-bg::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 200%;
-            height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), rgba(255,200,255,0.08), transparent);
-            animation: shimmer 8s infinite;
-            pointer-events: none;
-        }
-        
-        .shimmer-block {
-            position: relative;
-            background: rgba(0,0,0,0.85);
-            padding: 36px 44px;
-            overflow: hidden;
-        }
-        .shimmer-block::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 200%;
-            height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.06), rgba(255,200,255,0.04), transparent);
-            animation: shimmer 6s infinite;
-            pointer-events: none;
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(100%); }
-            100% { transform: translateX(100%); }
-        }
-        
+        .statement-section { margin-top: 12px; position: relative; width: 100%; box-sizing: border-box; }
+        .shimmer-bg { position: relative; padding: 20px; background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(255,255,255,0.06)); overflow: hidden; }
+        .shimmer-bg::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), rgba(255,200,255,0.08), transparent); animation: shimmer 8s infinite; pointer-events: none; }
+        .shimmer-block { position: relative; background: rgba(0,0,0,0.85); padding: 36px 44px; overflow: hidden; }
+        .shimmer-block::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.06), rgba(255,200,255,0.04), transparent); animation: shimmer 6s infinite; pointer-events: none; }
+        @keyframes shimmer { 0% { transform: translateX(0); } 50% { transform: translateX(100%); } 100% { transform: translateX(100%); } }
         .shimmer-block h2 { position: relative; color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 4px; margin: 0 0 15px 0; text-transform: uppercase; }
         .shimmer-block h2:not(:first-of-type) { margin-top: 25px; }
         .shimmer-block p { position: relative; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin-bottom: 12px; color: #f4e4ba; }
@@ -891,211 +129,55 @@
         .shimmer-block a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.4); transition: all 0.3s ease; }
         .shimmer-block a:hover { border-bottom-color: #fff; }
         .shimmer-block .section-divider { position: relative; text-align: center; color: #fff; font-size: 1rem; margin: 28px 0; opacity: 0.5; letter-spacing: 0.3em; }
-        .shimmer-block .contact-info { 
-            position: relative; 
-            margin-top: 30px; 
-            padding-top: 20px; 
-            border-top: 1px solid rgba(212,175,55,0.3);
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
-            font-size: 0.75rem;
-            color: rgba(244,228,186,0.7);
-        }
+        .shimmer-block .contact-info { position: relative; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(212,175,55,0.3); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.75rem; color: rgba(244,228,186,0.7); }
         .shimmer-block .contact-info p { margin-bottom: 6px; font-size: 0.75rem; }
         .shimmer-block .contact-info strong { color: rgba(212,175,55,0.8); letter-spacing: 2px; font-weight: normal; }
         .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
         
-        /* ========== MOBILE RESPONSIVE ========== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
+        
+        /* RESPONSIVE - EXACTLY LIKE DANCE */
         @media (max-width: 1200px) {
-            .main {
-                grid-template-columns: 1fr 200px;
-                grid-template-rows: auto 1fr;
-            }
-            .controls {
-                grid-column: 1 / -1;
-                grid-row: 1;
-            }
+            .main { grid-template-columns: 1fr 200px; grid-template-rows: auto 1fr; }
+            .controls { grid-column: 1 / -1; grid-row: 1; }
         }
         
         @media (max-width: 900px) {
-            .main {
-                display: flex !important;
-                flex-direction: column !important;
-                padding: 0;
-                gap: 0;
-            }
-            
-            /* Session bar spans full width */
-            .session-bar {
-            display: flex;
-            align-items: stretch;
-            gap: 15px;
-                order: 0 !important;
-                width: 100%;
-                padding: 10px 15px;
-                box-sizing: border-box;
-                margin: 0;
-            }
-            
-            /* FULL SCREEN VIDEO AT TOP */
-            .output-area {
-                order: 1 !important;
-                width: 100vw;
-                margin: 0;
-            }
-            
-            /* Mobile action bar right after video */
-            .mobile-action-bar {
-                order: 2 !important;
-                display: flex !important;
-            }
-            
-            /* Controls below */
-            .controls {
-                order: 3 !important;
-            }
-            
-            .video-container {
-                border-radius: 0 !important;
-                border-left: none !important;
-                border-right: none !important;
-            }
-            
-            /* Hide film strip panel on mobile */
-            .capture-panel {
-                display: none !important;
-            }
-            
-            /* Statement visible on mobile */
-            .statement-section {
-                display: block !important;
-                order: 100 !important;
-                width: 100% !important;
-                margin: 20px 10px !important;
-                background: rgba(15,10,12,0.95) !important;
-                border: 1px solid rgba(212,175,55,0.4) !important;
-                border-radius: 12px !important;
-            }
-            
-            .controls {
-                margin: 10px;
-                border-radius: 12px;
-            }
+            .main { grid-template-columns: 1fr; padding: 0; gap: 0; }
+            .output-area { order: -10; width: 100vw; margin-left: calc(-50vw + 50%); }
+            .video-container { border-radius: 0 !important; border-left: none !important; border-right: none !important; }
+            .capture-panel { display: none !important; }
+            .controls { margin: 10px; border-radius: 12px; }
         }
         
         @media (max-width: 768px) {
-            .header {
-                padding: 10px;
-            }
-            .header-top {
-                display: none;
-            }
-            .header h1 {
-                font-size: 1.4rem;
-                letter-spacing: 2px;
-            }
-            .header-sub, .header-credit {
-                font-size: 0.9rem;
-            }
-            
-            .section:nth-child(n+6) {
-                display: none;
-            }
-            
-            .controls {
-                padding: 16px;
-            }
-            
-            .section {
-                margin-bottom: 16px;
-                padding-bottom: 16px;
-            }
-            
-            .section h3 {
-                font-size: 1.2rem;
-                margin-bottom: 14px;
-            }
-            
-            .session-btn {
-                padding: 24px 28px;
-                font-size: 1.4rem;
-                letter-spacing: 3px;
-                min-height: 70px;
-            }
-            
-            .style-buttons {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 12px !important;
-            }
-            .style-btn {
-                padding: 20px 14px !important;
-                font-size: 1rem !important;
-                min-height: 65px;
-            }
-            
-            .slider-row {
-                margin-bottom: 20px;
-            }
-            .slider-row label {
-                font-size: 1rem;
-                margin-bottom: 12px;
-            }
-            input[type="range"] {
-                height: 12px;
-            }
-            input[type="range"]::-webkit-slider-thumb {
-                width: 32px;
-                height: 32px;
-            }
-            
-            .shop-prints-btn {
-                padding: 20px 24px !important;
-                font-size: 1.2rem !important;
-                min-height: 65px;
-            }
-            
-            .shimmer-block {
-                padding: 24px 20px;
-            }
+            .header { padding: 10px; }
+            .header-top { display: none; }
+            .header h1 { font-size: 1.4rem; letter-spacing: 2px; }
+            .header-sub, .header-credit { font-size: 0.9rem; }
+            .controls { padding: 16px; }
+            .section { margin-bottom: 16px; padding-bottom: 16px; }
+            .section h3 { font-size: 1.2rem; margin-bottom: 14px; }
+            .session-btn { padding: 24px 28px; font-size: 1.4rem; letter-spacing: 3px; min-height: 70px; }
+            .style-btn { padding: 20px 14px !important; font-size: 1rem !important; min-height: 65px; }
+            .slider-row { margin-bottom: 20px; }
+            .slider-row label { font-size: 1rem; margin-bottom: 12px; }
+            input[type="range"] { height: 12px; }
+            input[type="range"]::-webkit-slider-thumb { width: 32px; height: 32px; }
+            .shimmer-block { padding: 24px 20px; }
         }
         
         @media (max-width: 480px) {
-            .header h1 {
-                font-size: 1.2rem;
-            }
-            .header-sub, .header-credit {
-                font-size: 0.8rem;
-            }
-            
-            .controls {
-                margin: 8px;
-                padding: 14px;
-            }
-            
-            .section h3 {
-                font-size: 1.1rem;
-            }
-            
-            .session-btn {
-                padding: 20px 24px;
-                font-size: 1.2rem;
-                min-height: 60px;
-            }
-            
-            .style-btn {
-                padding: 16px 10px !important;
-                font-size: 0.9rem !important;
-                min-height: 55px;
-            }
-            
-            .slider-row label {
-                font-size: 0.9rem;
-            }
-            
-            .shop-prints-btn {
-                padding: 18px 20px !important;
-                font-size: 1rem !important;
-                min-height: 55px;
-            }
+            .header h1 { font-size: 1.2rem; }
+            .header-sub, .header-credit { font-size: 0.8rem; }
+            .controls { margin: 8px; padding: 14px; }
+            .section h3 { font-size: 1.1rem; }
+            .session-btn { padding: 20px 24px; font-size: 1.2rem; min-height: 60px; }
+            .style-btn { padding: 16px 10px !important; font-size: 0.9rem !important; min-height: 55px; }
+            .slider-row label { font-size: 0.9rem; }
         }
         
         @media (max-height: 500px) and (orientation: landscape) {
@@ -1104,129 +186,30 @@
             .controls { max-height: 80vh; overflow-y: auto; }
         }
         
-        /* Mobile Action Bar */
-        .mobile-action-bar {
-            display: none;
-        }
+        .mobile-action-bar { display: none; }
         
         @media (max-width: 900px) {
-            .mobile-action-bar {
-                display: flex !important;
-                justify-content: space-between;
-                align-items: stretch;
-                gap: 10px;
-                padding: 12px 10px;
-                background: rgba(10,6,8,0.95);
-                border-bottom: 2px solid rgba(212,175,55,0.4);
-                order: 2 !important;
-                width: 100%;
-            }
-            
-            .mobile-action-btn {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                padding: 12px 8px;
-                border: 1px solid rgba(212,175,55,0.5);
-                border-radius: 8px;
-                font-family: 'Cinzel', serif;
-                font-size: 0.75rem;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                text-decoration: none;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                min-height: 65px;
-            }
-            
-            .mobile-action-btn.capture {
-                background: linear-gradient(180deg, #d4af37, #8b6914);
-                color: #0a0608;
-                font-weight: 700;
-            }
-            
-            .mobile-action-btn.capture:active {
-                transform: scale(0.95);
-            }
-            
-            .mobile-recent-still {
-                flex: 1.2;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                background: rgba(0,0,0,0.5);
-                border: 1px solid rgba(212,175,55,0.3);
-                border-radius: 8px;
-                position: relative;
-                min-height: 65px;
-                overflow: hidden;
-            }
-            
-            .mobile-recent-still .placeholder-text {
-                color: rgba(244,228,186,0.4);
-                font-size: 0.65rem;
-                font-style: italic;
-            }
-            
-            .mobile-recent-still img {
-                display: none;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                position: absolute;
-                top: 0;
-                left: 0;
-            }
-            
-            .mobile-recent-still.has-image img {
-                display: block;
-            }
-            
-            .mobile-recent-still.has-image .placeholder-text {
-                display: none;
-            }
-            
-            .mobile-recent-still .still-counter {
-                position: absolute;
-                bottom: 4px;
-                right: 6px;
-                background: rgba(0,0,0,0.7);
-                color: #d4af37;
-                font-size: 0.6rem;
-                padding: 2px 6px;
-                border-radius: 4px;
-            }
-            
-            .mobile-action-btn.shop {
-                flex: 1.5;
-                background: rgba(20,15,18,0.9);
-                color: #d4af37;
-                flex-direction: column;
-                gap: 2px;
-                font-size: 0.75rem;
-            }
-            
-            .mobile-action-btn.shop:active {
-                background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
-            }
-            
-            .mobile-action-btn.shop .shop-line {
-                display: block;
-            }
-            
-            .mobile-action-btn.shop .shop-divider {
-                font-size: 0.6rem;
-                opacity: 0.6;
-            }
-            
-            .header {
-                position: sticky;
-                top: 0;
-                z-index: 100;
-            }
+            .header { position: sticky; top: 0; z-index: 100; background: linear-gradient(180deg, rgba(114,47,55,0.95) 0%, rgba(10,6,8,0.98) 100%); }
+            .controls { display: contents; }
+            .session-section { order: 1; background: rgba(15,10,12,0.95); padding: 15px; margin: 10px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.4); }
+            .output-area { order: 2; width: 100vw; margin-left: calc(-50vw + 50%); }
+            .mobile-action-bar { display: flex !important; order: 3; justify-content: space-between; align-items: stretch; gap: 10px; padding: 12px 10px; background: rgba(10,6,8,0.95); border-bottom: 2px solid rgba(212,175,55,0.4); width: 100%; }
+            .mobile-action-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px; border: 1px solid rgba(212,175,55,0.5); border-radius: 8px; font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.3s ease; min-height: 65px; }
+            .mobile-action-btn.capture { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; font-weight: 700; }
+            .mobile-action-btn.capture:active { transform: scale(0.95); }
+            .mobile-recent-still { flex: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; position: relative; min-height: 65px; overflow: hidden; }
+            .mobile-recent-still .placeholder-text { color: rgba(244,228,186,0.4); font-size: 0.65rem; font-style: italic; }
+            .mobile-recent-still img { display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+            .mobile-recent-still.has-image img { display: block; }
+            .mobile-recent-still.has-image .placeholder-text { display: none; }
+            .mobile-recent-still .still-counter { position: absolute; bottom: 4px; right: 6px; background: rgba(0,0,0,0.7); color: #d4af37; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; }
+            .mobile-action-btn.shop { flex: 1.5; background: rgba(20,15,18,0.9); color: #d4af37; flex-direction: column; gap: 2px; font-size: 0.75rem; }
+            .mobile-action-btn.shop:active { background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4)); }
+            .mobile-action-btn.shop .shop-line { display: block; }
+            .mobile-action-btn.shop .shop-divider { font-size: 0.6rem; opacity: 0.6; }
+            .prompt-section, .section { order: 4; background: rgba(15,10,12,0.95); padding: 15px; margin: 10px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.4); }
+            #log { order: 100; margin: 10px; }
+            .statement-section { order: 101; }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -1237,11 +220,7 @@
     
     <div class="content">
         <div class="header">
-            <div class="header-top">
-                <span>COLUMBUS MUSEUM OF ART</span>
-                <span>⚜</span>
-                <span>WONDERBALL 2026</span>
-            </div>
+            <div class="header-top"><span>COLUMBUS MUSEUM OF ART</span><span>⚜</span><span>WONDERBALL 2026</span></div>
             <h1>⚜ BAROQUE MIRROR: SELF-PORTRAIT ⚜</h1>
             <div class="header-sub">Live AI Art Transformation</div>
             <div class="header-credit">by Krista Faist</div>
@@ -1249,13 +228,11 @@
         
         <div class="main">
             <div class="controls">
-                <!-- Session section hidden - moved to session-bar -->
                 <div class="session-section">
                     <button class="session-btn" id="startBtn">Begin Session ⚜</button>
                     <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ■</button>
                 </div>
                 
-                <!-- Prompt Section -->
                 <div class="prompt-section">
                     <h3>⚜ Prompt</h3>
                     <div class="prompt-container">
@@ -1288,66 +265,43 @@
                 
                 <div class="section">
                     <h3>⚜ Transform Controls</h3>
-                    <div class="slider-row">
-                        <label>AI Strength <span class="val" id="strengthVal">50</span></label>
-                        <input type="range" id="strengthSlider" min="1" max="50" value="50">
-                    </div>
-                    <div class="slider-row">
-                        <label>Prompt Weight <span class="val" id="promptWeightVal">1.00</span></label>
-                        <input type="range" id="promptWeightSlider" min="0" max="100" value="100">
-                    </div>
-                    <div class="slider-row">
-                        <label>Pose <span class="val" id="poseVal">0.30</span></label>
-                        <input type="range" id="poseSlider" min="0" max="100" value="30">
-                    </div>
-                    <div class="slider-row">
-                        <label>Edge <span class="val" id="edgeVal">0.25</span></label>
-                        <input type="range" id="edgeSlider" min="0" max="100" value="25">
-                    </div>
-                    <div class="slider-row">
-                        <label>Depth <span class="val" id="depthVal">0.20</span></label>
-                        <input type="range" id="depthSlider" min="0" max="100" value="20">
-                    </div>
-                    <div class="slider-row">
-                        <label>Background Transparency <span class="val" id="bgTransVal">0%</span></label>
-                        <input type="range" id="bgTransSlider" min="0" max="100" value="0">
-                    </div>
+                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">50</span></label><input type="range" id="strengthSlider" min="1" max="50" value="50"></div>
+                    <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">1.00</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="100"></div>
+                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.30</span></label><input type="range" id="poseSlider" min="0" max="100" value="30"></div>
+                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.25</span></label><input type="range" id="edgeSlider" min="0" max="100" value="25"></div>
+                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.20</span></label><input type="range" id="depthSlider" min="0" max="100" value="20"></div>
+                    <div class="slider-row"><label>Background Transparency <span class="val" id="bgTransVal">0%</span></label><input type="range" id="bgTransSlider" min="0" max="100" value="0"></div>
                 </div>
                 
                 <div class="section">
                     <h3>⚜ Audio Reactivity</h3>
-                    <div class="slider-row">
-                        <label>Audio Intensity <span class="val" id="audioIntensityVal">75%</span></label>
-                        <input type="range" id="audioIntensitySlider" min="0" max="100" value="75">
-                    </div>
-                    <div class="slider-row">
-                        <label>Pulse Speed <span class="val" id="pulseSpeedVal">50%</span></label>
-                        <input type="range" id="pulseSpeedSlider" min="10" max="100" value="50">
-                    </div>
-                    <div class="slider-row">
-                        <label>Particle Density <span class="val" id="particleDensityVal">60%</span></label>
-                        <input type="range" id="particleDensitySlider" min="10" max="100" value="60">
-                    </div>
-                    <div class="audio-section">
-                        <h4>🎵 Live Audio Spectrum</h4>
-                        <div class="audio-meter" id="audioMeter"></div>
+                    <div class="slider-row"><label>Audio Intensity <span class="val" id="audioIntensityVal">75%</span></label><input type="range" id="audioIntensitySlider" min="0" max="100" value="75"></div>
+                    <div class="slider-row"><label>Pulse Speed <span class="val" id="pulseSpeedVal">50%</span></label><input type="range" id="pulseSpeedSlider" min="10" max="100" value="50"></div>
+                    <div class="slider-row"><label>Particle Density <span class="val" id="particleDensityVal">60%</span></label><input type="range" id="particleDensitySlider" min="10" max="100" value="60"></div>
+                    <div class="audio-section"><h4>🎵 Live Audio Spectrum</h4><div class="audio-meter" id="audioMeter"></div></div>
+                </div>
+                
+                <div class="statement-section">
+                    <div class="shimmer-bg">
+                        <div class="shimmer-block">
+                            <h2>Statement</h2>
+                            <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses.</p>
+                            <p>French Revolutionary caricature was uniquely ferocious, more violent, more confrontational, and more visually ruthless than anything produced before it.</p>
+                            <div class="section-divider">. . .</div>
+                            <h2>About</h2>
+                            <p>Historically, jesters entertained elites beneath gilded ceilings. Later, caricature artists appeared at salons and masquerades, where exaggerated portraits were commissioned by the same people who might dismiss them as vulgar in public.</p>
+                            <p class="license-note">The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0).</p>
+                            <div class="contact-info">
+                                <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+                                <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-            </div>
-            
-            <!-- Right content area -->
-            <div class="right-content">
-            
-            <!-- Session Bar - ALWAYS VISIBLE above video -->
-            <div class="session-bar">
                 <div id="log">⚜ Baroque Mirror ready...</div>
-                <button class="session-btn" id="startBtn2">Begin Session ⚜</button>
-                <button class="session-btn stop" id="stopBtn2" style="display:none;">End Session ■</button>
             </div>
             
-            <!-- Video and Statement wrapper -->
-            <div class="video-statement-wrapper">
             <div class="output-area">
                 <div class="video-container" id="videoContainer">
                     <div class="video-wrapper">
@@ -1359,131 +313,8 @@
                 </div>
             </div>
             
-            <!-- Statement Section - directly below video -->
-            <div class="statement-section">
-                <div class="shimmer-bg">
-                    <div class="shimmer-block">
-                        <h2>Statement</h2>
-                        <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses. It learns motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
-                        <p>French Revolutionary caricature was uniquely ferocious, more violent, more confrontational, and more visually ruthless than anything produced before it. It emerged during years when grotesque mockery and extravagant displays of wealth existed in the same rooms, and for a time no one blinked.</p>
-                        <div class="section-divider">. . .</div>
-                        <h2>About</h2>
-                        <p>Historically, jesters entertained elites beneath gilded ceilings (see the <a href="https://www.vam.ac.uk/articles/court-fools-and-jesters" target="_blank">Victoria and Albert Museum's overview</a>). Later, caricature artists appeared at salons and masquerades, where exaggerated portraits were commissioned by the same people who might dismiss them as vulgar in public. Early traditions are richly documented in sources like the <a href="https://www.metmuseum.org/toah/hd/crrn/hd_crrn.htm" target="_blank">Met's survey of caricature</a> and the <a href="https://www.britishmuseum.org/collection/galleries/political-satire" target="_blank">British Museum's political satire collection</a>.</p>
-                        <p>Wealthy patrons often paid handsomely for grotesque works of art that the lowest rung of the hoi polloi would judge tacky at a carnival. Taste, ego, and humor have always been unstable companions. AI heightens this tension: fragile ego is still the best subject, and a robust sense of humor remains the only safe compass. In glamorous rooms, as in history, opulence and satire continue their strange partnership.</p>
-                        <p class="license-note">The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development. Exhibition licenses and institutional partnerships support the continued evolution of networked digital art practices.</p>
-                        <div class="contact-info">
-                            <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
-                            <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div> <!-- close video-statement-wrapper -->
-            
-            <!-- Capture Panel - Right sidebar -->
-            <div class="capture-panel">
-                <div class="input-preview-section">
-                    <h4>⚜ Live Input</h4>
-                    <div class="webcam-pip">
-                        <video id="local" autoplay muted playsinline></video>
-                    </div>
-                </div>
-                
-                <div class="sprocket-track left">
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                </div>
-                <div class="sprocket-track right">
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
-                </div>
-                
-                <a href="/prints" class="purchase-btn-large" id="purchaseBtn">
-                    <span class="purchase-line">Shop Prints</span>
-                    <span class="purchase-divider">⚜</span>
-                    <span class="purchase-line">Mint NFTs</span>
-                </a>
-                
-                <div class="capture-panel-header">
-                    <h3>⚜ Captures</h3>
-                </div>
-                
-                <div class="capture-grid">
-                    <div class="capture-slot" data-slot="1">
-                        <span class="capture-slot-number">EXP_01</span>
-                        <img src="" alt="Captured still 1">
-                        <button class="capture-btn" onclick="captureStill(1)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="2">
-                        <span class="capture-slot-number">EXP_02</span>
-                        <img src="" alt="Captured still 2">
-                        <button class="capture-btn" onclick="captureStill(2)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="3">
-                        <span class="capture-slot-number">EXP_03</span>
-                        <img src="" alt="Captured still 3">
-                        <button class="capture-btn" onclick="captureStill(3)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="4">
-                        <span class="capture-slot-number">EXP_04</span>
-                        <img src="" alt="Captured still 4">
-                        <button class="capture-btn" onclick="captureStill(4)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="5">
-                        <span class="capture-slot-number">EXP_05</span>
-                        <img src="" alt="Captured still 5">
-                        <button class="capture-btn" onclick="captureStill(5)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="6">
-                        <span class="capture-slot-number">EXP_06</span>
-                        <img src="" alt="Captured still 6">
-                        <button class="capture-btn" onclick="captureStill(6)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="7">
-                        <span class="capture-slot-number">EXP_07</span>
-                        <img src="" alt="Captured still 7">
-                        <button class="capture-btn" onclick="captureStill(7)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="8">
-                        <span class="capture-slot-number">EXP_08</span>
-                        <img src="" alt="Captured still 8">
-                        <button class="capture-btn" onclick="captureStill(8)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="9">
-                        <span class="capture-slot-number">EXP_09</span>
-                        <img src="" alt="Captured still 9">
-                        <button class="capture-btn" onclick="captureStill(9)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="10">
-                        <span class="capture-slot-number">EXP_10</span>
-                        <img src="" alt="Captured still 10">
-                        <button class="capture-btn" onclick="captureStill(10)">Capture Still</button>
-                    </div>
-                </div>
-            </div>
-            </div> <!-- close right-content -->
-            
-            <!-- Mobile Action Bar - visible only on mobile -->
             <div class="mobile-action-bar">
-                <button class="mobile-action-btn capture" onclick="captureNextSlot()">
-                    CAPTURE
-                </button>
+                <button class="mobile-action-btn capture" onclick="captureNextSlot()">CAPTURE</button>
                 <div class="mobile-recent-still" id="mobileRecentStill">
                     <img src="" alt="Recent capture">
                     <span class="placeholder-text">No captures</span>
@@ -1496,7 +327,34 @@
                 </a>
             </div>
             
-        </div> <!-- close main -->
+            <div class="capture-panel">
+                <div class="input-preview-section">
+                    <h4>⚜ Live Input</h4>
+                    <div class="webcam-pip"><video id="local" autoplay muted playsinline></video></div>
+                </div>
+                
+                <a href="/prints" class="purchase-btn-large" id="purchaseBtn">
+                    <span class="purchase-line">Shop Prints</span>
+                    <span class="purchase-divider">⚜</span>
+                    <span class="purchase-line">Mint NFTs</span>
+                </a>
+                
+                <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
+                
+                <div class="capture-grid">
+                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">EXP_01</span><img src="" alt="Captured still 1"><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">EXP_02</span><img src="" alt="Captured still 2"><button class="capture-btn" onclick="captureStill(2)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">EXP_03</span><img src="" alt="Captured still 3"><button class="capture-btn" onclick="captureStill(3)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">EXP_04</span><img src="" alt="Captured still 4"><button class="capture-btn" onclick="captureStill(4)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">EXP_05</span><img src="" alt="Captured still 5"><button class="capture-btn" onclick="captureStill(5)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="6"><span class="capture-slot-number">EXP_06</span><img src="" alt="Captured still 6"><button class="capture-btn" onclick="captureStill(6)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="7"><span class="capture-slot-number">EXP_07</span><img src="" alt="Captured still 7"><button class="capture-btn" onclick="captureStill(7)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="8"><span class="capture-slot-number">EXP_08</span><img src="" alt="Captured still 8"><button class="capture-btn" onclick="captureStill(8)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="9"><span class="capture-slot-number">EXP_09</span><img src="" alt="Captured still 9"><button class="capture-btn" onclick="captureStill(9)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="10"><span class="capture-slot-number">EXP_10</span><img src="" alt="Captured still 10"><button class="capture-btn" onclick="captureStill(10)">Capture Still</button></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <canvas id="captureCanvas" style="display:none;"></canvas>
@@ -1548,145 +406,38 @@ const promptInspirations = [
     "Pre-Raphaelite romanticism, flowing hair, medieval legends, vivid colors",
     "Venetian veduta cityscape, grand canals, gondolas, atmospheric perspective",
     "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects"
-
-// Caricature prompts - 50/50 chance on dice roll
-const caricaturePrompts = [
-    "Gillray-style biting satire, nose bulging with inherited hauteur, buttons multiplied beyond sanity, serpents coiled in courtly corners, hourglass running out in the background",
-    "candlelit intimacy, wig bending under the weight of hubris, visible brushwork, pyramidal arrangement",
-    "Hogarth moral commentary, neck craning toward imagined importance, wig bending under the weight of hubris, velvet curtains revealing emptiness behind",
-    "Hogarth moral commentary, jowls trembling with indignation, brocade drowning the figure in golden excess, butterflies representing fleeting power, storm clouds gathering beyond the window",
-    "political caricature, hands clutching invisible scepters, powdered tower of hair defying gravity, cherubs overhead with knowing smirks, crowns slipping from unworthy heads",
-    "stormy atmospheric glow, wig sprouting architectural fantasies, alla prima confidence, trompe l'oeil pretension, cake towers threatening to collapse",
-    "shadow play of moral ambiguity, fabric patterns swallowing the wearer whole, impasto highlights, intimate chamber scene",
-    "Gillray-style biting satire, hands clutching invisible scepters, lace collar sharp enough to decapitate, gold leaf peeling to reveal rot beneath",
-    "speech bubbles of pompous nonsense, nose bulging with inherited hauteur, powdered tower of hair defying gravity, gilded frames cracking at the edges",
-    "stormy atmospheric glow, silk ribbons multiplying like courtly parasites, layered translucency, swirling Baroque drama",
-    "grotesque aristocratic features, posture rigid with false dignity, embroidery depicting delusions of grandeur, columns listing toward inevitable fall",
-    "stormy atmospheric glow, brocade drowning the figure in golden excess, sfumato edges, pyramidal arrangement",
-    "aristocratic absurdity exposed, posture rigid with false dignity, velvet so deep one could drown in it, crowns slipping from unworthy heads",
-    "aristocratic absurdity exposed, posture rigid with false dignity, silk ribbons multiplying like courtly parasites, cake towers threatening to collapse",
-    "revolutionary fervor, hands clutching invisible scepters, periwig cascading like frozen waterfalls, gold leaf peeling to reveal rot beneath",
-    "exaggerated physiognomy, eyes bulging with aristocratic entitlement, periwig cascading like frozen waterfalls, ravens waiting with patient hunger, columns listing toward inevitable fall",
-    "golden hour of empire, ruffles blooming into textile madness, rich oil pigments, intimate chamber scene",
-    "Hogarth moral commentary, nose bulging with inherited hauteur, wig sprouting architectural fantasies, cake towers threatening to collapse",
-    "tenebrism chiaroscuro, powdered tower of hair defying gravity, visible brushwork, processional grandeur, serpents coiled in courtly corners, cracks spreading through marble floors",
-    "political caricature, cheeks flushed with champagne hubris, wig sprouting architectural fantasies, thrones buckling under bloated egos",
-    "ancien regime mockery, hands clutching invisible scepters, periwig cascading like frozen waterfalls, serpents coiled in courtly corners, cracks spreading through marble floors",
-    "candlelit intimacy, periwig cascading like frozen waterfalls, academic technique, crowded courtly chaos",
-    "exaggerated physiognomy, chin retreating from responsibility, silk ribbons multiplying like courtly parasites, cake towers threatening to collapse",
-    "harsh light revealing all flaws, powdered tower of hair defying gravity, academic technique, intimate chamber scene",
-    "exaggerated physiognomy, cheeks flushed with champagne hubris, fabric patterns swallowing the wearer whole, gilded frames cracking at the edges",
-    "stormy atmospheric glow, embroidery depicting delusions of grandeur, impasto highlights, pyramidal arrangement, storm clouds gathering beyond the window",
-    "theatrical illumination, wig sprouting architectural fantasies, masterful rendering, trompe l'oeil pretension",
-    "ancien regime mockery, eyes bulging with aristocratic entitlement, golden threads spelling out inherited shame, chandeliers swaying ominously",
-    "tenebrism chiaroscuro, periwig cascading like frozen waterfalls, academic technique, trompe l'oeil pretension",
-    "ancien regime mockery, posture rigid with false dignity, periwig cascading like frozen waterfalls, velvet curtains revealing emptiness behind",
-    "grotesque aristocratic features, eyes bulging with aristocratic entitlement, golden threads spelling out inherited shame, crowns slipping from unworthy heads",
-    "golden hour of empire, jewels weighing down the absurdly overdressed, alla prima confidence, diagonal dynamism",
-    "Hogarthian moral narrative, sequential storytelling, symbolic detail, social critique, revolutionary fervor, nose bulging with inherited hauteur, ruffles blooming into textile madness, gold leaf peeling to reveal rot beneath",
-    "candlelit intimacy, buttons multiplied beyond sanity, oil painting texture, crowded courtly chaos",
-    "aristocratic absurdity exposed, brow furrowed with dynastic concerns, velvet so deep one could drown in it, monkeys with mirrors reflecting truth, hourglass running out in the background",
-    "grotesque aristocratic features, cheeks flushed with champagne hubris, wig sprouting architectural fantasies, mice nibbling at the foundations, cracks spreading through marble floors",
-    "Caravaggesque spotlight, embroidery depicting delusions of grandeur, layered translucency, pyramidal arrangement",
-    "divine light piercing darkness, jewels weighing down the absurdly overdressed, oil painting texture, pyramidal arrangement",
-    "golden hour of empire, ermine trim suggesting borrowed majesty, alla prima confidence, intimate chamber scene",
-    "golden hour of empire, embroidery depicting delusions of grandeur, alla prima confidence, isolated figure against void, chandeliers swaying ominously",
-    "theatrical illumination, periwig cascading like frozen waterfalls, masterful rendering, swirling Baroque drama",
-    "speech bubbles of pompous nonsense, cheeks flushed with champagne hubris, fabric patterns swallowing the wearer whole, gilded frames cracking at the edges",
-    "fete galante fantasy, velvet so deep one could drown in it, glazed shadows, diagonal dynamism, mice nibbling at the foundations",
-    "golden hour of empire, jewels weighing down the absurdly overdressed, visible brushwork, intimate chamber scene, allegorical figures rolling their eyes",
-    "speech bubbles of pompous nonsense, nose bulging with inherited hauteur, buttons multiplied beyond sanity, lap dogs more dignified than their owners, gilded frames cracking at the edges",
-    "aristocratic absurdity exposed, lips pursed in performative disdain, wig bending under the weight of hubris, lap dogs more dignified than their owners, thrones buckling under bloated egos",
-    "harsh light revealing all flaws, ruffles blooming into textile madness, visible brushwork, centralized vanity",
-    "aristocratic absurdity exposed, lips pursed in performative disdain, lace collar sharp enough to decapitate, gilded frames cracking at the edges",
-    "political caricature, eyes bulging with aristocratic entitlement, lace collar sharp enough to decapitate, cracks spreading through marble floors",
-    "speech bubbles of pompous nonsense, neck craning toward imagined importance, golden threads spelling out inherited shame, thrones buckling under bloated egos",
-    "harsh light revealing all flaws, wig bending under the weight of hubris, glazed shadows, intimate chamber scene, mice nibbling at the foundations",
-    "Gillray-style biting satire, cheeks flushed with champagne hubris, ruffles blooming into textile madness, scepters wilting in weak grips",
-    "Gillray-style biting satire, cheeks flushed with champagne hubris, ruffles blooming into textile madness, gold leaf peeling to reveal rot beneath",
-    "Gillray-style biting satire, neck craning toward imagined importance, golden threads spelling out inherited shame, chandeliers swaying ominously",
-    "candlelit intimacy, silk ribbons multiplying like courtly parasites, sfumato edges, intimate chamber scene",
-    "Gillray-style biting satire, chin retreating from responsibility, ermine trim suggesting borrowed majesty, chandeliers swaying ominously",
-    "divine light piercing darkness, silk ribbons multiplying like courtly parasites, visible brushwork, centralized vanity",
-    "harsh light revealing all flaws, embroidery depicting delusions of grandeur, sfumato edges, diagonal dynamism, serpents coiled in courtly corners, gilded frames cracking at the edges",
-    "grotesque aristocratic features, cheeks flushed with champagne hubris, periwig cascading like frozen waterfalls, cake towers threatening to collapse",
-    "Hogarth moral commentary, nose bulging with inherited hauteur, jewels weighing down the absurdly overdressed, putti struggling to lift collapsing crowns, chandeliers swaying ominously",
-    "candlelit intimacy, jewels weighing down the absurdly overdressed, alla prima confidence, swirling Baroque drama",
-    "theatrical illumination, ruffles blooming into textile madness, impasto highlights, isolated figure against void, allegorical figures rolling their eyes",
-    "Caravaggesque spotlight, silk ribbons multiplying like courtly parasites, rich oil pigments, centralized vanity, serpents coiled in courtly corners",
-    "speech bubbles of pompous nonsense, chin retreating from responsibility, buttons multiplied beyond sanity, cracks spreading through marble floors",
-    "political caricature, hands clutching invisible scepters, silk ribbons multiplying like courtly parasites, monkeys with mirrors reflecting truth, thrones buckling under bloated egos",
-    "speech bubbles of pompous nonsense, hands clutching invisible scepters, fabric patterns swallowing the wearer whole, chandeliers swaying ominously",
-    "grotesque aristocratic features, nose bulging with inherited hauteur, silk ribbons multiplying like courtly parasites, velvet curtains revealing emptiness behind",
-    "candlelit intimacy, golden threads spelling out inherited shame, visible brushwork, trompe l'oeil pretension",
-    "tenebrism chiaroscuro, powdered tower of hair defying gravity, visible brushwork, trompe l'oeil pretension, gilded frames cracking at the edges",
-    "stormy atmospheric glow, wig sprouting architectural fantasies, glazed shadows, crowded courtly chaos",
-    "theatrical illumination, wig bending under the weight of hubris, rich oil pigments, centralized vanity",
-    "dramatic Baroque lighting, ruffles blooming into textile madness, alla prima confidence, isolated figure against void",
-    "revolutionary fervor, cheeks flushed with champagne hubris, ruffles blooming into textile madness, putti struggling to lift collapsing crowns, crowns slipping from unworthy heads",
-    "harsh light revealing all flaws, velvet so deep one could drown in it, masterful rendering, diagonal dynamism, gold leaf peeling to reveal rot beneath",
-    "Hogarth moral commentary, eyes bulging with aristocratic entitlement, ermine trim suggesting borrowed majesty, hourglass running out in the background",
-    "political caricature, nose bulging with inherited hauteur, ruffles blooming into textile madness, cracks spreading through marble floors",
-    "Gillray-style biting satire, eyes bulging with aristocratic entitlement, buttons multiplied beyond sanity, storm clouds gathering beyond the window",
-    "champagne-bubble palette, silk ribbons multiplying like courtly parasites, glazed shadows, swirling Baroque drama",
-    "ancien regime mockery, nose bulging with inherited hauteur, buttons multiplied beyond sanity, hourglass running out in the background",
-    "divine light piercing darkness, silk ribbons multiplying like courtly parasites, oil painting texture, centralized vanity",
-    "candlelit intimacy, powdered tower of hair defying gravity, alla prima confidence, centralized vanity",
-    "dramatic Baroque lighting, fabric patterns swallowing the wearer whole, impasto highlights, diagonal dynamism",
-    "shadow play of moral ambiguity, wig bending under the weight of hubris, layered translucency, intimate chamber scene",
-    "political caricature, posture rigid with false dignity, velvet so deep one could drown in it, cracks spreading through marble floors",
-    "Hogarth moral commentary, nose bulging with inherited hauteur, wig bending under the weight of hubris, gilded frames cracking at the edges",
-    "ancien regime mockery, hands clutching invisible scepters, velvet so deep one could drown in it, butterflies representing fleeting power, velvet curtains revealing emptiness behind",
-    "ancien regime mockery, eyes bulging with aristocratic entitlement, lace collar sharp enough to decapitate, mocking cupids exchanging glances, columns listing toward inevitable fall",
-    "divine light piercing darkness, wig bending under the weight of hubris, academic technique, pyramidal arrangement",
-    "aristocratic absurdity exposed, cheeks flushed with champagne hubris, wig sprouting architectural fantasies, hourglass running out in the background",
-    "exaggerated physiognomy, jowls trembling with indignation, golden threads spelling out inherited shame, parrots repeating empty platitudes, hourglass running out in the background",
-    "theatrical illumination, velvet so deep one could drown in it, layered translucency, swirling Baroque drama",
-    "harsh light revealing all flaws, fabric patterns swallowing the wearer whole, oil painting texture, centralized vanity",
-    "harsh light revealing all flaws, buttons multiplied beyond sanity, alla prima confidence, diagonal dynamism",
-    "divine light piercing darkness, lace collar sharp enough to decapitate, oil painting texture, intimate chamber scene",
-    "Caravaggesque spotlight, periwig cascading like frozen waterfalls, oil painting texture, isolated figure against void",
-    "exaggerated physiognomy, jowls trembling with indignation, silk ribbons multiplying like courtly parasites, scepters wilting in weak grips",
-    "aristocratic absurdity exposed, eyes bulging with aristocratic entitlement, golden threads spelling out inherited shame, butterflies representing fleeting power, crowns slipping from unworthy heads",
-    "ancien regime mockery, brow furrowed with dynastic concerns, powdered tower of hair defying gravity, hourglass running out in the background",
-    "political caricature, hands clutching invisible scepters, wig sprouting architectural fantasies, cracks spreading through marble floors",
-    "stormy atmospheric glow, brocade drowning the figure in golden excess, impasto highlights, centralized vanity",
 ];
 
-
+const caricaturePrompts = [
+    "golden hour of empire, ermine trim suggesting borrowed majesty, alla prima confidence, intimate chamber scene",
+    "theatrical illumination, wig sprouting architectural fantasies, masterful rendering, trompe l'oeil pretension",
+    "tenebrism chiaroscuro, ermine trim suggesting borrowed majesty, sfumato edges, theatrical composition, velvet curtains revealing emptiness behind",
+    "Gillray-style biting satire, nose bulging with inherited hauteur, silk ribbons multiplying like courtly parasites, scepters wilting in weak grips",
+    "grotesque aristocratic features, eyes bulging with aristocratic entitlement, golden threads spelling out inherited shame, crowns slipping from unworthy heads",
+    "candlelit intimacy, periwig cascading like frozen waterfalls, masterful rendering, theatrical composition",
+    "exaggerated physiognomy, chin retreating from responsibility, fabric patterns swallowing the wearer whole, cracks spreading through marble floors",
+    "speech bubbles of pompous nonsense, chin retreating from responsibility, velvet so deep one could drown in it, crowns slipping from unworthy heads",
+    "political caricature, lips pursed in performative disdain, silk ribbons multiplying like courtly parasites, cake towers threatening to collapse",
+    "aristocratic absurdity exposed, lips pursed in performative disdain, wig bending under the weight of hubris, lap dogs more dignified than their owners",
+    "ancien regime mockery, hands clutching invisible scepters, velvet so deep one could drown in it, velvet curtains revealing emptiness behind",
+    "grotesque aristocratic features, cheeks flushed with champagne hubris, periwig cascading like frozen waterfalls, scepters wilting in weak grips",
+    "revolutionary fervor, eyes bulging with aristocratic entitlement, lace collar sharp enough to decapitate, serpents coiled in courtly corners",
+    "divine light piercing darkness, silk ribbons multiplying like courtly parasites, impasto highlights, ravens waiting with patient hunger",
+    "speech bubbles of pompous nonsense, eyes bulging with aristocratic entitlement, periwig cascading like frozen waterfalls, cake towers threatening to collapse",
+    "Hogarth moral commentary, eyes bulging with aristocratic entitlement, ermine trim suggesting borrowed majesty, hourglass running out in the background",
+    "harsh light revealing all flaws, velvet so deep one could drown in it, masterful rendering, gold leaf peeling to reveal rot beneath",
+    "candlelit intimacy, brocade drowning the figure in golden excess, academic technique, swirling Baroque drama",
+    "Caravaggesque spotlight, periwig cascading like frozen waterfalls, oil painting texture, isolated figure against void",
+    "shadow play of moral ambiguity, buttons multiplied beyond sanity, alla prima confidence, theatrical composition"
 ];
 
 const styles = {
-    baroque: { 
-        base: "baroque masterpiece, dramatic chiaroscuro lighting, Rubens influence, rich oil paint textures, gold leaf accents", 
-        caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture",
-        colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] }
-    },
-    rococo: { 
-        base: "rococo painting, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", 
-        caricature: "French Revolution caricature, James Gillray style, mocking aristocracy",
-        colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] }
-    },
-    caravaggio: { 
-        base: "Caravaggio tenebrism, extreme chiaroscuro, single dramatic spotlight, biblical intensity", 
-        caricature: "Revolutionary propaganda poster, bold contrast, woodcut style",
-        colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] }
-    },
-    vermeer: { 
-        base: "Vermeer Dutch Golden Age, soft window light, intimate domestic scene, pearl luminosity", 
-        caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature",
-        colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] }
-    },
-    rembrandt: { 
-        base: "Rembrandt self-portrait style, golden brown palette, impasto brushwork, psychological depth", 
-        caricature: "Revolutionary broadsheet illustration, Thomas Rowlandson style",
-        colors: { primary: [139, 90, 43], secondary: [85, 60, 42], accent: [218, 165, 32] }
-    },
-    artemisia: { 
-        base: "Artemisia Gentileschi style, powerful feminine subjects, dramatic baroque lighting, intense emotional expression", 
-        caricature: "Revolutionary feminist pamphlet, fierce women warriors, Liberty Leading the People energy",
-        colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] }
-    }
+    baroque: { base: "baroque masterpiece, dramatic chiaroscuro lighting, Rubens influence, rich oil paint textures, gold leaf accents", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
+    rococo: { base: "rococo painting, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", caricature: "French Revolution caricature, James Gillray style, mocking aristocracy", colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] } },
+    caravaggio: { base: "Caravaggio tenebrism, extreme chiaroscuro, single dramatic spotlight, biblical intensity", caricature: "Revolutionary propaganda poster, bold contrast, woodcut style", colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] } },
+    vermeer: { base: "Vermeer Dutch Golden Age, soft window light, intimate domestic scene, pearl luminosity", caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature", colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] } },
+    rembrandt: { base: "Rembrandt self-portrait style, golden brown palette, impasto brushwork, psychological depth", caricature: "Revolutionary broadsheet illustration, Thomas Rowlandson style", colors: { primary: [139, 90, 43], secondary: [85, 60, 42], accent: [218, 165, 32] } },
+    artemisia: { base: "Artemisia Gentileschi style, powerful feminine subjects, dramatic baroque lighting, intense emotional expression", caricature: "Revolutionary feminist pamphlet, fierce women warriors, Liberty Leading the People energy", colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] } }
 };
 
 function log(msg, type = '') {
@@ -1701,9 +452,7 @@ function log(msg, type = '') {
 
 function captureNextSlot() {
     let targetSlot = null;
-    for (let i = 1; i <= 10; i++) {
-        if (!capturedStills[i]) { targetSlot = i; break; }
-    }
+    for (let i = 1; i <= 10; i++) { if (!capturedStills[i]) { targetSlot = i; break; } }
     if (!targetSlot) targetSlot = 1;
     captureStill(targetSlot);
 }
@@ -1743,7 +492,6 @@ function captureStill(slotNumber) {
 function loadCapturedStills() { localStorage.removeItem('baroqueCaptures'); capturedStills = {}; }
 
 function shufflePrompt() {
-    // 50/50 caricature vs classical
     const allPrompts = Math.random() < 0.5 ? caricaturePrompts : promptInspirations;
     const randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
     document.getElementById('promptInput').value = randomPrompt;
@@ -1751,7 +499,6 @@ function shufflePrompt() {
     log('Prompt rolled & applied', 'success');
     if (streamId) setParams();
 }
-
 
 function applyCustomPrompt() {
     customPrompt = document.getElementById('promptInput').value.trim();
@@ -2050,12 +797,8 @@ document.getElementById('audioIntensitySlider').oninput = function() { audioPara
 document.getElementById('pulseSpeedSlider').oninput = function() { audioParams.pulseSpeed = parseInt(this.value) / 100; document.getElementById('pulseSpeedVal').textContent = this.value + '%'; };
 document.getElementById('particleDensitySlider').oninput = function() { audioParams.particleDensity = parseInt(this.value) / 100; document.getElementById('particleDensityVal').textContent = this.value + '%'; };
 
-// Session buttons - both pairs
 document.getElementById('startBtn').onclick = start;
 document.getElementById('stopBtn').onclick = stop;
-document.getElementById('startBtn2').onclick = start;
-document.getElementById('stopBtn2').onclick = stop;
-
 document.getElementById('fullscreenBtn').onclick = toggleFullscreen;
 
 function toggleFullscreen() {
@@ -2092,7 +835,6 @@ function buildPrompt() {
 
 async function start() {
     document.getElementById('startBtn').disabled = true;
-    document.getElementById('startBtn2').disabled = true;
     try {
         log('Getting camera...', 'info');
         localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, audio: true });
@@ -2121,14 +863,11 @@ async function start() {
         log('Waiting for output...', 'info');
         document.getElementById('startBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
-        document.getElementById('startBtn2').style.display = 'none';
-        document.getElementById('stopBtn2').style.display = 'block';
         startPolling();
     } catch (e) {
         log(`ERROR: ${e.message}`, 'error');
         console.error(e);
         document.getElementById('startBtn').disabled = false;
-        document.getElementById('startBtn2').disabled = false;
     }
 }
 
@@ -2200,9 +939,6 @@ function stop() {
     document.getElementById('startBtn').disabled = false;
     document.getElementById('startBtn').style.display = 'block';
     document.getElementById('stopBtn').style.display = 'none';
-    document.getElementById('startBtn2').disabled = false;
-    document.getElementById('startBtn2').style.display = 'block';
-    document.getElementById('stopBtn2').style.display = 'none';
     streamId = null;
     playbackId = null;
     particles = [];
