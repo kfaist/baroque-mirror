@@ -1606,6 +1606,19 @@ const promptInspirations = [
     "Pre-Raphaelite romanticism, flowing hair, medieval legends, vivid colors",
     "Venetian veduta cityscape, grand canals, gondolas, atmospheric perspective",
     "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects"
+
+// Caricature prompts for 50/50 mode
+const caricaturePrompts = [
+    "French Revolutionary political cartoon, Honoré Daumier grotesque satire, exaggerated features, lithograph texture",
+    "James Gillray caricature, bulging eyes, elongated nose, mocking aristocracy, hand-colored etching",
+    "Thomas Rowlandson satirical print, rotund figures, red-faced excess, Georgian era mockery",
+    "Sans-culottes propaganda broadsheet, fierce revolutionary spirit, woodcut boldness",
+    "William Hogarth moral satire, exaggerated expressions, crowded composition, social critique",
+    "George Cruikshank political cartoon, sharp angular features, dramatic gestures, copper engraving",
+    "Philipon pear-head caricature, transformative satire, subversive wit, pen and ink grotesque",
+    "French Revolutionary playing card, reversed hierarchy, satirical inversion"
+];
+
 ];
 
 // ============================================
@@ -1760,11 +1773,16 @@ function loadCapturedStills() {
 // PROMPT SHUFFLE
 // ============================================
 function shufflePrompt() {
-    const randomPrompt = promptInspirations[Math.floor(Math.random() * promptInspirations.length)];
+    // 50/50 caricature vs classical
+    const allPrompts = Math.random() < 0.5 ? caricaturePrompts : promptInspirations;
+    const randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
     document.getElementById('promptInput').value = randomPrompt;
     customPrompt = randomPrompt;
-    log('Prompt shuffled', 'info');
+    log('Prompt rolled & applied', 'success');
+    // Auto-apply if stream is active
+    if (streamId) setParams();
 }
+
 
 function applyCustomPrompt() {
     customPrompt = document.getElementById('promptInput').value.trim();
