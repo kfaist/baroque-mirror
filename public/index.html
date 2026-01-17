@@ -220,6 +220,19 @@
             .video-container { order: 2; width: 100vw !important; margin-left: calc(-50vw + 50%); border-radius: 0 !important; }
             .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
         }
+        /* Progressive Watermark Raindrops */
+        .raindrop {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: raindropFade ease-out forwards;
+        }
+        @keyframes raindropFade {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            20% { transform: scale(1.2) rotate(90deg); opacity: 1; }
+            100% { transform: scale(0.8) rotate(360deg); opacity: 0; }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -334,7 +347,7 @@
                     <span class="placeholder-text">No captures</span>
                     <span class="still-counter" id="stillCounter">0/10</span>
                 </div>
-                <a href="/prints" class="mobile-action-btn shop">
+                <a href="https://baroque-mirror-production.up.railway.app/prints" class="mobile-action-btn shop">
                     <span class="shop-line">SHOP PRINTS</span>
                     <span class="shop-divider">⚜</span>
                     <span class="shop-line">MINT NFTs</span>
@@ -347,7 +360,7 @@
                     <div class="webcam-pip"><video id="local" autoplay muted playsinline></video></div>
                 </div>
                 
-                <a href="/prints" class="purchase-btn-large" id="purchaseBtn">
+                <a href="https://baroque-mirror-production.up.railway.app/prints" class="purchase-btn-large" id="purchaseBtn">
                     <span class="purchase-line">Shop Prints</span>
                     <span class="purchase-divider">⚜</span>
                     <span class="purchase-line">Mint NFTs</span>
@@ -374,6 +387,22 @@
     <canvas id="captureCanvas" style="display:none;"></canvas>
 
 <script>
+// ============================================
+// SESSION DURATION & PROGRESSIVE WATERMARK
+// ============================================
+const SESSION_DURATION = 600000; // 10 minutes in ms
+const BASE_RAIN_START = 420000; // Rain starts after 1 min
+let sessionStartTime = null;
+let sessionTimer = null;
+let rainAnimationRunning = false;
+
+const rainColors = [
+    'rgba(255, 105, 180, 0.9)', 'rgba(138, 43, 226, 0.9)',
+    'rgba(75, 0, 130, 0.9)', 'rgba(0, 191, 255, 0.9)',
+    'rgba(127, 255, 212, 0.9)', 'rgba(255, 215, 0, 0.9)',
+    'rgba(255, 140, 0, 0.9)', 'rgba(255, 20, 147, 0.9)',
+    'rgba(147, 112, 219, 0.9)'
+];
 // ============================================
 // CONFIGURATION
 // ============================================
@@ -1059,6 +1088,7 @@ async function start() {
         document.getElementById('startBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
         startPolling();
+        startSessionTimer();
     } catch (e) {
         log(`ERROR: ${e.message}`, 'error');
         console.error(e);
@@ -1121,7 +1151,71 @@ function connectHLS(url) {
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; video.addEventListener('loadedmetadata', () => { video.play().catch(() => { video.muted = true; video.play(); }); }); log('Native HLS playing', 'success'); }
 }
 
+
+function createRaindrop(progress) {
+    const drop = document.createElement('div');
+    drop.className = 'raindrop';
+    drop.style.left = Math.random() * window.innerWidth + 'px';
+    drop.style.top = Math.random() * window.innerHeight + 'px';
+    const color1 = rainColors[Math.floor(Math.random() * rainColors.length)];
+    const color2 = rainColors[Math.floor(Math.random() * rainColors.length)];
+    const color3 = rainColors[Math.floor(Math.random() * rainColors.length)];
+    const isTakeover = progress > 0.66;
+    let baseOpacity = isTakeover ? 0.4 + ((progress - 0.66) / 0.34 * 0.5) : 0.15 + (progress * 0.35);
+    let sizeMultiplier = isTakeover ? 1.0 + ((progress - 0.66) / 0.34 * 0.8) : 1.5 - (progress * 0.5);
+    let duration = isTakeover ? 6 - ((progress - 0.66) / 0.34 * 2) + Math.random() * 3 : 10 - (progress * 4) + Math.random() * 4;
+    let glowIntensity = isTakeover ? 30 + (Math.pow((progress - 0.66) / 0.34, 1.5) * 120) : (15 + (progress * 50)) * (2.0 - (progress * 1.2));
+    let baseSize;
+    const sizeRoll = Math.random();
+    if (isTakeover) {
+        baseSize = sizeRoll < 0.2 ? 30 + Math.random() * 15 : sizeRoll < 0.5 ? 50 + Math.random() * 30 : 60 + Math.random() * 70;
+    } else {
+        baseSize = sizeRoll < 0.3 ? 20 + Math.random() * 10 : sizeRoll < 0.7 ? 40 + Math.random() * 20 : 40 + Math.random() * 50;
+    }
+    const finalSize = baseSize * sizeMultiplier;
+    drop.style.width = finalSize + 'px';
+    drop.style.height = finalSize + 'px';
+    drop.style.background = 'radial-gradient(circle at 40% 40%, ' + color1.replace('0.9', String(baseOpacity)) + ' 0%, ' + color2.replace('0.9', String(baseOpacity * 0.7)) + ' 30%, ' + color3.replace('0.9', String(baseOpacity * 0.4)) + ' 60%, transparent 100%)';
+    drop.style.boxShadow = '0 0 ' + glowIntensity + 'px ' + (glowIntensity * 0.4) + 'px ' + color1 + ', 0 0 ' + (glowIntensity * 2) + 'px ' + (glowIntensity * 0.8) + 'px ' + color2;
+    drop.style.animationDuration = duration + 's';
+    document.body.appendChild(drop);
+    setTimeout(function() { if (drop.parentNode) drop.parentNode.removeChild(drop); }, duration * 1000);
+}
+
+function runRainAnimation() {
+    if (!sessionStartTime || rainAnimationRunning) return;
+    rainAnimationRunning = true;
+    function animateRain() {
+        if (!sessionStartTime || !localStream) { rainAnimationRunning = false; return; }
+        const elapsed = Date.now() - sessionStartTime;
+        if (elapsed >= BASE_RAIN_START) {
+            const progress = Math.min((elapsed - BASE_RAIN_START) / (SESSION_DURATION - BASE_RAIN_START), 1.0);
+            const exponentialGrowth = Math.pow(progress, 2.5);
+            let dropProbability = 0.03 * (1 + exponentialGrowth * 30);
+            if (progress > 0.66) { dropProbability *= 1 + ((progress - 0.66) / 0.34 * 6); }
+            if (Math.random() < dropProbability) { createRaindrop(progress); }
+        }
+        requestAnimationFrame(animateRain);
+    }
+    animateRain();
+}
+
+function endSessionAndRedirect() {
+    stop();
+    document.querySelectorAll('.raindrop').forEach(function(el) { el.remove(); });
+    window.location.href = '/thankyou.html';
+}
+
+function startSessionTimer() {
+    sessionStartTime = Date.now();
+    runRainAnimation();
+    sessionTimer = setTimeout(function() { endSessionAndRedirect(); }, SESSION_DURATION);
+}
+
 function stop() {
+    if (sessionTimer) { clearTimeout(sessionTimer); sessionTimer = null; }
+    sessionStartTime = null;
+    rainAnimationRunning = false;
     if (pollTimer) clearTimeout(pollTimer);
     hideStatusOverlay();
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
