@@ -7,7 +7,6 @@
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        html, body { height: 100%; }
         body { 
             background: #0a0608; 
             color: #fff; 
@@ -16,123 +15,891 @@
             overflow-x: hidden;
         }
         
-        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .content { position: relative; z-index: 10; }
+        /* Embossed shimmer background canvas */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
         
-        .header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(212,175,55,0.3); background: linear-gradient(180deg, rgba(114,47,55,0.4) 0%, rgba(10,6,8,0.9) 100%); backdrop-filter: blur(10px); }
-        .header-top { display: flex; justify-content: center; gap: 40px; margin-bottom: 10px; font-size: 0.8rem; letter-spacing: 4px; color: #f4e4ba; font-family: 'Cinzel', serif; text-transform: uppercase; }
-        .header h1 { color: #d4af37; font-size: 2.5rem; margin: 0; letter-spacing: 6px; font-family: 'Cinzel', serif; text-shadow: 0 0 30px rgba(212,175,55,0.5); }
-        .header-sub { font-size: 1rem; color: rgba(244,228,186,0.8); margin-top: 8px; font-style: italic; }
-        .header-credit { font-size: 0.9rem; color: #d4af37; margin-top: 5px; font-weight: 600; }
+        /* Particle overlay canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
         
-        /* FLAT 3-COLUMN GRID - EXACTLY LIKE DANCE */
-        .main { display: grid; grid-template-columns: 400px 1fr 200px; gap: 25px; padding: 25px; max-width: 1900px; margin: 0 auto; }
+        .content {
+            position: relative;
+            z-index: 10;
+        }
         
-        .controls, .capture-panel { background: rgba(15,10,12,0.85); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5); }
-        .capture-panel { padding: 15px; }
+        .header { 
+            text-align: center; 
+            padding: 20px; 
+            border-bottom: 1px solid rgba(212,175,55,0.3); 
+            background: linear-gradient(180deg, rgba(114,47,55,0.4) 0%, rgba(10,6,8,0.9) 100%);
+            backdrop-filter: blur(10px);
+        }
         
-        .section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .header-top { 
+            display: flex; 
+            justify-content: center; 
+            gap: 40px; 
+            margin-bottom: 10px; 
+            font-size: 0.8rem; 
+            letter-spacing: 4px; 
+            color: #f4e4ba; 
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+        }
+        
+        .header h1 { 
+            color: #d4af37; 
+            font-size: 2.5rem; 
+            margin: 0; 
+            letter-spacing: 6px; 
+            font-family: 'Cinzel', serif;
+            text-shadow: 0 0 30px rgba(212,175,55,0.5);
+        }
+        
+        .header-sub { 
+            font-size: 1rem; 
+            color: rgba(244,228,186,0.8); 
+            margin-top: 8px; 
+            font-style: italic;
+        }
+        
+        .header-credit { 
+            font-size: 0.9rem; 
+            color: #d4af37; 
+            margin-top: 5px; 
+            font-weight: 600;
+        }
+        
+        .main { 
+            display: grid; 
+            grid-template-columns: 400px 1fr 200px; 
+            gap: 25px; 
+            padding: 25px; 
+            max-width: 1900px; 
+            margin: 0 auto; 
+        }
+        
+        .controls, .capture-panel { 
+            background: rgba(15,10,12,0.85); 
+            border: 1px solid rgba(212,175,55,0.4); 
+            border-radius: 12px; 
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5);
+        }
+        
+        /* Film Strip Styling for Capture Panel */
+        .capture-panel {
+            padding: 15px;
+            background: linear-gradient(180deg, #1a1412 0%, #0d0a09 50%, #1a1412 100%) !important;
+            border: 1px solid rgba(212,175,55,0.3) !important;
+            position: relative;
+            padding-left: 28px !important;
+            padding-right: 28px !important;
+            border-radius: 4px !important;
+            z-index: 100;
+        }
+        
+        /* Sprocket track containers */
+        .capture-panel::before,
+        .capture-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 18px;
+            /* Checkered background showing through */
+            background: 
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(30,25,20,0.9) 0px,
+                    rgba(30,25,20,0.9) 4px,
+                    rgba(15,12,10,0.9) 4px,
+                    rgba(15,12,10,0.9) 8px
+                );
+            z-index: 0;
+            pointer-events: none;
+        }
+        .capture-panel::before { left: 0; border-right: 1px solid rgba(139,105,20,0.4); }
+        .capture-panel::after { right: 0; border-left: 1px solid rgba(139,105,20,0.4); }
+        
+        /* Sprocket holes - cut out effect */
+        .sprocket-track {
+            position: absolute;
+            top: 10px;
+            bottom: 10px;
+            width: 18px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            pointer-events: none;
+        }
+        .sprocket-track.left { left: 0; }
+        .sprocket-track.right { right: 0; }
+        
+        .sprocket-hole {
+            width: 10px;
+            height: 14px;
+            background: rgba(0,0,0,0.95);
+            border-radius: 2px;
+            box-shadow: 
+                inset 0 1px 2px rgba(255,255,255,0.1),
+                0 0 3px rgba(0,0,0,0.8);
+            flex-shrink: 0;
+        }
+        
+        .section { 
+            margin-bottom: 20px; 
+            padding-bottom: 18px; 
+            border-bottom: 1px solid rgba(212,175,55,0.2); 
+        }
+        
         .section:last-child { border-bottom: none; margin-bottom: 0; }
-        .section h3 { color: #d4af37; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; }
         
-        .session-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
-        .session-btn { width: 100%; padding: 16px 20px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(114,47,55,0.85), rgba(74,31,36,0.95)); color: #d4af37; font-size: 1rem; cursor: pointer; border-radius: 8px; font-family: 'Cinzel', serif; letter-spacing: 3px; transition: all 0.3s ease; text-transform: uppercase; box-shadow: 0 0 20px rgba(212,175,55,0.15); }
-        .session-btn:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 35px rgba(212,175,55,0.5); transform: translateY(-2px); }
-        .session-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-        .session-btn.stop { background: linear-gradient(180deg, rgba(139,0,0,0.85), rgba(74,0,0,0.95)); border-color: #8b0000; color: #ff6b6b; }
-        .session-btn.stop:hover { background: linear-gradient(180deg, #8b0000, #4a0000); color: #fff; box-shadow: 0 0 35px rgba(139,0,0,0.5); }
+        /* Session Button at Top */
+        .session-section {
+            margin-bottom: 20px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+        }
         
-        .prompt-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
-        .prompt-section h3 { margin-bottom: 12px; color: #d4af37; font-size: 0.95rem; font-family: 'Cinzel', serif; letter-spacing: 2px; }
-        .prompt-container { display: flex; gap: 8px; align-items: stretch; }
-        .prompt-btn { width: 44px; height: 44px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.2rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .prompt-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.3); transform: scale(1.05); }
-        .prompt-btn.apply { background: linear-gradient(135deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9)); font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 1px; }
-        .prompt-btn.apply:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; }
-        .prompt-input { flex: 1; padding: 12px 14px; border: 1px solid rgba(212,175,55,0.4); background: rgba(0,0,0,0.5); color: #f4e4ba; border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; resize: none; min-height: 44px; transition: all 0.3s ease; }
-        .prompt-input:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.2); }
-        .prompt-input::placeholder { color: rgba(244,228,186,0.4); font-style: italic; }
+        .session-btn {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #d4af37;
+            background: linear-gradient(180deg, rgba(114,47,55,0.85), rgba(74,31,36,0.95));
+            color: #d4af37;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(212,175,55,0.15);
+        }
         
-        .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .style-btn { padding: 10px 12px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #f4e4ba; cursor: pointer; border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; transition: all 0.3s ease; }
-        .style-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
-        .style-btn.active { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; font-weight: 700; border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); }
+        .session-btn:hover {
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 35px rgba(212,175,55,0.5);
+            transform: translateY(-2px);
+        }
         
-        .mode-box { margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(212,175,55,0.15); }
-        .mode-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(244,228,186,0.7); margin-bottom: 10px; }
-        .mode-value { text-align: center; color: #d4af37; font-size: 0.9rem; margin-top: 8px; font-weight: 600; }
+        .session-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .session-btn.stop {
+            background: linear-gradient(180deg, rgba(139,0,0,0.85), rgba(74,0,0,0.95));
+            border-color: #8b0000;
+            color: #ff6b6b;
+        }
+        
+        .session-btn.stop:hover {
+            background: linear-gradient(180deg, #8b0000, #4a0000);
+            color: #fff;
+            box-shadow: 0 0 35px rgba(139,0,0,0.5);
+        }
+        
+        .section h3 { 
+            color: #d4af37; 
+            font-size: 0.95rem; 
+            margin: 0 0 14px 0; 
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+        }
+        
+        /* Banner-style section headers with integrated buttons */
+        .section-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        
+        .section-banner h3 {
+            margin: 0;
+        }
+        
+        .banner-btn {
+            padding: 8px 16px;
+            border: 1px solid #d4af37;
+            background: linear-gradient(180deg, rgba(114,47,55,0.9), rgba(74,31,36,0.95));
+            color: #d4af37;
+            font-size: 0.7rem;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .banner-btn:hover {
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 20px rgba(212,175,55,0.4);
+            transform: translateY(-1px);
+        }
+        
+        .banner-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .banner-btn.stop {
+            background: linear-gradient(180deg, rgba(139,0,0,0.8), rgba(74,0,0,0.9));
+            border-color: #8b0000;
+            color: #ff6b6b;
+        }
+        
+        .banner-btn.stop:hover {
+            background: linear-gradient(180deg, #8b0000, #4a0000);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(139,0,0,0.4);
+        }
+        
+        /* Prompt Section */
+        .prompt-section {
+            margin-bottom: 20px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+        }
+        
+        .prompt-section h3 {
+            margin-bottom: 12px;
+        }
+        
+        .prompt-container {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+        
+        .prompt-btn {
+            width: 44px;
+            height: 44px;
+            border: 1px solid rgba(212,175,55,0.5);
+            background: rgba(20,15,18,0.8);
+            color: #d4af37;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .prompt-btn:hover {
+            background: rgba(212,175,55,0.15);
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212,175,55,0.3);
+            transform: scale(1.05);
+        }
+        
+        .prompt-btn.apply {
+            background: linear-gradient(135deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9));
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+        
+        .prompt-btn.apply:hover {
+            background: linear-gradient(135deg, #d4af37, #8b6914);
+            color: #0a0608;
+        }
+        
+        .prompt-input {
+            flex: 1;
+            padding: 12px 14px;
+            border: 1px solid rgba(212,175,55,0.4);
+            background: rgba(0,0,0,0.5);
+            color: #f4e4ba;
+            border-radius: 6px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.9rem;
+            resize: none;
+            min-height: 44px;
+            transition: all 0.3s ease;
+        }
+        
+        .prompt-input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212,175,55,0.2);
+        }
+        
+        .prompt-input::placeholder {
+            color: rgba(244,228,186,0.4);
+            font-style: italic;
+        }
+        
+        .style-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 8px; 
+        }
+        
+        .style-btn { 
+            padding: 10px 12px; 
+            border: 1px solid rgba(212,175,55,0.5); 
+            background: rgba(20,15,18,0.8); 
+            color: #f4e4ba; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            font-family: 'Cormorant Garamond', serif; 
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .style-btn:hover { 
+            background: rgba(212,175,55,0.15); 
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212,175,55,0.2);
+        }
+        
+        .style-btn.active { 
+            background: linear-gradient(135deg, #d4af37, #8b6914); 
+            color: #0a0608; 
+            font-weight: 700; 
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212,175,55,0.4);
+        }
+        
+        .mode-box { 
+            margin-top: 14px; 
+            padding: 12px; 
+            background: rgba(0,0,0,0.4); 
+            border-radius: 8px;
+            border: 1px solid rgba(212,175,55,0.15);
+        }
+        
+        .mode-labels { 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 0.75rem; 
+            color: rgba(244,228,186,0.7); 
+            margin-bottom: 10px; 
+        }
+        
+        .mode-value { 
+            text-align: center; 
+            color: #d4af37; 
+            font-size: 0.9rem; 
+            margin-top: 8px;
+            font-weight: 600;
+        }
         
         .slider-row { margin-bottom: 14px; }
-        .slider-row label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; color: rgba(244,228,186,0.9); }
-        .slider-row .val { color: #d4af37; font-weight: 700; min-width: 40px; text-align: right; }
-        input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #722f37, #d4af37); -webkit-appearance: none; cursor: pointer; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37); cursor: pointer; box-shadow: 0 0 10px rgba(212,175,55,0.6); transition: transform 0.2s; }
-        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
         
-        .audio-section { background: rgba(114,47,55,0.2); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; margin-top: 12px; }
-        .audio-section h4 { color: #d4af37; font-size: 0.85rem; margin-bottom: 10px; font-family: 'Cinzel', serif; }
-        .audio-meter { height: 40px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; display: flex; align-items: flex-end; gap: 2px; padding: 4px; }
-        .audio-bar { flex: 1; background: linear-gradient(180deg, #d4af37, #722f37, #2a1015); border-radius: 2px; transition: height 0.05s ease-out; }
+        .slider-row label { 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 0.85rem; 
+            margin-bottom: 6px;
+            color: rgba(244,228,186,0.9);
+        }
         
-        .output-area { position: relative; }
-        .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: #000; }
-        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
-        .output-video { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .video-animation-overlay { position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; pointer-events: none; z-index: 2; opacity: 0.4; mix-blend-mode: overlay; }
-        .fullscreen-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.6); background: rgba(10,6,8,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.1rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(5px); }
-        .fullscreen-btn:hover { background: rgba(212,175,55,0.3); border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); transform: scale(1.1); }
-        .video-container:fullscreen { border-radius: 0; border: none; }
-        .video-container:fullscreen .video-wrapper { aspect-ratio: auto; width: 100vw; height: 100vh; }
-        .video-container:fullscreen .output-video { object-fit: contain; background: #000; }
-        .video-container:fullscreen .fullscreen-btn { top: 25px; right: 25px; }
-        .video-container:fullscreen .frame-overlay { display: none; }
-        .video-container:fullscreen .video-animation-overlay { display: none; }
-        .frame-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; border: 8px solid transparent; border-image: linear-gradient(135deg, #d4af37 0%, #8b6914 25%, #d4af37 50%, #8b6914 75%, #d4af37 100%) 1; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
+        .slider-row .val { 
+            color: #d4af37; 
+            font-weight: 700;
+            min-width: 40px;
+            text-align: right;
+        }
         
-        .status-overlay { position: absolute; top: 15px; left: 15px; z-index: 50; display: none; font-family: 'Courier New', monospace; font-size: 0.7rem; max-width: 350px; }
-        .status-overlay.active { display: block; }
-        .status-message { color: #ff1493; animation: pinkFlash 1s ease-in-out infinite; margin-bottom: 8px; text-shadow: 0 0 10px rgba(255,20,147,0.5); }
-        @keyframes pinkFlash { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .status-debug { color: #88ffaa; font-size: 0.65rem; line-height: 1.4; }
-        .status-debug-line { margin-bottom: 2px; }
-        .status-debug-line.info { color: #88ccff; }
-        .status-debug-line.success { color: #88ffaa; }
-        .status-debug-line.error { color: #ff6b6b; }
+        input[type="range"] { 
+            width: 100%; 
+            height: 6px; 
+            border-radius: 3px; 
+            background: linear-gradient(90deg, #722f37, #d4af37); 
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
         
-        .input-preview-section { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(212,175,55,0.3); }
-        .input-preview-section h4 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; text-align: center; text-transform: uppercase; }
-        .webcam-pip { position: relative; width: 100%; border: 2px solid rgba(212,175,55,0.5); border-radius: 6px; overflow: hidden; background: #000; box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3); aspect-ratio: 4/3; }
-        .webcam-pip video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            width: 18px; 
+            height: 18px; 
+            border-radius: 50%; 
+            background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(212,175,55,0.6);
+            transition: transform 0.2s;
+        }
         
-        #log { display: none; background: rgba(0,0,0,0.6); padding: 12px; height: 100px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.7rem; border: 1px solid rgba(212,175,55,0.2); border-radius: 6px; margin-top: 15px; }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Audio reactivity section */
+        .audio-section {
+            background: rgba(114,47,55,0.2);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+        
+        .audio-section h4 {
+            color: #d4af37;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .audio-meter {
+            height: 40px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            padding: 4px;
+        }
+        
+        .audio-bar {
+            flex: 1;
+            background: linear-gradient(180deg, #d4af37, #722f37, #2a1015);
+            border-radius: 2px;
+            transition: height 0.05s ease-out;
+        }
+        
+        .action-btn { 
+            width: 100%; 
+            padding: 16px; 
+            border: 2px solid #d4af37; 
+            background: linear-gradient(180deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9)); 
+            color: #d4af37; 
+            font-size: 1rem; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        .action-btn:hover { 
+            background: linear-gradient(180deg, #d4af37, #8b6914); 
+            color: #0a0608;
+            box-shadow: 0 0 30px rgba(212,175,55,0.5);
+            transform: translateY(-2px);
+        }
+        
+        .action-btn:disabled { 
+            opacity: 0.4; 
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .action-btn.stop { 
+            background: linear-gradient(180deg, rgba(139,0,0,0.8), rgba(74,0,0,0.9));
+            border-color: #8b0000;
+            color: #ff6b6b;
+        }
+        
+        .action-btn.stop:hover {
+            background: linear-gradient(180deg, #8b0000, #4a0000);
+            color: #fff;
+            box-shadow: 0 0 30px rgba(139,0,0,0.5);
+        }
+        
+        .output-area { 
+            position: relative;
+        }
+        
+        .video-container {
+            position: relative;
+            border: 2px solid rgba(212,175,55,0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8);
+            background: #000;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+        }
+        
+        .output-video { 
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* Animation overlay that bleeds to all edges */
+        .video-animation-overlay {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.4;
+            mix-blend-mode: overlay;
+        }
+        
+        /* Fullscreen button */
+        .fullscreen-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(212,175,55,0.6);
+            background: rgba(10,6,8,0.8);
+            color: #d4af37;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            backdrop-filter: blur(5px);
+        }
+        
+        .fullscreen-btn:hover {
+            background: rgba(212,175,55,0.3);
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212,175,55,0.4);
+            transform: scale(1.1);
+        }
+        
+        .video-container:fullscreen {
+            border-radius: 0;
+            border: none;
+        }
+        
+        .video-container:fullscreen .video-wrapper {
+            aspect-ratio: auto;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .video-container:fullscreen .output-video {
+            object-fit: contain;
+            background: #000;
+        }
+        
+        .video-container:fullscreen .fullscreen-btn {
+            top: 25px;
+            right: 25px;
+        }
+        
+        /* Webcam now in sidebar, not affected by fullscreen */
+        
+        .video-container:fullscreen .frame-overlay {
+            display: none;
+        }
+        
+        .video-container:fullscreen .video-animation-overlay {
+            display: none;
+        }
+        
+        /* Ornate frame overlay */
+        .frame-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            border: 8px solid transparent;
+            border-image: linear-gradient(135deg, #d4af37 0%, #8b6914 25%, #d4af37 50%, #8b6914 75%, #d4af37 100%) 1;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+        }
+        
+        /* Input Preview - In capture panel sidebar */
+        .input-preview-section {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+        }
+        .input-preview-section h4 {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .webcam-pip { 
+            position: relative;
+            width: 100%;
+            border: 2px solid rgba(212,175,55,0.5); 
+            border-radius: 6px; 
+            overflow: hidden; 
+            background: #000;
+            box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3);
+            aspect-ratio: 4/3;
+        }
+        .webcam-pip video { 
+            width: 100%; 
+            height: 100%;
+            object-fit: cover;
+            display: block; 
+        }
+        
+        #log { 
+            background: rgba(0,0,0,0.6); 
+            padding: 12px; 
+            height: 100px; 
+            overflow-y: auto; 
+            font-family: 'Courier New', monospace; 
+            font-size: 0.7rem; 
+            border: 1px solid rgba(212,175,55,0.2); 
+            border-radius: 6px; 
+            margin-top: 15px;
+        }
+        
         .success { color: #4ade80; }
         .error { color: #f87171; }
         .info { color: #60a5fa; }
         
-        .capture-panel-header { display: flex; justify-content: center; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(212,175,55,0.2); }
-        .capture-panel-header h3 { color: #d4af37; font-size: 0.8rem; font-family: 'Cinzel', serif; letter-spacing: 2px; margin: 0; }
-        .purchase-btn-large { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 12px 10px; margin-bottom: 15px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35)); color: #d4af37; cursor: pointer; border-radius: 6px; font-family: 'Cinzel', serif; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; text-align: center; gap: 2px; }
-        .purchase-btn-large:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 25px rgba(212,175,55,0.5); transform: translateY(-2px); }
-        .purchase-btn-large .purchase-line { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; }
-        .purchase-btn-large .purchase-divider { font-size: 0.6rem; opacity: 0.7; line-height: 1; }
-        .capture-grid { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 3; }
-        .capture-slot { aspect-ratio: 16/10; border: 1px solid rgba(139,105,20,0.5); border-radius: 2px; background: rgba(10,8,6,0.95); overflow: hidden; position: relative; transition: all 0.3s ease; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
-        .capture-slot:hover { border-color: #d4af37; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3); }
-        .capture-slot-number { position: absolute; top: 4px; left: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.55rem; color: rgba(212,175,55,0.6); letter-spacing: 1px; z-index: 2; }
-        .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .capture-slot.has-image img { display: block; }
-        .capture-slot.has-image .capture-btn { opacity: 0; }
-        .capture-slot.has-image:hover .capture-btn { opacity: 1; }
-        .capture-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 8px 12px; border: 1px solid rgba(212,175,55,0.6); background: rgba(15,10,12,0.9); color: #d4af37; font-size: 0.6rem; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; white-space: nowrap; }
-        .capture-btn:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
+        /* Capture Panel Styles */
+        .capture-panel-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+        }
         
-        .statement-section { margin-top: 12px; position: relative; width: 100%; box-sizing: border-box; }
-        .shimmer-bg { position: relative; padding: 20px; background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(255,255,255,0.06)); overflow: hidden; }
-        .shimmer-bg::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), rgba(255,200,255,0.08), transparent); animation: shimmer 8s infinite; pointer-events: none; }
-        .shimmer-block { position: relative; background: rgba(0,0,0,0.85); padding: 36px 44px; overflow: hidden; }
-        .shimmer-block::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.06), rgba(255,200,255,0.04), transparent); animation: shimmer 6s infinite; pointer-events: none; }
-        @keyframes shimmer { 0% { transform: translateX(0); } 50% { transform: translateX(100%); } 100% { transform: translateX(100%); } }
+        .capture-panel-header h3 {
+            color: #d4af37;
+            font-size: 0.8rem;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+        
+        .purchase-btn-large {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px 10px;
+            margin-bottom: 15px;
+            border: 2px solid #d4af37;
+            background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35));
+            color: #d4af37;
+            cursor: pointer;
+            border-radius: 6px;
+            font-family: 'Cinzel', serif;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            text-decoration: none;
+            text-align: center;
+            gap: 2px;
+        }
+        
+        .purchase-btn-large:hover {
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 25px rgba(212,175,55,0.5);
+            transform: translateY(-2px);
+        }
+        
+        .purchase-btn-large .purchase-line {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        
+        .purchase-btn-large .purchase-divider {
+            font-size: 0.6rem;
+            opacity: 0.7;
+            line-height: 1;
+        }
+        
+        .capture-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .capture-slot {
+            aspect-ratio: 16/10;
+            border: 1px solid rgba(139,105,20,0.5);
+            border-radius: 2px;
+            background: rgba(10,8,6,0.95);
+            overflow: visible;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            z-index: 50;
+            pointer-events: auto !important;
+        }
+        
+        .capture-slot:hover {
+            border-color: #d4af37;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3);
+        }
+        
+        .capture-slot-number {
+            position: absolute;
+            bottom: 4px;
+            left: 6px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.55rem;
+            color: rgba(212,175,55,0.6);
+            letter-spacing: 1px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .capture-slot img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            pointer-events: none;
+        }
+        
+        .capture-slot.has-image img {
+            display: block;
+        }
+        
+        .capture-slot.has-image .capture-btn {
+            opacity: 0;
+        }
+        
+        .capture-slot.has-image:hover .capture-btn {
+            opacity: 1;
+        }
+        
+        .capture-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 8px 12px;
+            border: 1px solid rgba(212,175,55,0.6);
+            background: rgba(15,10,12,0.9);
+            color: #d4af37;
+            font-size: 0.6rem;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: auto !important;
+        }
+        
+        .capture-btn:hover {
+            background: linear-gradient(135deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 15px rgba(212,175,55,0.4);
+        }
+        
+        .capture-slot-number {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            font-size: 0.55rem;
+            color: rgba(212,175,55,0.6);
+            font-family: 'Cinzel', serif;
+            pointer-events: none;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
+        
+        /* Statement section - TWO TIERED SHIMMER LAYERS */
+        .statement-section { margin-top: 12px; width: 100%; position: relative; }
+        
+        /* Layer 1: LIGHTER/more transparent outer shimmer background */
+        .shimmer-bg {
+            position: relative;
+            padding: 20px;
+            background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(255,255,255,0.06));
+            overflow: hidden;
+        }
+        .shimmer-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), rgba(255,200,255,0.08), transparent);
+            animation: shimmer 8s infinite;
+            pointer-events: none;
+        }
+        
+        /* Layer 2: DARKER inner text block */
+        .shimmer-block {
+            position: relative;
+            background: rgba(0,0,0,0.85);
+            padding: 36px 44px;
+            overflow: hidden;
+        }
+        .shimmer-block::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.06), rgba(255,200,255,0.04), transparent);
+            animation: shimmer 6s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
+        }
+        
         .shimmer-block h2 { position: relative; color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 4px; margin: 0 0 15px 0; text-transform: uppercase; }
         .shimmer-block h2:not(:first-of-type) { margin-top: 25px; }
         .shimmer-block p { position: relative; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin-bottom: 12px; color: #f4e4ba; }
@@ -140,96 +907,207 @@
         .shimmer-block a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.4); transition: all 0.3s ease; }
         .shimmer-block a:hover { border-bottom-color: #fff; }
         .shimmer-block .section-divider { position: relative; text-align: center; color: #fff; font-size: 1rem; margin: 28px 0; opacity: 0.5; letter-spacing: 0.3em; }
-        .shimmer-block .contact-info { position: relative; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(212,175,55,0.3); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.75rem; color: rgba(244,228,186,0.7); }
+        .shimmer-block .contact-info { 
+            position: relative; 
+            margin-top: 30px; 
+            padding-top: 20px; 
+            border-top: 1px solid rgba(212,175,55,0.3);
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: rgba(244,228,186,0.7);
+        }
         .shimmer-block .contact-info p { margin-bottom: 6px; font-size: 0.75rem; }
         .shimmer-block .contact-info strong { color: rgba(212,175,55,0.8); letter-spacing: 2px; font-weight: normal; }
         .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
         
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
-        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
-        
-        /* RESPONSIVE - EXACTLY LIKE DANCE */
-        
+        /* ========== MOBILE RESPONSIVE ========== */
         @media (max-width: 1200px) {
-            .main { grid-template-columns: 1fr; padding: 0; gap: 0; }
-            .output-area { display: contents; }
-            .video-container { order: -10; width: 100vw; margin-left: calc(-50vw + 50%); border-radius: 0 !important; }
-            .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
-            .capture-panel { display: none !important; }
-            .controls { margin: 10px; border-radius: 12px; }
+            .main {
+                grid-template-columns: 1fr 200px;
+                grid-template-rows: auto 1fr;
+            }
+            .controls {
+                grid-column: 1 / -1;
+                grid-row: 1;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main {
+                grid-template-columns: 1fr;
+                padding: 0;
+                gap: 0;
+            }
+            
+            /* FULL SCREEN VIDEO AT TOP */
+            .output-area {
+                order: -10;
+                width: 100vw;
+                margin-left: calc(-50vw + 50%);
+            }
+            
+            /* Hide statement on mobile */
+            .statement-section {
+                display: none !important;
+            }
+            
+            .video-container {
+                border-radius: 0 !important;
+                border-left: none !important;
+                border-right: none !important;
+            }
+            
+            /* Hide film strip panel on mobile */
+            .capture-panel {
+                display: none !important;
+            }
+            
+            .controls {
+                margin: 10px;
+                border-radius: 12px;
+            }
         }
         
         @media (max-width: 768px) {
-            .header { padding: 10px; }
-            .header-top { display: none; }
-            .header h1 { font-size: 1.4rem; letter-spacing: 2px; }
-            .header-sub, .header-credit { font-size: 0.9rem; }
-            .controls { padding: 16px; }
-            .section { margin-bottom: 16px; padding-bottom: 16px; }
-            .section h3 { font-size: 1.2rem; margin-bottom: 14px; }
-            .session-btn { padding: 24px 28px; font-size: 1.4rem; letter-spacing: 3px; min-height: 70px; }
-            .style-btn { padding: 20px 14px !important; font-size: 1rem !important; min-height: 65px; }
-            .slider-row { margin-bottom: 20px; }
-            .slider-row label { font-size: 1rem; margin-bottom: 12px; }
-            input[type="range"] { height: 12px; }
-            input[type="range"]::-webkit-slider-thumb { width: 32px; height: 32px; }
-            .shimmer-block { padding: 24px 20px; }
+            /* MINIMAL HEADER */
+            .header {
+                padding: 10px;
+            }
+            .header-top {
+                display: none;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+                letter-spacing: 2px;
+            }
+            .header-sub, .header-credit {
+                font-size: 0.9rem;
+            }
+            
+            /* HIDE HALF THE SECTIONS */
+            .section:nth-child(n+4) {
+                display: none;
+            }
+            
+            .controls {
+                padding: 16px;
+            }
+            
+            .section {
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+            }
+            
+            /* DOUBLE SIZE HEADINGS */
+            .section h3 {
+                font-size: 1.2rem;
+                margin-bottom: 14px;
+            }
+            
+            /* GIANT SESSION BUTTON */
+            .session-btn {
+                padding: 24px 28px;
+                font-size: 1.4rem;
+                letter-spacing: 3px;
+                min-height: 70px;
+            }
+            
+            /* BIGGER STYLE BUTTONS - 2 columns only */
+            .style-buttons {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+            }
+            .style-btn {
+                padding: 20px 14px !important;
+                font-size: 1rem !important;
+                min-height: 65px;
+            }
+            
+            /* BIGGER SLIDERS */
+            .slider-row {
+                margin-bottom: 20px;
+            }
+            .slider-row label {
+                font-size: 1rem;
+                margin-bottom: 12px;
+            }
+            input[type="range"] {
+                height: 12px;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                width: 32px;
+                height: 32px;
+            }
+            
+            /* Shop prints - BIG */
+            .shop-prints-btn {
+                padding: 20px 24px !important;
+                font-size: 1.2rem !important;
+                min-height: 65px;
+            }
+            
+            /* Hide statement on mobile */
+            .shimmer-block {
+                display: none;
+            }
         }
         
         @media (max-width: 480px) {
-            .header h1 { font-size: 1.2rem; }
-            .header-sub, .header-credit { font-size: 0.8rem; }
-            .controls { margin: 8px; padding: 14px; }
-            .section h3 { font-size: 1.1rem; }
-            .session-btn { padding: 20px 24px; font-size: 1.2rem; min-height: 60px; }
-            .style-btn { padding: 16px 10px !important; font-size: 0.9rem !important; min-height: 55px; }
-            .slider-row label { font-size: 0.9rem; }
-        }
-        
-        @media (max-height: 500px) and (orientation: landscape) {
-            .header { display: none; }
-            .video-container { max-height: 90vh; }
-            .controls { max-height: 80vh; overflow-y: auto; }
-        }
-        
-        .mobile-action-bar { display: none; }
-        
-        @media (max-width: 1200px) {
-            .header { position: sticky; top: 0; z-index: 100; background: linear-gradient(180deg, rgba(114,47,55,0.95) 0%, rgba(10,6,8,0.98) 100%); }
-            .controls { display: contents; }
-            .session-section { order: 1; background: rgba(15,10,12,0.95); padding: 15px; margin: 10px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.4); }
-            .output-area { display: contents; }
-            .mobile-action-bar { display: flex !important; order: 3; justify-content: space-between; align-items: stretch; gap: 10px; padding: 12px 10px; background: rgba(10,6,8,0.95); border-bottom: 2px solid rgba(212,175,55,0.4); width: 100%; }
-            .mobile-action-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px; border: 1px solid rgba(212,175,55,0.5); border-radius: 8px; font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.3s ease; min-height: 65px; }
-            .mobile-action-btn.capture { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; font-weight: 700; }
-            .mobile-action-btn.capture:active { transform: scale(0.95); }
-            .mobile-recent-still { flex: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; position: relative; min-height: 65px; overflow: hidden; }
-            .mobile-recent-still .placeholder-text { color: rgba(244,228,186,0.4); font-size: 0.65rem; font-style: italic; }
-            .mobile-recent-still img { display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
-            .mobile-recent-still.has-image img { display: block; }
-            .mobile-recent-still.has-image .placeholder-text { display: none; }
-            .mobile-recent-still .still-counter { position: absolute; bottom: 4px; right: 6px; background: rgba(0,0,0,0.7); color: #d4af37; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; }
-            .mobile-action-btn.shop { flex: 1.5; background: rgba(20,15,18,0.9); color: #d4af37; flex-direction: column; gap: 2px; font-size: 0.75rem; }
-            .mobile-action-btn.shop:active { background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4)); }
-            .mobile-action-btn.shop .shop-line { display: block; }
-            .mobile-action-btn.shop .shop-divider { font-size: 0.6rem; opacity: 0.6; }
-            .prompt-section, .section { order: 4; background: rgba(15,10,12,0.95); padding: 15px; margin: 10px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.4); }
-            #log { display: none !important; order: 100; margin: 10px; }
-            .video-container { order: 2; width: 100vw !important; margin-left: calc(-50vw + 50%); border-radius: 0 !important; }
-            .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
+            .header h1 {
+                font-size: 1.2rem;
+            }
+            .header-sub, .header-credit {
+                font-size: 0.8rem;
+            }
+            
+            .controls {
+                margin: 8px;
+                padding: 14px;
+            }
+            
+            .section h3 {
+                font-size: 1.1rem;
+            }
+            
+            .session-btn {
+                padding: 20px 24px;
+                font-size: 1.2rem;
+                min-height: 60px;
+            }
+            
+            .style-btn {
+                padding: 16px 10px !important;
+                font-size: 0.9rem !important;
+                min-height: 55px;
+            }
+            
+            .slider-row label {
+                font-size: 0.9rem;
+            }
+            
+            .shop-prints-btn {
+                padding: 18px 20px !important;
+                font-size: 1rem !important;
+                min-height: 55px;
+            }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
+    <!-- Embossed shimmer background -->
     <canvas id="bgCanvas"></canvas>
+    
+    <!-- Motion-reactive particles -->
     <canvas id="particleCanvas"></canvas>
     
     <div class="content">
         <div class="header">
-            <div class="header-top"><span>COLUMBUS MUSEUM OF ART</span><span>⚜</span><span>WONDERBALL 2026</span></div>
+            <div class="header-top">
+                <span>COLUMBUS MUSEUM OF ART</span>
+                <span>⚜</span>
+                <span>WONDERBALL 2026</span>
+            </div>
             <h1>⚜ BAROQUE MIRROR: SELF-PORTRAIT ⚜</h1>
             <div class="header-sub">Live AI Art Transformation</div>
             <div class="header-credit">by Krista Faist</div>
@@ -237,21 +1115,18 @@
         
         <div class="main">
             <div class="controls">
+                <!-- Begin Session Button - Top -->
                 <div class="session-section">
                     <button class="session-btn" id="startBtn">Begin Session ⚜</button>
                     <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ■</button>
                 </div>
                 
+                <!-- Prompt Section -->
                 <div class="prompt-section">
                     <h3>⚜ Prompt</h3>
                     <div class="prompt-container">
                         <button class="prompt-btn shuffle" id="shuffleBtn" title="Random Prompt">🎲</button>
                         <textarea class="prompt-input" id="promptInput" placeholder="Enter custom style prompt or shuffle for inspiration..." rows="2"></textarea>
-                        <button class="prompt-btn apply" id="applyPromptBtn" title="Apply Prompt">Apply</button>
-                    </div>
-                    <div class="slider-row" style="margin-top: 12px;">
-                        <label>Prompt Weight <span class="val" id="promptWeightVal2">1.00</span></label>
-                        <input type="range" id="promptWeightSlider2" min="0" max="100" value="100">
                     </div>
                 </div>
                 
@@ -267,29 +1142,57 @@
                     </div>
                     <div class="mode-box">
                         <div class="mode-labels"><span>🎨 Opulent Oil Painting</span><span>French Revolution Caricatures 📜</span></div>
-                        <input type="range" id="modeSlider" min="0" max="100" value="50">
-                        <div class="mode-value" id="modeValue">Balanced</div>
+                        <input type="range" id="modeSlider" min="0" max="100" value="0">
+                        <div class="mode-value" id="modeValue">Pure Classical</div>
                     </div>
                 </div>
                 
                 <div class="section">
                     <h3>⚜ Transform Controls</h3>
-                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">50</span></label><input type="range" id="strengthSlider" min="1" max="50" value="50"></div>
-                    <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">1.00</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="100"></div>
-                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.30</span></label><input type="range" id="poseSlider" min="0" max="100" value="30"></div>
-                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.25</span></label><input type="range" id="edgeSlider" min="0" max="100" value="25"></div>
-                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.20</span></label><input type="range" id="depthSlider" min="0" max="100" value="20"></div>
-                    <div class="slider-row"><label>Background Transparency <span class="val" id="bgTransVal">0%</span></label><input type="range" id="bgTransSlider" min="0" max="100" value="0"></div>
+                    <div class="slider-row">
+                        <label>AI Strength <span class="val" id="strengthVal">25</span></label>
+                        <input type="range" id="strengthSlider" min="1" max="50" value="25">
+                    </div>
+                    <div class="slider-row">
+                        <label>Pose <span class="val" id="poseVal">0.30</span></label>
+                        <input type="range" id="poseSlider" min="0" max="100" value="30">
+                    </div>
+                    <div class="slider-row">
+                        <label>Edge <span class="val" id="edgeVal">0.25</span></label>
+                        <input type="range" id="edgeSlider" min="0" max="100" value="25">
+                    </div>
+                    <div class="slider-row">
+                        <label>Depth <span class="val" id="depthVal">0.20</span></label>
+                        <input type="range" id="depthSlider" min="0" max="100" value="20">
+                    </div>
+                    <div class="slider-row">
+                        <label>Background Transparency <span class="val" id="bgTransVal">0%</span></label>
+                        <input type="range" id="bgTransSlider" min="0" max="100" value="0">
+                    </div>
                 </div>
-                
                 
                 <div class="section">
                     <h3>⚜ Audio Reactivity</h3>
-                    <div class="slider-row"><label>Audio Intensity <span class="val" id="audioIntensityVal">75%</span></label><input type="range" id="audioIntensitySlider" min="0" max="100" value="75"></div>
-                    <div class="slider-row"><label>Pulse Speed <span class="val" id="pulseSpeedVal">50%</span></label><input type="range" id="pulseSpeedSlider" min="10" max="100" value="50"></div>
-                    <div class="slider-row"><label>Particle Density <span class="val" id="particleDensityVal">60%</span></label><input type="range" id="particleDensitySlider" min="10" max="100" value="60"></div>
-                    <div class="audio-section"><h4>🎵 Live Audio Spectrum</h4><div class="audio-meter" id="audioMeter"></div></div>
+                    <div class="slider-row">
+                        <label>Audio Intensity <span class="val" id="audioIntensityVal">75%</span></label>
+                        <input type="range" id="audioIntensitySlider" min="0" max="100" value="75">
+                    </div>
+                    <div class="slider-row">
+                        <label>Pulse Speed <span class="val" id="pulseSpeedVal">50%</span></label>
+                        <input type="range" id="pulseSpeedSlider" min="10" max="100" value="50">
+                    </div>
+                    <div class="slider-row">
+                        <label>Particle Density <span class="val" id="particleDensityVal">60%</span></label>
+                        <input type="range" id="particleDensitySlider" min="10" max="100" value="60">
+                    </div>
+                    <div class="audio-section">
+                        <h4>🎵 Live Audio Spectrum</h4>
+                        <div class="audio-meter" id="audioMeter">
+                            <!-- Bars generated by JS -->
+                        </div>
+                    </div>
                 </div>
+                
                 <div id="log">⚜ Baroque Mirror ready...</div>
             </div>
             
@@ -299,52 +1202,58 @@
                         <video class="output-video" id="output" autoplay playsinline></video>
                         <canvas class="video-animation-overlay" id="videoOverlay"></canvas>
                     </div>
-                    <div class="status-overlay" id="statusOverlay">
-                        <div class="status-message" id="statusMessage">Negotiating with pixels. Please wait up to 45 seconds...</div>
-                        <div class="status-debug" id="statusDebug"></div>
-                    </div>
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
                 </div>
-                <div class="statement-section">
-                    <div class="shimmer-bg">
-                        <div class="shimmer-block">
-                            <h2>Statement</h2>
-                            <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses. It learns motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
-                            <p>French Revolutionary caricature was uniquely ferocious, more violent, more confrontational, and more visually ruthless than anything produced before it. It emerged during years when grotesque mockery and extravagant displays of wealth existed in the same rooms, and for a time no one blinked.</p>
-                            <div class="section-divider">. . .</div>
-                            <h2>About</h2>
-                            <p>Historically, jesters entertained elites beneath gilded ceilings (see the <a href="https://www.vam.ac.uk/articles/court-fools-and-jesters" target="_blank">Victoria and Albert Museum's overview</a>). Later, caricature artists appeared at salons and masquerades, where exaggerated portraits were commissioned by the same people who might dismiss them as vulgar in public. Early traditions are richly documented in sources like the <a href="https://www.metmuseum.org/toah/hd/crrn/hd_crrn.htm" target="_blank">Met's survey of caricature</a> and the <a href="https://www.britishmuseum.org/collection/galleries/political-satire" target="_blank">British Museum's political satire collection</a>.</p>
-                            <p>Wealthy patrons often paid handsomely for grotesque works of art that the lowest rung of the hoi polloi would judge tacky at a carnival. Taste, ego, and humor have always been unstable companions. AI heightens this tension: fragile ego is still the best subject, and a robust sense of humor remains the only safe compass. In glamorous rooms, as in history, opulence and satire continue their strange partnership.</p>
-                            <p class="license-note">The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development.</p>
-                            <div class="contact-info">
-                                <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
-                                <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
-                            </div>
-                        </div>
+                
+                <!-- Pink Preamble / Statement Section -->
+                <div class="statement-section" style="margin-top: 25px; padding: 35px 40px; background: rgba(20, 15, 25, 0.4); border: 1px solid rgba(212,175,55,0.25); border-radius: 16px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1); position: relative; overflow: hidden;">
+                    <h2 style="color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 4px; text-transform: uppercase; margin: 0 0 15px 0;">✦ THE MIRROR'S ECHO ✦</h2>
+                    <p style="color: #f4e4ba; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin: 0 0 12px 0;">Speak, and watch your words transform into living landscapes. This AI-powered mirror captures your voice through advanced speech recognition, extracting the essence of your words to generate real-time visual poetry.</p>
+                    <p style="color: #f4e4ba; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin: 0 0 12px 0;">The system uses Whisper AI and natural language processing to find compound nouns in your speech—"mountain stream," "golden sunset," "ancient forest"—then renders them as baroque dreamscapes through StreamDiffusion.</p>
+                    <p style="color: #d4af37; font-style: italic; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin: 0 0 12px 0;">Speak. Dream. Become the landscape.</p>
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(212,175,55,0.3); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.75rem; color: rgba(244,228,186,0.7);">
+                        <span style="color: rgba(212,175,55,0.8); letter-spacing: 2px; display: block; margin-bottom: 4px;">ARTIST</span>
+                        <span style="display: block;">Krista Faist</span>
+                        <span style="display: block;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="355e475c464154755e475c46415453545c46411b565a58">[email&#160;protected]</a></span>
+                        <span style="display: block;">kristafaist.com</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Capture Panel - NEW -->
+            <div class="capture-panel">
+                <!-- Input Preview -->
+                <div class="input-preview-section">
+                    <h4>⚜ Live Input</h4>
+                    <div class="webcam-pip">
+                        <video id="local" autoplay muted playsinline></video>
                     </div>
                 </div>
                 
-            </div>
-            
-            <div class="mobile-action-bar">
-                <button class="mobile-action-btn capture" onclick="captureNextSlot()">CAPTURE</button>
-                <div class="mobile-recent-still" id="mobileRecentStill">
-                    <img src="" alt="Recent capture">
-                    <span class="placeholder-text">No captures</span>
-                    <span class="still-counter" id="stillCounter">0/10</span>
+                <div class="sprocket-track left">
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
                 </div>
-                <a href="/prints" class="mobile-action-btn shop">
-                    <span class="shop-line">SHOP PRINTS</span>
-                    <span class="shop-divider">⚜</span>
-                    <span class="shop-line">MINT NFTs</span>
-                </a>
-            </div>
-            
-            <div class="capture-panel">
-                <div class="input-preview-section">
-                    <h4>⚜ Live Input</h4>
-                    <div class="webcam-pip"><video id="local" autoplay muted playsinline></video></div>
+                <div class="sprocket-track right">
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
                 </div>
                 
                 <a href="/prints" class="purchase-btn-large" id="purchaseBtn">
@@ -353,27 +1262,80 @@
                     <span class="purchase-line">Mint NFTs</span>
                 </a>
                 
-                <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
+                <div class="capture-panel-header">
+                    <h3>⚜ Captures</h3>
+                </div>
                 
                 <div class="capture-grid">
-                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">EXP_01</span><img src="" alt="Captured still 1"><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">EXP_02</span><img src="" alt="Captured still 2"><button class="capture-btn" onclick="captureStill(2)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">EXP_03</span><img src="" alt="Captured still 3"><button class="capture-btn" onclick="captureStill(3)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">EXP_04</span><img src="" alt="Captured still 4"><button class="capture-btn" onclick="captureStill(4)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">EXP_05</span><img src="" alt="Captured still 5"><button class="capture-btn" onclick="captureStill(5)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="6"><span class="capture-slot-number">EXP_06</span><img src="" alt="Captured still 6"><button class="capture-btn" onclick="captureStill(6)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="7"><span class="capture-slot-number">EXP_07</span><img src="" alt="Captured still 7"><button class="capture-btn" onclick="captureStill(7)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="8"><span class="capture-slot-number">EXP_08</span><img src="" alt="Captured still 8"><button class="capture-btn" onclick="captureStill(8)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="9"><span class="capture-slot-number">EXP_09</span><img src="" alt="Captured still 9"><button class="capture-btn" onclick="captureStill(9)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="10"><span class="capture-slot-number">EXP_10</span><img src="" alt="Captured still 10"><button class="capture-btn" onclick="captureStill(10)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="1">
+                        <span class="capture-slot-number">EXP_01</span>
+                        <img src="" alt="Captured still 1">
+                        <button type="button" class="capture-btn" onclick="alert('clicked 1'); captureStill(1)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="2">
+                        <span class="capture-slot-number">EXP_02</span>
+                        <img src="" alt="Captured still 2">
+                        <button type="button" class="capture-btn" onclick="captureStill(2)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="3">
+                        <span class="capture-slot-number">EXP_03</span>
+                        <img src="" alt="Captured still 3">
+                        <button type="button" class="capture-btn" onclick="captureStill(3)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="4">
+                        <span class="capture-slot-number">EXP_04</span>
+                        <img src="" alt="Captured still 4">
+                        <button type="button" class="capture-btn" onclick="captureStill(4)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="5">
+                        <span class="capture-slot-number">EXP_05</span>
+                        <img src="" alt="Captured still 5">
+                        <button class="capture-btn" onclick="captureStill(5)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="6">
+                        <span class="capture-slot-number">EXP_06</span>
+                        <img src="" alt="Captured still 6">
+                        <button class="capture-btn" onclick="captureStill(6)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="7">
+                        <span class="capture-slot-number">EXP_07</span>
+                        <img src="" alt="Captured still 7">
+                        <button class="capture-btn" onclick="captureStill(7)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="8">
+                        <span class="capture-slot-number">EXP_08</span>
+                        <img src="" alt="Captured still 8">
+                        <button class="capture-btn" onclick="captureStill(8)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="9">
+                        <span class="capture-slot-number">EXP_09</span>
+                        <img src="" alt="Captured still 9">
+                        <button class="capture-btn" onclick="captureStill(9)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="10">
+                        <span class="capture-slot-number">EXP_10</span>
+                        <img src="" alt="Captured still 10">
+                        <button class="capture-btn" onclick="captureStill(10)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="11">
+                        <span class="capture-slot-number">EXP_11</span>
+                        <img src="" alt="Captured still 11">
+                        <button class="capture-btn" onclick="captureStill(11)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="12">
+                        <span class="capture-slot-number">EXP_12</span>
+                        <img src="" alt="Captured still 12">
+                        <button class="capture-btn" onclick="captureStill(12)">Capture Still</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Hidden canvas for capturing -->
     <canvas id="captureCanvas" style="display:none;"></canvas>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ============================================
 // CONFIGURATION
 // ============================================
@@ -385,28 +1347,36 @@ const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
 // STATE
 // ============================================
 let localStream, inputPC, streamId, playbackId, hls, pollTimer;
-let countdownTimer = null;
-let countdownValue = 45;
-let statusDebugLines = [];
 let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
-let modeValue = 50;
+let modeValue = 0;
 let customPrompt = '';
-let params = { strength: 50, promptWeight: 1.00, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0 };
+let params = { strength: 25, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
+
+// Captured stills storage
 let capturedStills = {};
+
+// Audio analysis
 let audioLevels = new Array(32).fill(0);
 let smoothedAudio = new Array(32).fill(0);
 let bassLevel = 0, midLevel = 0, highLevel = 0;
 let overallLevel = 0;
+
+// Motion detection
 let prevFrame = null;
 let motionLevel = 0;
 let motionSmoothed = 0;
+
+// Animation
 let animationId;
 let time = 0;
+
+// Particles
 let particles = [];
 const MAX_PARTICLES = 300;
 
+// Random prompt inspirations
 const promptInspirations = [
     "Venetian carnival masquerade, golden masks, mysterious candlelight atmosphere",
     "Dutch still life with tulips and silver vessels, morning light through window",
@@ -425,465 +1395,526 @@ const promptInspirations = [
     "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects"
 ];
 
-
-const satireCaptions = [
-    "grotesquely enlarged features emphasizing vanity and pride",
-    "exaggerated aristocratic pose mocking pretension",
-    "symbolic objects orbiting figure in allegorical chaos",
-    "towering powdered wig defying architectural logic",
-    "medals and ribbons multiplied to absurd profusion",
-    "bloated proportions suggesting moral excess",
-    "caricatured expression revealing inner corruption",
-    "satirical props undermining dignified pretense",
-    "cartoonish rendering of pompous self-importance",
-    "symbolic animals commenting on human folly",
-    "exaggerated costume overwhelming diminished figure",
-    "ironic juxtaposition of grandeur and absurdity",
-    "grotesque physiognomy exposing character flaws",
-    "theatrical staging pushed to ridiculous extreme",
-    "symbolic decay beneath surface of opulence",
-    "exaggerated gesture suggesting empty rhetoric",
-    "cartoonish embellishments mocking social climbing",
-    "absurd accessories revealing misplaced priorities",
-    "grotesque distortion of aristocratic conventions",
-    "satirical commentary through visual exaggeration",
-    "inflated ego rendered in literal physical terms",
-    "symbolic weight of office crushing bearer",
-    "exaggerated finery contrasting with base nature",
-    "cartoonish simplification exposing essential character",
-    "grotesque amalgamation of status symbols",
-    "satirical reversal of portrait conventions",
-    "exaggerated shadow suggesting hidden nature",
-    "symbolic props commenting on abuse of power",
-    "cartoonish rendering of social pretension",
-    "grotesque physiognomy revealing moral character",
-    "absurdly tall wig sprouting candelabras as visual satire",
-    "aristocratic vanity exaggerated through reflective surfaces",
-    "cartoonish embellishments amplifying pomp and self-importance",
-    "ridiculous footwear featuring miniature staircases for humor",
-    "ornamental chaos symbolizing excess and decline",
-    "caricatured expression highlighting arrogance and fragility",
-    "symbolic animals acting as allegorical companions",
-    "decorative overload turning costume into comedic punishment",
-    "swirling cartoon lines exaggerating dramatic gesture",
-    "satirical props metaphorically capturing misguided ambition",
-    "exaggerated facial features echoing political-cartoon tradition",
-    "ornate patterns swallowing the character in symbolic excess",
-    "character weighed down by absurd decorative accessories",
-    "figure surrounded by floating allegorical symbols",
-    "vanity portrayed through multiple hand-held mirrors",
-    "satirical exaggeration of status through decorative clutter",
-    "collapsing wig structure symbolizing pretension",
-    "cartoon metaphor rendered through rococo ornament",
-    "exaggerated gesture implying pompous self-importance",
-    "rococo excess weaponized as humorous critique"
-];
-
-const caricaturePrompts = [
-    "Gillray-style biting satire, chin retreating from responsibility, buttons multiplied beyond sanity, mice nibbling at the foundations, velvet curtains revealing emptiness behind",
-    "exaggerated physiognomy, nose bulging with inherited hauteur, wig bending under the weight of hubris, thrones buckling under bloated egos",
-    "divine light piercing darkness, jewels weighing down the absurdly overdressed, alla prima confidence, trompe l'oeil pretension",
-    "divine light piercing darkness, lace collar sharp enough to decapitate, oil painting texture, intimate chamber scene",
-    "ancien regime mockery, neck craning toward imagined importance, brocade drowning the figure in golden excess, gold leaf peeling to reveal rot beneath",
-    "speech bubbles of pompous nonsense, hands clutching invisible scepters, fabric patterns swallowing the wearer whole, chandeliers swaying ominously",
-    "dramatic Baroque lighting, ruffles blooming into textile madness, alla prima confidence, isolated figure against void",
-    "speech bubbles of pompous nonsense, cheeks flushed with champagne hubris, fabric patterns swallowing the wearer whole, gilded frames cracking at the edges",
-    "grotesque aristocratic features, nose bulging with inherited hauteur, embroidery depicting delusions of grandeur, gilded frames cracking at the edges",
-    "Gillray-style biting satire, brow furrowed with dynastic concerns, ermine trim suggesting borrowed majesty, gold leaf peeling to reveal rot beneath",
-    "speech bubbles of pompous nonsense, neck craning toward imagined importance, silk ribbons multiplying like courtly parasites, gilded frames cracking at the edges",
-    "speech bubbles of pompous nonsense, eyes bulging with aristocratic entitlement, brocade drowning the figure in golden excess, chandeliers swaying ominously",
-    "aristocratic absurdity exposed, lips pursed in performative disdain, lace collar sharp enough to decapitate, gilded frames cracking at the edges",
-    "Caravaggesque spotlight, powdered tower of hair defying gravity, oil painting texture, swirling Baroque drama, columns listing toward inevitable fall",
-    "theatrical illumination, wig bending under the weight of hubris, rich oil pigments, centralized vanity",
-    "divine light piercing darkness, fabric patterns swallowing the wearer whole, alla prima confidence, diagonal dynamism, cake towers threatening to collapse",
-    "aristocratic absurdity exposed, lips pursed in performative disdain, velvet so deep one could drown in it, thrones buckling under bloated egos",
-    "Gillray-style biting satire, nose bulging with inherited hauteur, buttons multiplied beyond sanity, serpents coiled in courtly corners, hourglass running out in the background",
-    "Hogarth moral commentary, cheeks flushed with champagne hubris, fabric patterns swallowing the wearer whole, mice nibbling at the foundations, columns listing toward inevitable fall",
-    "Gillray-style biting satire, hands clutching invisible scepters, wig sprouting architectural fantasies, velvet curtains revealing emptiness behind",
-    "aristocratic absurdity exposed, cheeks flushed with champagne hubris, wig sprouting architectural fantasies, hourglass running out in the background",
-    "political caricature, cheeks flushed with champagne hubris, wig sprouting architectural fantasies, thrones buckling under bloated egos",
-    "harsh light revealing all flaws, wig bending under the weight of hubris, glazed shadows, intimate chamber scene, mice nibbling at the foundations",
-    "aristocratic absurdity exposed, nose bulging with inherited hauteur, periwig cascading like frozen waterfalls, scepters wilting in weak grips",
-    "theatrical illumination, jewels weighing down the absurdly overdressed, masterful rendering, pyramidal arrangement",
-    "political caricature, hands clutching invisible scepters, powdered tower of hair defying gravity, cherubs overhead with knowing smirks, crowns slipping from unworthy heads",
-    "theatrical illumination, ermine trim suggesting borrowed majesty, impasto highlights, diagonal dynamism",
-    "harsh light revealing all flaws, embroidery depicting delusions of grandeur, impasto highlights, intimate chamber scene",
-    "exaggerated physiognomy, cheeks flushed with champagne hubris, velvet so deep one could drown in it, parrots repeating empty platitudes, storm clouds gathering beyond the window",
-    "exaggerated physiognomy, posture rigid with false dignity, buttons multiplied beyond sanity, hourglass running out in the background",
-    "grotesque aristocratic features, eyes bulging with aristocratic entitlement, golden threads spelling out inherited shame, crowns slipping from unworthy heads",
-    "Hogarth moral commentary, nose bulging with inherited hauteur, wig sprouting architectural fantasies, cake towers threatening to collapse",
-    "tenebrism chiaroscuro, buttons multiplied beyond sanity, sfumato edges, intimate chamber scene, butterflies representing fleeting power",
-    "shadow play of moral ambiguity, brocade drowning the figure in golden excess, layered translucency, diagonal dynamism",
-    "political caricature, hands clutching invisible scepters, silk ribbons multiplying like courtly parasites, monkeys with mirrors reflecting truth, thrones buckling under bloated egos",
-    "candlelit intimacy, jewels weighing down the absurdly overdressed, alla prima confidence, swirling Baroque drama",
-    "Hogarth moral commentary, jowls trembling with indignation, brocade drowning the figure in golden excess, butterflies representing fleeting power, storm clouds gathering beyond the window",
-    "divine light piercing darkness, fabric patterns swallowing the wearer whole, glazed shadows, centralized vanity, peacocks of vanity preening nearby",
-    "harsh light revealing all flaws, embroidery depicting delusions of grandeur, academic technique, centralized vanity",
-    "revolutionary fervor, hands clutching invisible scepters, brocade drowning the figure in golden excess, thrones buckling under bloated egos",
-    "candlelit intimacy, velvet so deep one could drown in it, academic technique, centralized vanity",
-    "speech bubbles of pompous nonsense, chin retreating from responsibility, buttons multiplied beyond sanity, cracks spreading through marble floors",
-    "symbolic objects of corruption, eyes bulging with aristocratic entitlement, wig bending under the weight of hubris, butterflies representing fleeting power, thrones buckling under bloated egos",
-    "stormy atmospheric glow, golden threads spelling out inherited shame, glazed shadows, intimate chamber scene, butterflies representing fleeting power, velvet curtains revealing emptiness behind",
-    "exaggerated physiognomy, lips pursed in performative disdain, periwig cascading like frozen waterfalls, chandeliers swaying ominously",
-    "revolutionary fervor, lips pursed in performative disdain, powdered tower of hair defying gravity, cracks spreading through marble floors",
-    "Hogarth moral commentary, lips pursed in performative disdain, periwig cascading like frozen waterfalls, scepters wilting in weak grips",
-    "Gillray-style biting satire, posture rigid with false dignity, golden threads spelling out inherited shame, cracks spreading through marble floors",
-    "Hogarth moral commentary, cheeks flushed with champagne hubris, silk ribbons multiplying like courtly parasites, velvet curtains revealing emptiness behind",
-    "symbolic objects of corruption, lips pursed in performative disdain, lace collar sharp enough to decapitate, crowns slipping from unworthy heads",
-    "tenebrism chiaroscuro, ruffles blooming into textile madness, layered translucency, centralized vanity, ravens waiting with patient hunger",
-    "ancien regime mockery, eyes bulging with aristocratic entitlement, golden threads spelling out inherited shame, chandeliers swaying ominously",
-    "grotesque aristocratic features, nose bulging with inherited hauteur, brocade drowning the figure in golden excess, velvet curtains revealing emptiness behind",
-    "revolutionary fervor, eyes bulging with aristocratic entitlement, lace collar sharp enough to decapitate, gilded frames cracking at the edges",
-    "harsh light revealing all flaws, powdered tower of hair defying gravity, academic technique, intimate chamber scene",
-    "candlelit intimacy, lace collar sharp enough to decapitate, sfumato edges, crowded courtly chaos",
-    "speech bubbles of pompous nonsense, hands clutching invisible scepters, buttons multiplied beyond sanity, peacocks of vanity preening nearby, gilded frames cracking at the edges",
-    "candlelit intimacy, silk ribbons multiplying like courtly parasites, sfumato edges, centralized vanity",
-    "ancien regime mockery, nose bulging with inherited hauteur, velvet so deep one could drown in it, cracks spreading through marble floors",
-    "Gillray-style biting satire, chin retreating from responsibility, ermine trim suggesting borrowed majesty, chandeliers swaying ominously",
-    "symbolic objects of corruption, brow furrowed with dynastic concerns, buttons multiplied beyond sanity, gold leaf peeling to reveal rot beneath",
-    "symbolic objects of corruption, hands clutching invisible scepters, powdered tower of hair defying gravity, columns listing toward inevitable fall",
-    "theatrical illumination, velvet so deep one could drown in it, layered translucency, swirling Baroque drama",
-    "shadow play of moral ambiguity, buttons multiplied beyond sanity, alla prima confidence, theatrical composition",
-    "speech bubbles of pompous nonsense, nose bulging with inherited hauteur, powdered tower of hair defying gravity, serpents coiled in courtly corners, storm clouds gathering beyond the window",
-    "exaggerated physiognomy, cheeks flushed with champagne hubris, fabric patterns swallowing the wearer whole, gilded frames cracking at the edges",
-    "golden hour of empire, ermine trim suggesting borrowed majesty, sfumato edges, crowded courtly chaos",
-    "grotesque aristocratic features, posture rigid with false dignity, embroidery depicting delusions of grandeur, columns listing toward inevitable fall",
-    "grotesque aristocratic features, cheeks flushed with champagne hubris, velvet so deep one could drown in it, crowns slipping from unworthy heads",
-    "revolutionary fervor, posture rigid with false dignity, buttons multiplied beyond sanity, columns listing toward inevitable fall",
-    "grotesque aristocratic features, nose bulging with inherited hauteur, silk ribbons multiplying like courtly parasites, velvet curtains revealing emptiness behind",
-    "revolutionary fervor, lips pursed in performative disdain, velvet so deep one could drown in it, velvet curtains revealing emptiness behind",
-    "Caravaggesque spotlight, fabric patterns swallowing the wearer whole, visible brushwork, pyramidal arrangement, ravens waiting with patient hunger",
-    "aristocratic absurdity exposed, lips pursed in performative disdain, ruffles blooming into textile madness, scepters wilting in weak grips",
-    "symbolic objects of corruption, cheeks flushed with champagne hubris, silk ribbons multiplying like courtly parasites, mocking cupids exchanging glances, crowns slipping from unworthy heads",
-    "Hogarth moral commentary, nose bulging with inherited hauteur, wig bending under the weight of hubris, gilded frames cracking at the edges",
-    "candlelit intimacy, fabric patterns swallowing the wearer whole, academic technique, intimate chamber scene, chandeliers swaying ominously",
-    "stormy atmospheric glow, brocade drowning the figure in golden excess, oil painting texture, trompe l'oeil pretension, hourglass running out in the background",
-    "political caricature, jowls trembling with indignation, ermine trim suggesting borrowed majesty, gold leaf peeling to reveal rot beneath",
-    "stormy atmospheric glow, fabric patterns swallowing the wearer whole, rich oil pigments, swirling Baroque drama",
-    "divine light piercing darkness, lace collar sharp enough to decapitate, oil painting texture, diagonal dynamism, parrots repeating empty platitudes",
-    "Gillray-style biting satire, nose bulging with inherited hauteur, buttons multiplied beyond sanity, peacocks of vanity preening nearby, columns listing toward inevitable fall",
-    "aristocratic absurdity exposed, eyes bulging with aristocratic entitlement, golden threads spelling out inherited shame, butterflies representing fleeting power, crowns slipping from unworthy heads",
-    "symbolic objects of corruption, chin retreating from responsibility, jewels weighing down the absurdly overdressed, cake towers threatening to collapse",
-    "stormy atmospheric glow, wig sprouting architectural fantasies, alla prima confidence, trompe l'oeil pretension, cake towers threatening to collapse",
-    "candlelit intimacy, jewels weighing down the absurdly overdressed, glazed shadows, isolated figure against void",
-    "divine light piercing darkness, velvet so deep one could drown in it, layered translucency, pyramidal arrangement",
-    "Caravaggesque spotlight, jewels weighing down the absurdly overdressed, sfumato edges, processional grandeur",
-    "dramatic Baroque lighting, ermine trim suggesting borrowed majesty, masterful rendering, pyramidal arrangement",
-    "revolutionary fervor, posture rigid with false dignity, powdered tower of hair defying gravity, columns listing toward inevitable fall",
-    "divine light piercing darkness, wig bending under the weight of hubris, academic technique, pyramidal arrangement",
-    "candlelit intimacy, powdered tower of hair defying gravity, alla prima confidence, centralized vanity",
-    "revolutionary fervor, nose bulging with inherited hauteur, brocade drowning the figure in golden excess, cake towers threatening to collapse",
-    "exaggerated physiognomy, jowls trembling with indignation, silk ribbons multiplying like courtly parasites, scepters wilting in weak grips",
-    "shadow play of moral ambiguity, wig bending under the weight of hubris, rich oil pigments, theatrical composition",
-    "revolutionary fervor, brow furrowed with dynastic concerns, ermine trim suggesting borrowed majesty, gilded frames cracking at the edges",
-    "Gillray-style biting satire, eyes bulging with aristocratic entitlement, buttons multiplied beyond sanity, storm clouds gathering beyond the window",
-    "divine light piercing darkness, ermine trim suggesting borrowed majesty, alla prima confidence, intimate chamber scene, putti struggling to lift collapsing crowns",
-    "political caricature, posture rigid with false dignity, velvet so deep one could drown in it, cracks spreading through marble floors",
-    "dramatic Baroque lighting, brocade drowning the figure in golden excess, masterful rendering, diagonal dynamism",
-];
+// ============================================
+// STYLES
+// ============================================
 const styles = {
-    baroque: { base: "baroque masterpiece, dramatic chiaroscuro lighting, Rubens influence, rich oil paint textures, gold leaf accents", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
-    rococo: { base: "rococo painting, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", caricature: "French Revolution caricature, James Gillray style, mocking aristocracy", colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] } },
-    caravaggio: { base: "Caravaggio tenebrism, extreme chiaroscuro, single dramatic spotlight, biblical intensity", caricature: "Revolutionary propaganda poster, bold contrast, woodcut style", colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] } },
-    vermeer: { base: "Vermeer Dutch Golden Age, soft window light, intimate domestic scene, pearl luminosity", caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature", colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] } },
-    rembrandt: { base: "Rembrandt self-portrait style, golden brown palette, impasto brushwork, psychological depth", caricature: "Revolutionary broadsheet illustration, Thomas Rowlandson style", colors: { primary: [139, 90, 43], secondary: [85, 60, 42], accent: [218, 165, 32] } },
-    artemisia: { base: "Artemisia Gentileschi style, powerful feminine subjects, dramatic baroque lighting, intense emotional expression", caricature: "Revolutionary feminist pamphlet, fierce women warriors, Liberty Leading the People energy", colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] } }
+    baroque: { 
+        base: "baroque masterpiece, dramatic chiaroscuro lighting, Rubens influence, rich oil paint textures, gold leaf accents", 
+        caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture",
+        colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] }
+    },
+    rococo: { 
+        base: "rococo painting, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", 
+        caricature: "French Revolution caricature, James Gillray style, mocking aristocracy",
+        colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] }
+    },
+    caravaggio: { 
+        base: "Caravaggio tenebrism, extreme chiaroscuro, single dramatic spotlight, biblical intensity", 
+        caricature: "Revolutionary propaganda poster, bold contrast, woodcut style",
+        colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] }
+    },
+    vermeer: { 
+        base: "Vermeer Dutch Golden Age, soft window light, intimate domestic scene, pearl luminosity", 
+        caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature",
+        colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] }
+    },
+    rembrandt: { 
+        base: "Rembrandt self-portrait style, golden brown palette, impasto brushwork, psychological depth", 
+        caricature: "Revolutionary broadsheet illustration, Thomas Rowlandson style",
+        colors: { primary: [139, 90, 43], secondary: [85, 60, 42], accent: [218, 165, 32] }
+    },
+    artemisia: { 
+        base: "Artemisia Gentileschi style, powerful feminine subjects, dramatic baroque lighting, intense emotional expression", 
+        caricature: "Revolutionary feminist pamphlet, fierce women warriors, Liberty Leading the People energy",
+        colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] }
+    }
 };
 
+// ============================================
+// LOGGING
+// ============================================
 function log(msg, type = '') {
     const div = document.getElementById('log');
     const line = document.createElement('div');
     line.className = type;
-    const timeStr = new Date().toLocaleTimeString();
-    line.textContent = `[${timeStr}] ${msg}`;
+    line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
     div.appendChild(line);
     div.scrollTop = div.scrollHeight;
     console.log(msg);
-    // Update status debug overlay
-    const statusDebug = document.getElementById('statusDebug');
-    if (statusDebug && document.getElementById('statusOverlay').classList.contains('active')) {
-        statusDebugLines.push({text: `[${timeStr}] ${msg}`, type: type});
-        if (statusDebugLines.length > 5) statusDebugLines.shift();
-        statusDebug.innerHTML = statusDebugLines.map(l => `<div class="status-debug-line ${l.type}">${l.text}</div>`).join('');
-    }
 }
 
-function showStatusOverlay() {
-    const overlay = document.getElementById('statusOverlay');
-    overlay.classList.add('active');
-    countdownValue = 45;
-    statusDebugLines = [];
-    updateCountdown();
-    countdownTimer = setInterval(updateCountdown, 1000);
-}
-
-function updateCountdown() {
-    const msg = document.getElementById('statusMessage');
-    if (countdownValue > 0) {
-        msg.textContent = `Negotiating with pixels. Please wait up to ${countdownValue} seconds...`;
-        countdownValue--;
-    } else {
-        msg.textContent = 'Almost there...';
-    }
-}
-
-function hideStatusOverlay() {
-    const overlay = document.getElementById('statusOverlay');
-    overlay.classList.remove('active');
-    if (countdownTimer) {
-        clearInterval(countdownTimer);
-        countdownTimer = null;
-    }
-    statusDebugLines = [];
-}
-
-function captureNextSlot() {
-    let targetSlot = null;
-    for (let i = 1; i <= 10; i++) { if (!capturedStills[i]) { targetSlot = i; break; } }
-    if (!targetSlot) targetSlot = 1;
-    captureStill(targetSlot);
-}
-
-function updateMobileRecentStill(dataUrl, slotNumber) {
-    const recentStill = document.getElementById('mobileRecentStill');
-    const counter = document.getElementById('stillCounter');
-    if (recentStill && counter) {
-        const img = recentStill.querySelector('img');
-        if (img) { img.src = dataUrl; recentStill.classList.add('has-image'); }
-        counter.textContent = Object.keys(capturedStills).length + '/10';
-    }
-}
-
+// ============================================
+// CAPTURE FUNCTIONALITY
+// ============================================
 function captureStill(slotNumber) {
+    console.log('captureStill called with slot:', slotNumber);
     const outputVideo = document.getElementById('output');
     const canvas = document.getElementById('captureCanvas');
     const ctx = canvas.getContext('2d');
-    if (!outputVideo.videoWidth) { log('No video to capture yet', 'error'); return; }
+    
+    if (!outputVideo.videoWidth) {
+        log('No video to capture yet', 'error');
+        return;
+    }
+    
+    // Scale down for storage (max 800px wide)
     const maxWidth = 800;
     const scale = Math.min(1, maxWidth / outputVideo.videoWidth);
     canvas.width = outputVideo.videoWidth * scale;
     canvas.height = outputVideo.videoHeight * scale;
     ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
+    
+    // Use JPEG with 70% quality instead of PNG (much smaller)
     const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-    capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle, prompt: customPrompt || styles[currentStyle].base };
-    try { localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills)); }
-    catch (e) { localStorage.removeItem('baroqueCaptures'); capturedStills = {}; capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle, prompt: customPrompt || styles[currentStyle].base }; localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills)); log('Storage was full - cleared old captures', 'info'); }
+    
+    // Store in localStorage for prints page
+    capturedStills[slotNumber] = {
+        image: dataUrl,
+        timestamp: new Date().toISOString(),
+        style: currentStyle,
+        prompt: customPrompt || styles[currentStyle].base
+    };
+    
+    try {
+        localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills));
+    } catch (e) {
+        // Storage full - clear old captures and try again
+        console.warn('Storage full, clearing old captures');
+        localStorage.removeItem('baroqueCaptures');
+        capturedStills = {};
+        capturedStills[slotNumber] = {
+            image: dataUrl,
+            timestamp: new Date().toISOString(),
+            style: currentStyle,
+            prompt: customPrompt || styles[currentStyle].base
+        };
+        localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills));
+        log('Storage was full - cleared old captures', 'info');
+    }
+    
+    // Update UI
     const slot = document.querySelector(`.capture-slot[data-slot="${slotNumber}"]`);
     const img = slot.querySelector('img');
     img.src = dataUrl;
     slot.classList.add('has-image');
+    
     log(`Still captured to slot ${slotNumber}`, 'success');
-    updateMobileRecentStill(dataUrl, slotNumber);
 }
 
-function loadCapturedStills() { localStorage.removeItem('baroqueCaptures'); capturedStills = {}; }
+// Load existing captures on page load
+function loadCapturedStills() {
+    // Clear old captures on each new session
+    localStorage.removeItem('baroqueCaptures');
+    capturedStills = {};
+    console.log('Captures cleared for fresh session');
+}
 
+// ============================================
+// PROMPT SHUFFLE
+// ============================================
 function shufflePrompt() {
-    let allPrompts;
-    if (modeValue < 50) {
-        allPrompts = promptInspirations;
-    } else if (modeValue > 50) {
-        allPrompts = satireCaptions;
-    } else {
-        allPrompts = Math.random() < 0.5 ? satireCaptions : promptInspirations;
-    }
-    const randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
+    const randomPrompt = promptInspirations[Math.floor(Math.random() * promptInspirations.length)];
     document.getElementById('promptInput').value = randomPrompt;
     customPrompt = randomPrompt;
-    log('Prompt rolled & applied', 'success');
-    if (streamId) setParams();
+    log('Prompt shuffled', 'info');
 }
 
 function applyCustomPrompt() {
     customPrompt = document.getElementById('promptInput').value.trim();
-    if (customPrompt) { log(`Custom prompt applied: "${customPrompt.substring(0, 50)}..."`, 'success'); if (streamId) setParams(); }
-    else { log('Using default style prompt', 'info'); }
+    if (customPrompt) {
+        log(`Custom prompt applied: "${customPrompt.substring(0, 50)}..."`, 'success');
+        if (streamId) setParams();
+    } else {
+        log('Using default style prompt', 'info');
+    }
 }
 
+// ============================================
+// AUDIO ANALYSIS
+// ============================================
 function initAudio(stream) {
     try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
         analyser.fftSize = 256;
         analyser.smoothingTimeConstant = 0.7;
+        
         micSource = audioContext.createMediaStreamSource(stream);
         micSource.connect(analyser);
+        
         audioDataArray = new Uint8Array(analyser.frequencyBinCount);
+        
+        // Create audio meter bars
         const meter = document.getElementById('audioMeter');
         meter.innerHTML = '';
-        for (let i = 0; i < 32; i++) { const bar = document.createElement('div'); bar.className = 'audio-bar'; bar.style.height = '4px'; meter.appendChild(bar); }
+        for (let i = 0; i < 32; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'audio-bar';
+            bar.style.height = '4px';
+            meter.appendChild(bar);
+        }
+        
         log('Audio analysis initialized', 'success');
-    } catch (e) { log(`Audio init error: ${e.message}`, 'error'); }
+    } catch (e) {
+        log(`Audio init error: ${e.message}`, 'error');
+    }
 }
 
 function updateAudio() {
     if (!analyser) return;
+    
     analyser.getByteFrequencyData(audioDataArray);
+    
+    // Extract frequency bands
     const binCount = audioDataArray.length;
     const bassEnd = Math.floor(binCount * 0.15);
     const midEnd = Math.floor(binCount * 0.5);
+    
     let bassSum = 0, midSum = 0, highSum = 0;
+    
     for (let i = 0; i < binCount; i++) {
         const val = audioDataArray[i] / 255;
         if (i < bassEnd) bassSum += val;
         else if (i < midEnd) midSum += val;
         else highSum += val;
     }
+    
     bassLevel = (bassSum / bassEnd) * audioParams.intensity;
     midLevel = (midSum / (midEnd - bassEnd)) * audioParams.intensity;
     highLevel = (highSum / (binCount - midEnd)) * audioParams.intensity;
     overallLevel = (bassLevel + midLevel + highLevel) / 3;
-    for (let i = 0; i < 32; i++) { const idx = Math.floor(i * binCount / 32); audioLevels[i] = audioDataArray[idx] / 255; smoothedAudio[i] = smoothedAudio[i] * 0.7 + audioLevels[i] * 0.3; }
+    
+    // Update smoothed audio levels
+    for (let i = 0; i < 32; i++) {
+        const idx = Math.floor(i * binCount / 32);
+        audioLevels[i] = audioDataArray[idx] / 255;
+        smoothedAudio[i] = smoothedAudio[i] * 0.7 + audioLevels[i] * 0.3;
+    }
+    
+    // Update meter display
     const bars = document.querySelectorAll('.audio-bar');
-    bars.forEach((bar, i) => { bar.style.height = Math.max(4, smoothedAudio[i] * 36) + 'px'; });
+    bars.forEach((bar, i) => {
+        const height = Math.max(4, smoothedAudio[i] * 36);
+        bar.style.height = height + 'px';
+    });
 }
 
+// ============================================
+// MOTION DETECTION
+// ============================================
 function initMotionDetection() {
     const video = document.getElementById('local');
     const canvas = document.createElement('canvas');
-    canvas.width = 64; canvas.height = 48;
+    canvas.width = 64;
+    canvas.height = 48;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    
     function detectMotion() {
         if (!video.videoWidth) return;
+        
         ctx.drawImage(video, 0, 0, 64, 48);
         const imageData = ctx.getImageData(0, 0, 64, 48);
         const data = imageData.data;
+        
         if (prevFrame) {
             let diff = 0;
-            for (let i = 0; i < data.length; i += 4) { diff += Math.abs(data[i] - prevFrame[i]) + Math.abs(data[i + 1] - prevFrame[i + 1]) + Math.abs(data[i + 2] - prevFrame[i + 2]); }
+            for (let i = 0; i < data.length; i += 4) {
+                diff += Math.abs(data[i] - prevFrame[i]);
+                diff += Math.abs(data[i + 1] - prevFrame[i + 1]);
+                diff += Math.abs(data[i + 2] - prevFrame[i + 2]);
+            }
             motionLevel = diff / (data.length * 255 / 4);
             motionSmoothed = motionSmoothed * 0.8 + motionLevel * 0.2;
         }
+        
         prevFrame = new Uint8ClampedArray(data);
     }
+    
     setInterval(detectMotion, 50);
 }
 
+// ============================================
+// EMBOSSED SHIMMER BACKGROUND (Coral/Brain Pattern)
+// ============================================
 function initBackground() {
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
     resize();
     window.addEventListener('resize', resize);
+    
+    // Simplex-like noise for organic patterns
     function noise(x, y, z) {
-        const X = Math.floor(x) & 255, Y = Math.floor(y) & 255, Z = Math.floor(z) & 255;
-        x -= Math.floor(x); y -= Math.floor(y); z -= Math.floor(z);
-        function hash(n) { return Math.sin(n * 12.9898 + n * 78.233) * 43758.5453 % 1; }
-        function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-        function lerp(a, b, t) { return a + t * (b - a); }
+        const X = Math.floor(x) & 255;
+        const Y = Math.floor(y) & 255;
+        const Z = Math.floor(z) & 255;
+        x -= Math.floor(x);
+        y -= Math.floor(y);
+        z -= Math.floor(z);
         const u = fade(x), v = fade(y), w = fade(z);
-        const a = hash(X + Y * 57 + Z * 113), b = hash(X + 1 + Y * 57 + Z * 113);
-        const c = hash(X + (Y + 1) * 57 + Z * 113), d = hash(X + 1 + (Y + 1) * 57 + Z * 113);
-        const e = hash(X + Y * 57 + (Z + 1) * 113), f = hash(X + 1 + Y * 57 + (Z + 1) * 113);
-        const g = hash(X + (Y + 1) * 57 + (Z + 1) * 113), h = hash(X + 1 + (Y + 1) * 57 + (Z + 1) * 113);
-        return lerp(lerp(lerp(a, b, u), lerp(c, d, u), v), lerp(lerp(e, f, u), lerp(g, h, u), v), w);
+        
+        // Simple hash
+        function hash(n) {
+            return Math.sin(n * 12.9898 + n * 78.233) * 43758.5453 % 1;
+        }
+        
+        const a = hash(X + Y * 57 + Z * 113);
+        const b = hash(X + 1 + Y * 57 + Z * 113);
+        const c = hash(X + (Y + 1) * 57 + Z * 113);
+        const d = hash(X + 1 + (Y + 1) * 57 + Z * 113);
+        const e = hash(X + Y * 57 + (Z + 1) * 113);
+        const f = hash(X + 1 + Y * 57 + (Z + 1) * 113);
+        const g = hash(X + (Y + 1) * 57 + (Z + 1) * 113);
+        const h = hash(X + 1 + (Y + 1) * 57 + (Z + 1) * 113);
+        
+        return lerp(
+            lerp(lerp(a, b, u), lerp(c, d, u), v),
+            lerp(lerp(e, f, u), lerp(g, h, u), v),
+            w
+        );
     }
+    
+    function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+    function lerp(a, b, t) { return a + t * (b - a); }
+    
+    // Fractal Brownian Motion for organic texture
     function fbm(x, y, z, octaves = 5) {
-        let value = 0, amplitude = 0.5, frequency = 1;
-        for (let i = 0; i < octaves; i++) { value += amplitude * noise(x * frequency, y * frequency, z); amplitude *= 0.5; frequency *= 2; }
+        let value = 0;
+        let amplitude = 0.5;
+        let frequency = 1;
+        for (let i = 0; i < octaves; i++) {
+            value += amplitude * noise(x * frequency, y * frequency, z);
+            amplitude *= 0.5;
+            frequency *= 2;
+        }
         return value;
     }
+    
+    // Draw background
     function drawBackground() {
-        const w = canvas.width, h = canvas.height;
+        const w = canvas.width;
+        const h = canvas.height;
         const imageData = ctx.createImageData(w, h);
         const data = imageData.data;
+        
         const style = styles[currentStyle];
         const colors = style.colors;
+        
+        // Audio-reactive parameters
         const audioScale = 1 + bassLevel * 0.5;
         const colorShift = time * 0.01 + midLevel * 2;
         const pulseIntensity = 0.3 + highLevel * 0.7;
+        
         const scale = 0.004 * audioScale;
         const zOffset = time * 0.0003 * audioParams.pulseSpeed;
-        for (let y = 0; y < h; y += 2) {
+        
+        for (let y = 0; y < h; y += 2) { // Skip every other row for performance
             for (let x = 0; x < w; x += 2) {
-                const nx = x * scale, ny = y * scale;
+                // Create curling organic pattern
+                const nx = x * scale;
+                const ny = y * scale;
+                
+                // Multi-layer pattern
                 const n1 = fbm(nx, ny, zOffset, 4);
                 const n2 = fbm(nx + 100, ny + 100, zOffset + 0.5, 3);
                 const n3 = fbm(nx * 2, ny * 2, zOffset * 2, 2);
+                
+                // Curl/swirl effect
                 const curl = Math.sin(n1 * 6 + n2 * 4 + colorShift) * 0.5 + 0.5;
                 const emboss = n3 * 0.3 + curl * 0.7;
+                
+                // Audio-reactive pulse waves
                 const dist = Math.sqrt((x - w/2) ** 2 + (y - h/2) ** 2);
                 const pulse = Math.sin(dist * 0.02 - time * 0.002 * audioParams.pulseSpeed + bassLevel * 10) * pulseIntensity;
+                
+                // Color mapping with rainbow shift
                 const hue = (emboss * 360 + colorShift * 50 + dist * 0.1) % 360;
                 const sat = 0.6 + emboss * 0.3 + pulse * 0.2;
                 const light = 0.15 + emboss * 0.25 + pulse * 0.1;
+                
+                // HSL to RGB
                 const rgb = hslToRgb(hue / 360, sat, light);
+                
+                // Add shimmer/emboss highlight
                 const highlight = Math.pow(Math.max(0, n3 - 0.4) * 2.5, 2) * (0.5 + highLevel);
+                
                 const idx = (y * w + x) * 4;
                 data[idx] = Math.min(255, rgb[0] + highlight * colors.accent[0]);
                 data[idx + 1] = Math.min(255, rgb[1] + highlight * colors.accent[1]);
                 data[idx + 2] = Math.min(255, rgb[2] + highlight * colors.accent[2]);
                 data[idx + 3] = 255;
-                if (x + 1 < w) { data[idx + 4] = data[idx]; data[idx + 5] = data[idx + 1]; data[idx + 6] = data[idx + 2]; data[idx + 7] = 255; }
-                if (y + 1 < h) { const idx3 = idx + w * 4; data[idx3] = data[idx]; data[idx3 + 1] = data[idx + 1]; data[idx3 + 2] = data[idx + 2]; data[idx3 + 3] = 255; if (x + 1 < w) { data[idx3 + 4] = data[idx]; data[idx3 + 5] = data[idx + 1]; data[idx3 + 6] = data[idx + 2]; data[idx3 + 7] = 255; } }
+                
+                // Fill neighboring pixels
+                if (x + 1 < w) {
+                    const idx2 = idx + 4;
+                    data[idx2] = data[idx];
+                    data[idx2 + 1] = data[idx + 1];
+                    data[idx2 + 2] = data[idx + 2];
+                    data[idx2 + 3] = 255;
+                }
+                if (y + 1 < h) {
+                    const idx3 = idx + w * 4;
+                    data[idx3] = data[idx];
+                    data[idx3 + 1] = data[idx + 1];
+                    data[idx3 + 2] = data[idx + 2];
+                    data[idx3 + 3] = 255;
+                    if (x + 1 < w) {
+                        const idx4 = idx3 + 4;
+                        data[idx4] = data[idx];
+                        data[idx4 + 1] = data[idx + 1];
+                        data[idx4 + 2] = data[idx + 2];
+                        data[idx4 + 3] = 255;
+                    }
+                }
             }
         }
+        
         ctx.putImageData(imageData, 0, 0);
     }
+    
     return drawBackground;
 }
 
 function hslToRgb(h, s, l) {
     let r, g, b;
-    if (s === 0) { r = g = b = l; }
-    else {
-        const hue2rgb = (p, q, t) => { if (t < 0) t += 1; if (t > 1) t -= 1; if (t < 1/6) return p + (q - p) * 6 * t; if (t < 1/2) return q; if (t < 2/3) return p + (q - p) * (2/3 - t) * 6; return p; };
+    if (s === 0) {
+        r = g = b = l;
+    } else {
+        const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1/6) return p + (q - p) * 6 * t;
+            if (t < 1/2) return q;
+            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        };
         const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
         const p = 2 * l - q;
-        r = hue2rgb(p, q, h + 1/3); g = hue2rgb(p, q, h); b = hue2rgb(p, q, h - 1/3);
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
     }
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
 
+// ============================================
+// MOTION-REACTIVE PARTICLES
+// ============================================
 function initParticles() {
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
     resize();
     window.addEventListener('resize', resize);
+    
     class Particle {
-        constructor() { this.reset(); }
-        reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.vx = (Math.random() - 0.5) * 2; this.vy = (Math.random() - 0.5) * 2; this.size = Math.random() * 3 + 1; this.life = 1; this.decay = Math.random() * 0.005 + 0.002; this.hue = Math.random() * 60 + 30; }
+        constructor() {
+            this.reset();
+        }
+        
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 2;
+            this.vy = (Math.random() - 0.5) * 2;
+            this.size = Math.random() * 3 + 1;
+            this.life = 1;
+            this.decay = Math.random() * 0.005 + 0.002;
+            this.hue = Math.random() * 60 + 30; // Gold range
+        }
+        
         update() {
+            // Motion reactivity - particles swirl more with motion
             const motionInfluence = motionSmoothed * 10;
             const angle = Math.atan2(this.y - canvas.height/2, this.x - canvas.width/2);
+            
+            // Swirl effect
             this.vx += Math.sin(angle + time * 0.001) * motionInfluence * 0.1;
             this.vy += Math.cos(angle + time * 0.001) * motionInfluence * 0.1;
+            
+            // Audio reactivity
             this.vx += (Math.random() - 0.5) * bassLevel * 3;
             this.vy += (Math.random() - 0.5) * bassLevel * 3;
-            this.vx *= 0.98; this.vy *= 0.98;
-            this.x += this.vx; this.y += this.vy;
+            
+            // Damping
+            this.vx *= 0.98;
+            this.vy *= 0.98;
+            
+            this.x += this.vx;
+            this.y += this.vy;
+            
+            // Pulse size with audio
             this.displaySize = this.size * (1 + midLevel * 2);
+            
             this.life -= this.decay;
-            if (this.life <= 0 || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+            
+            if (this.life <= 0 || this.x < 0 || this.x > canvas.width || 
+                this.y < 0 || this.y > canvas.height) {
+                this.reset();
+            }
         }
+        
         draw(ctx) {
+            const style = styles[currentStyle];
             const alpha = this.life * 0.6;
+            
             ctx.save();
             ctx.globalAlpha = alpha;
+            
+            // Glow effect
+            const gradient = ctx.createRadialGradient(
+                this.x, this.y, 0,
+                this.x, this.y, this.displaySize * 3
+            );
+            
             const hueShift = (this.hue + time * 0.05 + highLevel * 100) % 360;
-            const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.displaySize * 3);
             gradient.addColorStop(0, `hsla(${hueShift}, 80%, 70%, 1)`);
             gradient.addColorStop(0.4, `hsla(${hueShift}, 70%, 50%, 0.5)`);
             gradient.addColorStop(1, `hsla(${hueShift}, 60%, 30%, 0)`);
+            
             ctx.fillStyle = gradient;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.displaySize * 3, 0, Math.PI * 2);
             ctx.fill();
+            
+            // Core
             ctx.fillStyle = `hsla(${hueShift}, 60%, 90%, ${alpha})`;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.displaySize, 0, Math.PI * 2);
             ctx.fill();
+            
             ctx.restore();
         }
     }
+    
+    // Initialize particles
     const targetCount = Math.floor(MAX_PARTICLES * audioParams.particleDensity);
-    for (let i = 0; i < targetCount; i++) particles.push(new Particle());
+    for (let i = 0; i < targetCount; i++) {
+        particles.push(new Particle());
+    }
+    
     function drawParticles() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Adjust particle count based on density setting
         const targetCount = Math.floor(MAX_PARTICLES * audioParams.particleDensity);
-        while (particles.length < targetCount) particles.push(new Particle());
-        while (particles.length > targetCount) particles.pop();
+        while (particles.length < targetCount) {
+            particles.push(new Particle());
+        }
+        while (particles.length > targetCount) {
+            particles.pop();
+        }
+        
+        // Audio-reactive burst - spawn extra particles on bass hits
         if (bassLevel > 0.6 && Math.random() < bassLevel) {
             const burst = new Particle();
             burst.x = canvas.width / 2 + (Math.random() - 0.5) * 200;
@@ -893,30 +1924,66 @@ function initParticles() {
             burst.size = 3 + bassLevel * 3;
             particles.push(burst);
         }
-        particles.forEach(p => { p.update(); p.draw(ctx); });
+        
+        particles.forEach(p => {
+            p.update();
+            p.draw(ctx);
+        });
     }
+    
     return drawParticles;
 }
 
+// ============================================
+// VIDEO OVERLAY ANIMATION
+// ============================================
 function initVideoOverlay() {
     const canvas = document.getElementById('videoOverlay');
     const ctx = canvas.getContext('2d');
-    function resize() { const wrapper = canvas.parentElement; canvas.width = wrapper.offsetWidth + 40; canvas.height = wrapper.offsetHeight + 40; }
+    
+    function resize() {
+        const wrapper = canvas.parentElement;
+        canvas.width = wrapper.offsetWidth + 40;
+        canvas.height = wrapper.offsetHeight + 40;
+    }
     resize();
     window.addEventListener('resize', resize);
+    
+    function noise(x, y, z) {
+        const X = Math.floor(x) & 255;
+        const Y = Math.floor(y) & 255;
+        function hash(n) { return Math.sin(n * 12.9898 + n * 78.233) * 43758.5453 % 1; }
+        return hash(X + Y * 57 + Math.floor(z) * 113);
+    }
+    
     function drawOverlay() {
-        const w = canvas.width, h = canvas.height;
+        const w = canvas.width;
+        const h = canvas.height;
+        
         ctx.clearRect(0, 0, w, h);
+        
         const style = styles[currentStyle];
         const colors = style.colors;
-        const gradient = ctx.createRadialGradient(w/2 + Math.sin(time * 0.01) * 100, h/2 + Math.cos(time * 0.01) * 50, 0, w/2, h/2, Math.max(w, h));
+        
+        // Create flowing energy effect
+        const gradient = ctx.createRadialGradient(
+            w/2 + Math.sin(time * 0.01) * 100, 
+            h/2 + Math.cos(time * 0.01) * 50,
+            0,
+            w/2, h/2, Math.max(w, h)
+        );
+        
         const hue1 = (time * 0.5 + bassLevel * 100) % 360;
         const hue2 = (hue1 + 60) % 360;
+        
         gradient.addColorStop(0, `hsla(${hue1}, 70%, 50%, ${0.3 + bassLevel * 0.4})`);
         gradient.addColorStop(0.5, `hsla(${hue2}, 60%, 40%, ${0.1 + midLevel * 0.2})`);
         gradient.addColorStop(1, 'transparent');
+        
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, w, h);
+        
+        // Add shimmer particles at edges
         const particleCount = Math.floor(20 + highLevel * 30);
         for (let i = 0; i < particleCount; i++) {
             const angle = (i / particleCount) * Math.PI * 2 + time * 0.002;
@@ -924,44 +1991,70 @@ function initVideoOverlay() {
             const x = w/2 + Math.cos(angle) * radius;
             const y = h/2 + Math.sin(angle) * radius;
             const size = 2 + Math.random() * 3 + bassLevel * 5;
+            
             ctx.beginPath();
             ctx.arc(x, y, size, 0, Math.PI * 2);
             ctx.fillStyle = `hsla(${(hue1 + i * 10) % 360}, 80%, 70%, ${0.3 + highLevel * 0.5})`;
             ctx.fill();
         }
+        
+        // Edge glow
         const edgeGradient = ctx.createLinearGradient(0, 0, w, 0);
         edgeGradient.addColorStop(0, `rgba(${colors.primary[0]}, ${colors.primary[1]}, ${colors.primary[2]}, ${0.4 + bassLevel * 0.3})`);
         edgeGradient.addColorStop(0.1, 'transparent');
         edgeGradient.addColorStop(0.9, 'transparent');
         edgeGradient.addColorStop(1, `rgba(${colors.primary[0]}, ${colors.primary[1]}, ${colors.primary[2]}, ${0.4 + bassLevel * 0.3})`);
+        
         ctx.fillStyle = edgeGradient;
         ctx.fillRect(0, 0, w, h);
     }
+    
     return drawOverlay;
 }
 
-let drawVideoOverlay, drawBackground, drawParticles;
+let drawVideoOverlay;
+
+// ============================================
+// MAIN ANIMATION LOOP
+// ============================================
+let drawBackground, drawParticles;
 
 function animate() {
     time++;
     updateAudio();
+    
     if (drawBackground) drawBackground();
     if (drawParticles) drawParticles();
     if (drawVideoOverlay) drawVideoOverlay();
+    
     animationId = requestAnimationFrame(animate);
 }
 
-// UI Event handlers
+// ============================================
+// UI EVENT HANDLERS
+// ============================================
+
+// Prompt controls
 let promptDebounceTimer = null;
 document.getElementById('shuffleBtn').onclick = shufflePrompt;
 document.getElementById('promptInput').addEventListener('input', (e) => {
+    // Debounce: wait 800ms after user stops typing before applying
     if (promptDebounceTimer) clearTimeout(promptDebounceTimer);
-    promptDebounceTimer = setTimeout(() => { if (streamId) applyCustomPrompt(); }, 800);
+    promptDebounceTimer = setTimeout(() => {
+        if (streamId) {
+            applyCustomPrompt();
+        }
+    }, 800);
 });
 document.getElementById('promptInput').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (promptDebounceTimer) clearTimeout(promptDebounceTimer); applyCustomPrompt(); }
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (promptDebounceTimer) clearTimeout(promptDebounceTimer);
+        applyCustomPrompt();
+    }
 });
 
+// Style buttons
 document.querySelectorAll('.style-btn').forEach(btn => {
     btn.onclick = () => {
         document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
@@ -972,6 +2065,7 @@ document.querySelectorAll('.style-btn').forEach(btn => {
     };
 });
 
+// Mode slider
 document.getElementById('modeSlider').oninput = function() {
     modeValue = parseInt(this.value);
     const labels = ['Pure Classical', 'Mostly Classical', 'Classical Blend', 'Balanced', 'Satirical Blend', 'Mostly Satirical', 'Full Revolutionary'];
@@ -979,86 +2073,187 @@ document.getElementById('modeSlider').oninput = function() {
     if (streamId) setParams();
 };
 
-document.getElementById('strengthSlider').oninput = function() { params.strength = parseInt(this.value); document.getElementById('strengthVal').textContent = params.strength; if (streamId) setParams(); };
-document.getElementById('promptWeightSlider').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); document.getElementById('promptWeightSlider2').value = this.value; document.getElementById('promptWeightVal2').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
-document.getElementById('promptWeightSlider2').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal2').textContent = params.promptWeight.toFixed(2); document.getElementById('promptWeightSlider').value = this.value; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
-document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = '✓'; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
-document.getElementById('poseSlider').oninput = function() { params.pose = parseInt(this.value) / 100; document.getElementById('poseVal').textContent = params.pose.toFixed(2); if (streamId) setParams(); };
-document.getElementById('edgeSlider').oninput = function() { params.edge = parseInt(this.value) / 100; document.getElementById('edgeVal').textContent = params.edge.toFixed(2); if (streamId) setParams(); };
-document.getElementById('depthSlider').oninput = function() { params.depth = parseInt(this.value) / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
-document.getElementById('bgTransSlider').oninput = function() { params.bgTrans = parseInt(this.value); document.getElementById('bgTransVal').textContent = params.bgTrans + '%'; if (streamId) setParams(); };
-document.getElementById('audioIntensitySlider').oninput = function() { audioParams.intensity = this.value / 100; document.getElementById('audioIntensityVal').textContent = this.value + '%'; };
-document.getElementById('pulseSpeedSlider').oninput = function() { audioParams.pulseSpeed = this.value / 100; document.getElementById('pulseSpeedVal').textContent = this.value + '%'; };
-document.getElementById('particleDensitySlider').oninput = function() { audioParams.particleDensity = this.value / 100; document.getElementById('particleDensityVal').textContent = this.value + '%'; };
+// Transform sliders
+document.getElementById('strengthSlider').oninput = function() {
+    params.strength = parseInt(this.value);
+    document.getElementById('strengthVal').textContent = params.strength;
+    if (streamId) setParams();
+};
 
+document.getElementById('poseSlider').oninput = function() {
+    params.pose = parseInt(this.value) / 100;
+    document.getElementById('poseVal').textContent = params.pose.toFixed(2);
+    if (streamId) setParams();
+};
+
+document.getElementById('edgeSlider').oninput = function() {
+    params.edge = parseInt(this.value) / 100;
+    document.getElementById('edgeVal').textContent = params.edge.toFixed(2);
+    if (streamId) setParams();
+};
+
+document.getElementById('depthSlider').oninput = function() {
+    params.depth = parseInt(this.value) / 100;
+    document.getElementById('depthVal').textContent = params.depth.toFixed(2);
+    if (streamId) setParams();
+};
+
+document.getElementById('bgTransSlider').oninput = function() {
+    params.bgTrans = parseInt(this.value);
+    document.getElementById('bgTransVal').textContent = params.bgTrans + '%';
+    if (streamId) setParams();
+};
+
+// Audio reactivity sliders
+document.getElementById('audioIntensitySlider').oninput = function() {
+    audioParams.intensity = parseInt(this.value) / 100;
+    document.getElementById('audioIntensityVal').textContent = this.value + '%';
+};
+
+document.getElementById('pulseSpeedSlider').oninput = function() {
+    audioParams.pulseSpeed = parseInt(this.value) / 100;
+    document.getElementById('pulseSpeedVal').textContent = this.value + '%';
+};
+
+document.getElementById('particleDensitySlider').oninput = function() {
+    audioParams.particleDensity = parseInt(this.value) / 100;
+    document.getElementById('particleDensityVal').textContent = this.value + '%';
+};
+
+// Start/Stop buttons
 document.getElementById('startBtn').onclick = start;
 document.getElementById('stopBtn').onclick = stop;
+
+// Fullscreen toggle
 document.getElementById('fullscreenBtn').onclick = toggleFullscreen;
 
 function toggleFullscreen() {
     const container = document.getElementById('videoContainer');
+    
     if (!document.fullscreenElement) {
-        if (container.requestFullscreen) container.requestFullscreen();
-        else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
-        else if (container.msRequestFullscreen) container.msRequestFullscreen();
+        if (container.requestFullscreen) {
+            container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) {
+            container.webkitRequestFullscreen();
+        } else if (container.msRequestFullscreen) {
+            container.msRequestFullscreen();
+        }
+        document.getElementById('fullscreenBtn').textContent = '⛶';
     } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        else if (document.msExitFullscreen) document.msExitFullscreen();
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+        document.getElementById('fullscreenBtn').textContent = '⛶';
     }
 }
 
-document.addEventListener('fullscreenchange', () => { document.getElementById('fullscreenBtn').textContent = document.fullscreenElement ? '✕' : '⛶'; });
+// Update fullscreen button on fullscreen change
+document.addEventListener('fullscreenchange', () => {
+    const btn = document.getElementById('fullscreenBtn');
+    btn.textContent = document.fullscreenElement ? '✕' : '⛶';
+});
 
+// ============================================
+// PROMPT BUILDING
+// ============================================
 function buildPrompt() {
+    // If custom prompt is set, use it as primary
     if (customPrompt) {
         let prompt = customPrompt;
-        if (params.bgTrans > 50) prompt += ", transparent background, isolated subject, no background, subject only";
-        else if (params.bgTrans > 20) prompt += ", soft faded background, subject focus, minimal background";
+        if (params.bgTrans > 50) {
+            prompt += ", transparent background, isolated subject, no background, subject only";
+        } else if (params.bgTrans > 20) {
+            prompt += ", soft faded background, subject focus, minimal background";
+        }
         return prompt;
     }
+    
     const style = styles[currentStyle];
     let basePrompt;
-    if (modeValue < 15) basePrompt = style.base;
-    else if (modeValue > 85) basePrompt = style.caricature;
-    else { const cw = (100 - modeValue) / 100; const sw = modeValue / 100; basePrompt = `(${style.base}:${cw.toFixed(2)}), (${style.caricature}:${sw.toFixed(2)})`; }
-    if (params.bgTrans > 50) basePrompt += ", transparent background, isolated subject, no background, subject only";
-    else if (params.bgTrans > 20) basePrompt += ", soft faded background, subject focus, minimal background";
+    
+    if (modeValue < 15) {
+        basePrompt = style.base;
+    } else if (modeValue > 85) {
+        basePrompt = style.caricature;
+    } else {
+        const cw = (100 - modeValue) / 100;
+        const sw = modeValue / 100;
+        basePrompt = `(${style.base}:${cw.toFixed(2)}), (${style.caricature}:${sw.toFixed(2)})`;
+    }
+    
+    if (params.bgTrans > 50) {
+        basePrompt += ", transparent background, isolated subject, no background, subject only";
+    } else if (params.bgTrans > 20) {
+        basePrompt += ", soft faded background, subject focus, minimal background";
+    }
+    
     return basePrompt;
 }
 
+// ============================================
+// MAIN START FUNCTION
+// ============================================
 async function start() {
     document.getElementById('startBtn').disabled = true;
-    showStatusOverlay();
+    
     try {
         log('Getting camera...', 'info');
-        localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, audio: true });
+        localStream = await navigator.mediaDevices.getUserMedia({
+            video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
+            audio: true
+        });
         document.getElementById('local').srcObject = localStream;
         log('Camera ready', 'success');
+
+        // Initialize audio analysis
         initAudio(localStream);
+        
+        // Initialize motion detection
         initMotionDetection();
+        
+        // Initialize visual systems
         drawBackground = initBackground();
         drawParticles = initParticles();
         drawVideoOverlay = initVideoOverlay();
-        if (!animationId) animate();
+        
+        // Start animation loop
+        if (!animationId) {
+            animate();
+        }
+
         log('Creating Daydream stream...', 'info');
-        const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ pipeline_id: PIPELINE_ID }) });
+        const createRes = await fetch(`${API_BASE}/streams`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+            body: JSON.stringify({ pipeline_id: PIPELINE_ID })
+        });
+        
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
+        
         const data = await createRes.json();
         streamId = data.id;
         playbackId = data.output_playback_id;
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
+
         log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
         log('Video streaming to AI', 'success');
+
         log('AI initializing...', 'info');
         await new Promise(r => setTimeout(r, 3000));
+        
         await setParams();
         log('Style applied', 'success');
+
         log('Waiting for output...', 'info');
         document.getElementById('startBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
         startPolling();
+
     } catch (e) {
         log(`ERROR: ${e.message}`, 'error');
         console.error(e);
@@ -1066,102 +2261,277 @@ async function start() {
     }
 }
 
+// ============================================
+// WEBRTC CONNECTION
+// ============================================
 async function connectWHIP(whipUrl) {
-    inputPC = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }] });
-    inputPC.oniceconnectionstatechange = () => { log(`ICE: ${inputPC.iceConnectionState}`, inputPC.iceConnectionState === 'connected' ? 'success' : 'info'); };
-    localStream.getTracks().forEach(track => { inputPC.addTrack(track, localStream); });
+    inputPC = new RTCPeerConnection({
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' }
+        ]
+    });
+
+    inputPC.oniceconnectionstatechange = () => {
+        log(`ICE: ${inputPC.iceConnectionState}`, inputPC.iceConnectionState === 'connected' ? 'success' : 'info');
+    };
+
+    localStream.getTracks().forEach(track => {
+        inputPC.addTrack(track, localStream);
+    });
+
     const offer = await inputPC.createOffer();
     await inputPC.setLocalDescription(offer);
-    await new Promise(resolve => { if (inputPC.iceGatheringState === 'complete') resolve(); else { inputPC.onicegatheringstatechange = () => { if (inputPC.iceGatheringState === 'complete') resolve(); }; setTimeout(resolve, 3000); } });
-    const res = await fetch(whipUrl, { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: inputPC.localDescription.sdp });
+
+    await new Promise(resolve => {
+        if (inputPC.iceGatheringState === 'complete') {
+            resolve();
+        } else {
+            inputPC.onicegatheringstatechange = () => {
+                if (inputPC.iceGatheringState === 'complete') resolve();
+            };
+            setTimeout(resolve, 3000);
+        }
+    });
+
+    const res = await fetch(whipUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/sdp' },
+        body: inputPC.localDescription.sdp
+    });
+
     if (!res.ok) throw new Error(`WHIP failed: ${res.status}`);
+
     const answer = await res.text();
     await inputPC.setRemoteDescription({ type: 'answer', sdp: answer });
 }
 
+// ============================================
+// PARAMETER UPDATE
+// ============================================
 async function setParams() {
     const prompt = buildPrompt();
-    const negPrompt = modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph";
-    const body = { model_id: "streamdiffusion", pipeline: "live-video-to-video", params: { model_id: "stabilityai/sd-turbo", prompt: prompt, negative_prompt: negPrompt, num_inference_steps: params.strength, seed: 42, controlnets: [{ conditioning_scale: params.pose, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" }, { conditioning_scale: params.edge, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" }, { conditioning_scale: params.depth, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }] } };
-    try { await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); }
-    catch (e) { log(`Params: ${e.message}`, 'info'); }
+    const negPrompt = modeValue > 50 
+        ? "photorealistic, smooth, beautiful, flattering, digital" 
+        : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph";
+    
+    const body = {
+        model_id: "streamdiffusion",
+        pipeline: "live-video-to-video",
+        params: {
+            model_id: "stabilityai/sd-turbo",
+            prompt: prompt,
+            negative_prompt: negPrompt,
+            num_inference_steps: params.strength,
+            seed: 42,
+            controlnets: [
+                { conditioning_scale: params.pose, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" },
+                { conditioning_scale: params.edge, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" },
+                { conditioning_scale: params.depth, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }
+            ]
+        }
+    };
+    
+    try {
+        await fetch(`${API_BASE}/streams/${streamId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+            body: JSON.stringify(body)
+        });
+    } catch (e) {
+        log(`Params: ${e.message}`, 'info');
+    }
 }
 
+// ============================================
+// POLLING FOR OUTPUT
+// ============================================
 function startPolling() {
-    let attempts = 0, maxAttempts = 120, hlsConnected = false;
+    let attempts = 0;
+    const maxAttempts = 120; // More attempts
+    let hlsConnected = false;
+    
     const poll = async () => {
         attempts++;
         try {
             const res = await fetch(`https://livepeer.studio/api/playback/${playbackId}`);
             const data = await res.json();
-            if (attempts % 5 === 0) log(`Waiting for AI output (${attempts})...`, 'info');
+            
+            if (attempts % 5 === 0) {
+                log(`Waiting for AI output (${attempts})...`, 'info');
+            }
+
             if (data.meta?.live === 1 && !hlsConnected) {
                 log('STREAM LIVE!', 'success');
                 const hlsUrl = data.meta?.source?.find(s => s.hrn === 'HLS (TS)')?.url;
-                if (hlsUrl) { hlsConnected = true; setTimeout(() => connectHLS(hlsUrl), 1500); }
-                else log('Waiting for HLS URL...', 'info');
+                if (hlsUrl) {
+                    hlsConnected = true;
+                    // Wait a moment for stream to stabilize
+                    setTimeout(() => connectHLS(hlsUrl), 1500);
+                } else {
+                    log('Waiting for HLS URL...', 'info');
+                }
             }
-            if (attempts < maxAttempts) pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
-        } catch (e) { log(`Poll: ${e.message}`, 'info'); if (attempts < maxAttempts) pollTimer = setTimeout(poll, 3000); }
+            
+            // Keep polling even after connected to monitor stream
+            if (attempts < maxAttempts) {
+                pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
+            }
+        } catch (e) {
+            log(`Poll: ${e.message}`, 'info');
+            if (attempts < maxAttempts) {
+                pollTimer = setTimeout(poll, 3000);
+            }
+        }
     };
+    
     pollTimer = setTimeout(poll, 3000);
 }
 
+// ============================================
+// HLS PLAYBACK
+// ============================================
 function connectHLS(url) {
     log(`Connecting HLS...`, 'info');
     const video = document.getElementById('output');
+    
     if (Hls.isSupported()) {
-        if (hls) hls.destroy();
-        hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 1, liveMaxLatencyDuration: 5, liveDurationInfinity: true, highBufferWatchdogPeriod: 2, manifestLoadingTimeOut: 20000, manifestLoadingMaxRetry: 6, manifestLoadingRetryDelay: 1000, levelLoadingTimeOut: 20000, levelLoadingMaxRetry: 6, levelLoadingRetryDelay: 1000, fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 6, fragLoadingRetryDelay: 1000, enableWorker: true, startLevel: -1 });
+        if (hls) {
+            hls.destroy();
+        }
+        
+        hls = new Hls({ 
+            lowLatencyMode: true,
+            liveSyncDuration: 1,
+            liveMaxLatencyDuration: 5,
+            liveDurationInfinity: true,
+            highBufferWatchdogPeriod: 2,
+            manifestLoadingTimeOut: 20000,
+            manifestLoadingMaxRetry: 6,
+            manifestLoadingRetryDelay: 1000,
+            levelLoadingTimeOut: 20000,
+            levelLoadingMaxRetry: 6,
+            levelLoadingRetryDelay: 1000,
+            fragLoadingTimeOut: 30000,
+            fragLoadingMaxRetry: 6,
+            fragLoadingRetryDelay: 1000,
+            enableWorker: true,
+            startLevel: -1
+        });
+        
         hls.loadSource(url);
         hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); hideStatusOverlay(); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); hideStatusOverlay(); video.muted = true; video.play().catch(() => {}); }); });
-        hls.on(Hls.Events.ERROR, (e, data) => { log(`HLS: ${data.type} - ${data.details}`, 'info'); if (data.fatal) { switch (data.type) { case Hls.ErrorTypes.NETWORK_ERROR: log('Network error - retrying...', 'info'); setTimeout(() => { hls.startLoad(); }, 2000); break; case Hls.ErrorTypes.MEDIA_ERROR: log('Media error - recovering...', 'info'); hls.recoverMediaError(); break; default: log('Fatal error - please restart', 'error'); break; } } });
-        hls.on(Hls.Events.FRAG_LOADED, () => { if (!video.playing) video.play().catch(() => {}); });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; video.addEventListener('loadedmetadata', () => { video.play().catch(() => { video.muted = true; video.play(); }); }); log('Native HLS playing', 'success'); }
+        
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            log('Stream manifest loaded', 'success');
+            video.play().then(() => {
+                log('AI OUTPUT ACTIVE!', 'success');
+            }).catch(e => {
+                log(`Autoplay blocked - click video to play`, 'info');
+                video.muted = true;
+                video.play().catch(() => {});
+            });
+        });
+        
+        hls.on(Hls.Events.ERROR, (e, data) => {
+            log(`HLS: ${data.type} - ${data.details}`, 'info');
+            
+            if (data.fatal) {
+                switch (data.type) {
+                    case Hls.ErrorTypes.NETWORK_ERROR:
+                        log('Network error - retrying...', 'info');
+                        setTimeout(() => {
+                            hls.startLoad();
+                        }, 2000);
+                        break;
+                    case Hls.ErrorTypes.MEDIA_ERROR:
+                        log('Media error - recovering...', 'info');
+                        hls.recoverMediaError();
+                        break;
+                    default:
+                        log('Fatal error - please restart', 'error');
+                        break;
+                }
+            }
+        });
+        
+        hls.on(Hls.Events.FRAG_LOADED, () => {
+            if (!video.playing) {
+                video.play().catch(() => {});
+            }
+        });
+        
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url;
+        video.addEventListener('loadedmetadata', () => {
+            video.play().catch(() => {
+                video.muted = true;
+                video.play();
+            });
+        });
+        log('Native HLS playing', 'success');
+    }
 }
 
+// ============================================
+// STOP FUNCTION
+// ============================================
 function stop() {
     if (pollTimer) clearTimeout(pollTimer);
-    hideStatusOverlay();
-    if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
     if (inputPC) { inputPC.close(); inputPC = null; }
     if (hls) { hls.destroy(); hls = null; }
     if (audioContext) { audioContext.close(); audioContext = null; }
-    if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+    if (localStream) { 
+        localStream.getTracks().forEach(t => t.stop()); 
+        localStream = null; 
+    }
+    
     document.getElementById('local').srcObject = null;
     document.getElementById('output').srcObject = null;
     document.getElementById('output').src = '';
+    
     document.getElementById('startBtn').disabled = false;
     document.getElementById('startBtn').style.display = 'block';
     document.getElementById('stopBtn').style.display = 'none';
+    
     streamId = null;
     playbackId = null;
     particles = [];
+    
+    // Clear canvases
     const bgCanvas = document.getElementById('bgCanvas');
     const particleCanvas = document.getElementById('particleCanvas');
     bgCanvas.getContext('2d').clearRect(0, 0, bgCanvas.width, bgCanvas.height);
     particleCanvas.getContext('2d').clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+    
     log('Session ended', 'info');
 }
 
+// ============================================
+// INITIALIZE ON LOAD
+// ============================================
 window.addEventListener('load', () => {
+    // Load any previously captured stills
     loadCapturedStills();
+    
+    // Start with a static background preview
     drawBackground = initBackground();
     drawParticles = initParticles();
     drawVideoOverlay = initVideoOverlay();
+    
+    // Demo mode - animate with simulated audio
     function demoAnimate() {
         time++;
+        
+        // Simulate subtle audio levels for demo
         bassLevel = 0.1 + Math.sin(time * 0.02) * 0.05;
         midLevel = 0.1 + Math.sin(time * 0.03) * 0.05;
         highLevel = 0.05 + Math.sin(time * 0.04) * 0.03;
         motionSmoothed = 0.05;
+        
         if (drawBackground) drawBackground();
-        if (drawParticles) drawParticles();
-        if (!localStream) animationId = requestAnimationFrame(demoAnimate);
-    }
-    demoAnimate();
-});
-</script>
-</body>
-</html>
+        if (drawParticles
