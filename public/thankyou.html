@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thank You - Baroque Mirror</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #0a0608; 
+            color: #fff; 
+            font-family: 'Cormorant Garamond', Georgia, serif; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            letter-spacing: 6px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 30px rgba(212,175,55,0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #f4e4ba;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+        
+        .divider {
+            color: #d4af37;
+            font-size: 1.5rem;
+            margin: 30px 0;
+            letter-spacing: 0.5em;
+        }
+        
+        .statement {
+            background: rgba(15,10,12,0.85);
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 12px;
+            padding: 40px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .statement h2 {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+        
+        .statement p {
+            color: #f4e4ba;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .about {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(212,175,55,0.3);
+        }
+        
+        .about h3 {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        
+        .about p {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        
+        .about a {
+            color: #d4af37;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(212,175,55,0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .about a:hover {
+            border-bottom-color: #d4af37;
+        }
+        
+        .purchase-btn {
+            display: inline-block;
+            padding: 20px 50px;
+            border: 2px solid #d4af37;
+            background: linear-gradient(180deg, rgba(114,47,55,0.85), rgba(74,31,36,0.95));
+            color: #d4af37;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            text-decoration: none;
+            margin-top: 30px;
+        }
+        
+        .purchase-btn:hover {
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 35px rgba(212,175,55,0.5);
+            transform: translateY(-2px);
+        }
+        
+        .restart-link {
+            display: block;
+            margin-top: 20px;
+            color: rgba(244,228,186,0.7);
+            font-size: 0.9rem;
+        }
+        
+        .restart-link a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        
+        .restart-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚜ THANK YOU ⚜</h1>
+        <p class="subtitle">for experiencing Baroque Mirror</p>
+        
+        <div class="divider">✦ ✦ ✦</div>
+        
+        <div class="statement">
+            <h2>ARTIST STATEMENT</h2>
+            <p>Baroque Mirror transforms the viewer into a living portrait, dissolving the boundary between observer and artwork. Through real-time AI transformation, your image becomes a brushstroke in an ever-evolving masterpiece—rendered in the dramatic chiaroscuro and opulent textures of the Old Masters.</p>
+            <p>This work explores identity, presence, and the democratization of portraiture. In an age where AI reshapes our relationship with images, Baroque Mirror invites you to see yourself as the aristocrats and saints of centuries past once saw themselves: immortalized in paint and light.</p>
+            <p style="color: #d4af37; font-style: italic;">Every session is unique. Every portrait, ephemeral.</p>
+            
+            <div class="about">
+                <h3>ABOUT THE ARTIST</h3>
+                <p><strong style="color: #d4af37;">Krista Faist</strong> is an experimental interactive new media artist and creative technologist exploring the intersection of AI, real-time graphics, and human experience.</p>
+                <p>Email: <a href="mailto:krista@kristafaist.com">krista@kristafaist.com</a></p>
+                <p>Website: <a href="https://kristafaist.com" target="_blank">kristafaist.com</a></p>
+            </div>
+        </div>
+        
+        <a href="https://baroque-mirror-production.up.railway.app/prints" class="purchase-btn">Shop Prints ⚜ Mint NFTs</a>
+        
+        <p class="restart-link">or <a href="/">begin another session</a></p>
+    </div>
+</body>
+</html>
