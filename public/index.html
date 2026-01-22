@@ -379,7 +379,7 @@
 // ============================================
 const API_KEY = 'sk_9bFt6nHdK1T6AXG6knDS3K57u1BTS6xe9FiwqwQW52KoK7UpqBBEYnmPGxFvLJmS';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_SDXL-turbo';
+const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
 
 // ============================================
 // STATE
@@ -392,7 +392,7 @@ let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
 let modeValue = 50;
 let customPrompt = '';
-let params = { strength: 50, promptWeight: 1.00, pose: 0.85, edge: 0.85, depth: 0.85, bgTrans: 0 };
+let params = { strength: 50, promptWeight: 1.00, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
 let capturedStills = {};
 let audioLevels = new Array(32).fill(0);
@@ -1082,36 +1082,7 @@ async function connectWHIP(whipUrl) {
 async function setParams() {
     const prompt = buildPrompt();
     const negPrompt = modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph";
-    const body = {
-        params: {
-            prompt: prompt,
-            negative_prompt: negPrompt,
-            seed: 42,
-            delta: 0.5,
-            guidance_scale: 1,
-            model_id: "stabilityai/sdxl-turbo",
-            controlnets: [
-                {
-                    enabled: true,
-                    model_id: "xinsir/controlnet-depth-sdxl-1.0",
-                    preprocessor: "depth_tensorrt",
-                    conditioning_scale: params.depth
-                },
-                {
-                    enabled: true,
-                    model_id: "xinsir/controlnet-canny-sdxl-1.0",
-                    preprocessor: "canny",
-                    conditioning_scale: params.edge
-                },
-                {
-                    enabled: true,
-                    model_id: "xinsir/controlnet-tile-sdxl-1.0",
-                    preprocessor: "tile",
-                    conditioning_scale: 0.5
-                }
-            ]
-        }
-    };
+    const body = { model_id: "streamdiffusion", pipeline: "live-video-to-video", params: { model_id: "stabilityai/sd-turbo", prompt: prompt, negative_prompt: negPrompt, num_inference_steps: params.strength, seed: 42, controlnets: [{ conditioning_scale: params.pose, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" }, { conditioning_scale: params.edge, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" }, { conditioning_scale: params.depth, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }] } };
     try { await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); }
     catch (e) { log(`Params: ${e.message}`, 'info'); }
 }
