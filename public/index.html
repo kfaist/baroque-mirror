@@ -423,6 +423,13 @@ window.stopSessionTimer = stopSessionTimer;
                 </div>
                 
                 
+                <div class="section">
+                    <h3>⚜ Audio Reactivity</h3>
+                    <div class="slider-row"><label>Audio Intensity <span class="val" id="audioIntensityVal">75%</span></label><input type="range" id="audioIntensitySlider" min="0" max="100" value="75"></div>
+                    <div class="slider-row"><label>Pulse Speed <span class="val" id="pulseSpeedVal">50%</span></label><input type="range" id="pulseSpeedSlider" min="10" max="100" value="50"></div>
+                    <div class="slider-row"><label>Particle Density <span class="val" id="particleDensityVal">60%</span></label><input type="range" id="particleDensitySlider" min="10" max="100" value="60"></div>
+                    <div class="audio-section"><h4>🎵 Live Audio Spectrum</h4><div class="audio-meter" id="audioMeter"></div></div>
+                </div>
                 <div id="log">⚜ Baroque Mirror ready...</div>
             </div>
             
@@ -842,7 +849,7 @@ function initAudio(stream) {
         micSource = audioContext.createMediaStreamSource(stream);
         micSource.connect(analyser);
         audioDataArray = new Uint8Array(analyser.frequencyBinCount);
-        const meter = document.getElementById('audioMeter'); if (!meter) return;
+        const meter = document.getElementById('audioMeter');
         meter.innerHTML = '';
         for (let i = 0; i < 32; i++) { const bar = document.createElement('div'); bar.className = 'audio-bar'; bar.style.height = '4px'; meter.appendChild(bar); }
         log('Audio analysis initialized', 'success');
@@ -1121,6 +1128,9 @@ document.getElementById('edgeSlider').oninput = function() { params.edge = parse
 document.getElementById('depthSlider').oninput = function() { params.depth = parseInt(this.value) / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
 document.getElementById('bgTransSlider').oninput = function() { params.bgTrans = parseInt(this.value); document.getElementById('bgTransVal').textContent = params.bgTrans + '%'; if (streamId) setParams(); };
 document.getElementById('chromaSlider').oninput = function() { params.chroma = parseInt(this.value); document.getElementById('chromaVal').textContent = params.chroma + '%'; document.getElementById('output').style.filter = 'saturate(' + (params.chroma / 100) + ')'; };
+document.getElementById('audioIntensitySlider').oninput = function() { audioParams.intensity = this.value / 100; document.getElementById('audioIntensityVal').textContent = this.value + '%'; };
+document.getElementById('pulseSpeedSlider').oninput = function() { audioParams.pulseSpeed = this.value / 100; document.getElementById('pulseSpeedVal').textContent = this.value + '%'; };
+document.getElementById('particleDensitySlider').oninput = function() { audioParams.particleDensity = this.value / 100; document.getElementById('particleDensityVal').textContent = this.value + '%'; };
 
 document.getElementById('startBtn').onclick = start;
 document.getElementById('stopBtn').onclick = stop;
