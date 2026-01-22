@@ -1215,7 +1215,7 @@ function runRainAnimation() {
             if (Math.random() < dropProbability) { createRaindrop(progress); }
         }
         if (elapsed < SESSION_DURATION) { requestAnimationFrame(animateRain); }
-        else { window.location.href = '/licensing.html?session=complete'; }
+        else { window.location.href = '/thankyou.html'; }
     }
     animateRain();
 }
