@@ -702,7 +702,7 @@ function initAudio(stream) {
         micSource = audioContext.createMediaStreamSource(stream);
         micSource.connect(analyser);
         audioDataArray = new Uint8Array(analyser.frequencyBinCount);
-        const meter = document.getElementById('audioMeter');
+        const meter = document.getElementById('audioMeter'); if (!meter) return;
         meter.innerHTML = '';
         for (let i = 0; i < 32; i++) { const bar = document.createElement('div'); bar.className = 'audio-bar'; bar.style.height = '4px'; meter.appendChild(bar); }
         log('Audio analysis initialized', 'success');
