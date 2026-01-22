@@ -220,150 +220,98 @@
             .video-container { order: 2; width: 100vw !important; margin-left: calc(-50vw + 50%); border-radius: 0 !important; }
             .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
         }
-        
-        /* Progressive Watermark Raindrops */
-        .raindrop { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; animation: raindropFade ease-out forwards; }
-        @keyframes raindropFade { 0% { transform: scale(0) rotate(0deg); opacity: 0; } 20% { transform: scale(1.2) rotate(90deg); opacity: 1; } 100% { transform: scale(0.8) rotate(360deg); opacity: 0; } }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script>
-// ============================================
-// SESSION TIMER & RAINBOW WATERMARK SYSTEM
-// ============================================
-const SESSION_DURATION = 600000; // 10 minutes
-const BASE_RAIN_START = 420000;  // 7 minutes
-const REDIRECT_URL = '/licensing.html?session=complete';
-
-let sessionStartTime = null;
-let sessionTimerId = null;
-let rainAnimationRunning = false;
-
-const rainColors = [
-    'rgba(255,105,180,0.9)',  // Hot pink
-    'rgba(138,43,226,0.9)',   // Blue violet
-    'rgba(75,0,130,0.9)',     // Indigo
-    'rgba(0,191,255,0.9)',    // Deep sky blue
-    'rgba(127,255,212,0.9)',  // Aquamarine
-    'rgba(255,215,0,0.9)',    // Gold
-    'rgba(255,140,0,0.9)',    // Dark orange
-    'rgba(255,20,147,0.9)',   // Deep pink
-    'rgba(147,112,219,0.9)'   // Medium purple
-];
-
-function createRaindrop(progress) {
-    const drop = document.createElement('div');
-    drop.className = 'raindrop';
-    drop.style.left = Math.random() * window.innerWidth + 'px';
-    drop.style.top = Math.random() * window.innerHeight + 'px';
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest">
+// Progressive watermark: droplets start at 7 min, full takeover at 10 min
+function startWatermarkSystem() {
+    const container = document.querySelector('.video-container');
+    if (!container) { console.log('No video container for watermark'); return; }
     
-    const color1 = rainColors[Math.floor(Math.random() * rainColors.length)];
-    const color2 = rainColors[Math.floor(Math.random() * rainColors.length)];
-    const color3 = rainColors[Math.floor(Math.random() * rainColors.length)];
+    const canvas = document.createElement('canvas');
+    canvas.id = 'watermarkCanvas';
+    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;';
+    container.style.position = 'relative';
+    container.appendChild(canvas);
     
-    const isTakeover = progress > 0.66;
-    let baseOpacity = isTakeover ? 0.4 + ((progress - 0.66) / 0.34 * 0.5) : 0.15 + (progress * 0.35);
-    let sizeMultiplier = isTakeover ? 1.0 + ((progress - 0.66) / 0.34 * 0.8) : 1.5 - (progress * 0.5);
-    let duration = isTakeover ? 6 - ((progress - 0.66) / 0.34 * 2) + Math.random() * 3 : 10 - (progress * 4) + Math.random() * 4;
-    let glowIntensity = isTakeover ? 30 + (Math.pow((progress - 0.66) / 0.34, 1.5) * 120) : (15 + (progress * 50)) * (2.0 - (progress * 1.2));
+    const ctx = canvas.getContext('2d');
+    let droplets = [];
     
-    let baseSize = Math.random() < 0.3 ? 20 + Math.random() * 10 : Math.random() < 0.7 ? 40 + Math.random() * 20 : 40 + Math.random() * 50;
-    if (isTakeover) baseSize *= 1.5;
-    const finalSize = baseSize * sizeMultiplier;
-    
-    drop.style.width = finalSize + 'px';
-    drop.style.height = finalSize + 'px';
-    drop.style.background = 'radial-gradient(circle at 40% 40%, ' + 
-        color1.replace('0.9', String(baseOpacity)) + ' 0%, ' + 
-        color2.replace('0.9', String(baseOpacity * 0.7)) + ' 30%, ' + 
-        color3.replace('0.9', String(baseOpacity * 0.4)) + ' 60%, transparent 100%)';
-    drop.style.boxShadow = '0 0 ' + glowIntensity + 'px ' + (glowIntensity * 0.4) + 'px ' + color1 + 
-        ', 0 0 ' + (glowIntensity * 2) + 'px ' + (glowIntensity * 0.8) + 'px ' + color2;
-    drop.style.animationDuration = duration + 's';
-    
-    document.body.appendChild(drop);
-    setTimeout(function() { if (drop.parentNode) drop.parentNode.removeChild(drop); }, duration * 1000);
-}
-
-function runRainAnimation() {
-    if (!sessionStartTime || rainAnimationRunning) return;
-    rainAnimationRunning = true;
-    
-    function animateRain() {
-        if (!sessionStartTime) { rainAnimationRunning = false; return; }
-        const elapsed = Date.now() - sessionStartTime;
-        if (elapsed >= BASE_RAIN_START) {
-            const progress = Math.min((elapsed - BASE_RAIN_START) / (SESSION_DURATION - BASE_RAIN_START), 1.0);
-            const exponentialGrowth = Math.pow(progress, 2.5);
-            let dropProbability = 0.03 * (1 + exponentialGrowth * 30);
-            if (progress > 0.66) { dropProbability *= 1 + ((progress - 0.66) / 0.34 * 6); }
-            if (Math.random() < dropProbability) { createRaindrop(progress); }
-        }
-        if (elapsed < SESSION_DURATION) {
-            requestAnimationFrame(animateRain);
-        }
+    function resize() {
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
     }
-    animateRain();
-}
-
-function createTimerDisplay() {
-    const timerDiv = document.createElement('div');
-    timerDiv.id = 'session-timer';
-    timerDiv.style.cssText = 'position:fixed;top:15px;right:15px;background:rgba(10,6,8,0.85);border:1px solid rgba(212,175,55,0.4);border-radius:8px;padding:8px 14px;font-family:Cinzel,serif;font-size:0.85rem;color:#d4af37;z-index:9999;backdrop-filter:blur(5px);box-shadow:0 0 15px rgba(212,175,55,0.2);';
-    document.body.appendChild(timerDiv);
-    return timerDiv;
-}
-
-function formatTime(ms) {
-    const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return minutes + ':' + seconds.toString().padStart(2, '0');
-}
-
-function updateTimerDisplay(timerDiv, remaining, elapsed) {
-    const progressPercent = Math.min(100, (elapsed / SESSION_DURATION) * 100);
-    let status = '';
-    if (remaining <= 60000) {
-        status = ' ⚠️';
-        timerDiv.style.borderColor = 'rgba(255,100,100,0.6)';
-        timerDiv.style.color = '#ff6b6b';
-    } else if (remaining <= 180000) {
-        status = ' ⏰';
-        timerDiv.style.borderColor = 'rgba(255,200,100,0.5)';
-        timerDiv.style.color = '#ffd93d';
-    }
-    timerDiv.innerHTML = '<div style="font-size:0.7rem;opacity:0.7;margin-bottom:2px;">SESSION TIME</div><div style="font-size:1.1rem;font-weight:bold;">' + formatTime(remaining) + status + '</div><div style="margin-top:4px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;"><div style="height:100%;width:' + progressPercent + '%;background:linear-gradient(90deg,#d4af37,#ffd700);transition:width 1s;"></div></div>';
-}
-
-function startSessionTimer() {
-    sessionStartTime = Date.now();
-    const timerDiv = createTimerDisplay();
-    runRainAnimation();
+    resize();
+    window.addEventListener('resize', resize);
     
-    sessionTimerId = setInterval(function() {
-        const elapsed = Date.now() - sessionStartTime;
-        const remaining = SESSION_DURATION - elapsed;
-        updateTimerDisplay(timerDiv, remaining, elapsed);
-        if (remaining <= 0) {
-            stopSessionTimer();
-            window.location.href = REDIRECT_URL;
+    function getIntensity() {
+        if (!sessionStart) return 0;
+        const elapsed = Date.now() - sessionStart;
+        const START_TIME = 7 * 60 * 1000; // 7 minutes
+        const END_TIME = 10 * 60 * 1000;  // 10 minutes
+        if (elapsed < START_TIME) return 0;
+        if (elapsed >= END_TIME) return 1;
+        return (elapsed - START_TIME) / (END_TIME - START_TIME);
+    }
+    
+    function addDroplet() {
+        const intensity = getIntensity();
+        if (intensity <= 0) return;
+        if (Math.random() > intensity * 0.3) return;
+        
+        droplets.push({
+            x: Math.random() * canvas.width,
+            y: -20,
+            size: 10 + Math.random() * 30 * intensity,
+            speed: 1 + Math.random() * 2,
+            hue: Math.random() * 60 + 280,
+            opacity: 0.3 + intensity * 0.5
+        });
+    }
+    
+    function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const intensity = getIntensity();
+        
+        if (intensity > 0.5) {
+            const overlayOpacity = (intensity - 0.5) * 0.6;
+            ctx.fillStyle = `rgba(128, 0, 128, ${overlayOpacity})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
-    }, 1000);
-    console.log('Session timer started - rainbow drops at 7 min, redirect at 10 min');
+        
+        droplets.forEach((d, i) => {
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${d.hue}, 80%, 50%, ${d.opacity})`;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(d.x, d.y + d.size, d.size * 0.3, d.size * 0.8, 0, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${d.hue}, 80%, 40%, ${d.opacity * 0.7})`;
+            ctx.fill();
+            d.y += d.speed;
+            if (d.y > canvas.height + 50) droplets.splice(i, 1);
+        });
+        
+        if (intensity >= 1) {
+            ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = 'bold 28px Cormorant Garamond';
+            ctx.fillStyle = '#d4af37';
+            ctx.textAlign = 'center';
+            ctx.fillText('Session Complete', canvas.width/2, canvas.height/2 - 30);
+            ctx.font = '20px Cormorant Garamond';
+            ctx.fillText('Please allow others to experience the mirror', canvas.width/2, canvas.height/2 + 10);
+            ctx.font = '16px Cormorant Garamond';
+            ctx.fillStyle = '#888';
+            ctx.fillText('Thank you for participating!', canvas.width/2, canvas.height/2 + 50);
+        }
+        
+        addDroplet();
+        requestAnimationFrame(render);
+    }
+    render();
+    console.log('Watermark system started - droplets begin at 7 min, takeover at 10 min');
 }
 
-function stopSessionTimer() {
-    if (sessionTimerId) { clearInterval(sessionTimerId); sessionTimerId = null; }
-    sessionStartTime = null;
-    rainAnimationRunning = false;
-    const timerDiv = document.getElementById('session-timer');
-    if (timerDiv) timerDiv.remove();
-    document.querySelectorAll('.raindrop').forEach(function(el) { el.remove(); });
-    console.log('Session timer stopped');
-}
-
-window.startSessionTimer = startSessionTimer;
-window.stopSessionTimer = stopSessionTimer;
 </script>
 </head>
 <body>
@@ -391,6 +339,10 @@ window.stopSessionTimer = stopSessionTimer;
                         <button class="prompt-btn shuffle" id="shuffleBtn" title="Random Prompt">🎲</button>
                         <textarea class="prompt-input" id="promptInput" placeholder="Enter custom style prompt or shuffle for inspiration..." rows="2"></textarea>
                         <button class="prompt-btn apply" id="applyPromptBtn" title="Apply Prompt">Apply</button>
+                    </div>
+                    <div class="slider-row" style="margin-top: 12px;">
+                        <label>Prompt Weight <span class="val" id="promptWeightVal2">1.00</span></label>
+                        <input type="range" id="promptWeightSlider2" min="0" max="100" value="100">
                     </div>
                 </div>
                 
@@ -423,6 +375,13 @@ window.stopSessionTimer = stopSessionTimer;
                 </div>
                 
                 
+                <div class="section">
+                    <h3>⚜ Audio Reactivity</h3>
+                    <div class="slider-row"><label>Audio Intensity <span class="val" id="audioIntensityVal">75%</span></label><input type="range" id="audioIntensitySlider" min="0" max="100" value="75"></div>
+                    <div class="slider-row"><label>Pulse Speed <span class="val" id="pulseSpeedVal">50%</span></label><input type="range" id="pulseSpeedSlider" min="10" max="100" value="50"></div>
+                    <div class="slider-row"><label>Particle Density <span class="val" id="particleDensityVal">60%</span></label><input type="range" id="particleDensitySlider" min="10" max="100" value="60"></div>
+                    <div class="audio-section"><h4>🎵 Live Audio Spectrum</h4><div class="audio-meter" id="audioMeter"></div></div>
+                </div>
                 <div id="log">⚜ Baroque Mirror ready...</div>
             </div>
             
@@ -842,7 +801,7 @@ function initAudio(stream) {
         micSource = audioContext.createMediaStreamSource(stream);
         micSource.connect(analyser);
         audioDataArray = new Uint8Array(analyser.frequencyBinCount);
-        const meter = document.getElementById('audioMeter'); if (!meter) return;
+        const meter = document.getElementById('audioMeter');
         meter.innerHTML = '';
         for (let i = 0; i < 32; i++) { const bar = document.createElement('div'); bar.className = 'audio-bar'; bar.style.height = '4px'; meter.appendChild(bar); }
         log('Audio analysis initialized', 'success');
@@ -1121,6 +1080,9 @@ document.getElementById('edgeSlider').oninput = function() { params.edge = parse
 document.getElementById('depthSlider').oninput = function() { params.depth = parseInt(this.value) / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
 document.getElementById('bgTransSlider').oninput = function() { params.bgTrans = parseInt(this.value); document.getElementById('bgTransVal').textContent = params.bgTrans + '%'; if (streamId) setParams(); };
 document.getElementById('chromaSlider').oninput = function() { params.chroma = parseInt(this.value); document.getElementById('chromaVal').textContent = params.chroma + '%'; document.getElementById('output').style.filter = 'saturate(' + (params.chroma / 100) + ')'; };
+document.getElementById('audioIntensitySlider').oninput = function() { audioParams.intensity = this.value / 100; document.getElementById('audioIntensityVal').textContent = this.value + '%'; };
+document.getElementById('pulseSpeedSlider').oninput = function() { audioParams.pulseSpeed = this.value / 100; document.getElementById('pulseSpeedVal').textContent = this.value + '%'; };
+document.getElementById('particleDensitySlider').oninput = function() { audioParams.particleDensity = this.value / 100; document.getElementById('particleDensityVal').textContent = this.value + '%'; };
 
 document.getElementById('startBtn').onclick = start;
 document.getElementById('stopBtn').onclick = stop;
@@ -1177,7 +1139,8 @@ async function start() {
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         const data = await createRes.json();
         streamId = data.id;
-        startSessionTimer();
+        sessionStart = Date.now();
+        startWatermarkSystem();
         playbackId = data.output_playback_id;
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
         log('Connecting WebRTC...', 'info');
@@ -1294,6 +1257,96 @@ window.addEventListener('load', () => {
     }
     demoAnimate();
 });
+
+// Progressive watermark: droplets start at 7 min, full takeover at 10 min
+function startWatermarkSystem() {
+    const container = document.querySelector('.video-container');
+    if (!container) { console.log('No video container for watermark'); return; }
+    
+    const canvas = document.createElement('canvas');
+    canvas.id = 'watermarkCanvas';
+    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;';
+    container.style.position = 'relative';
+    container.appendChild(canvas);
+    
+    const ctx = canvas.getContext('2d');
+    let droplets = [];
+    
+    function resize() {
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    
+    function getIntensity() {
+        if (!sessionStart) return 0;
+        const elapsed = Date.now() - sessionStart;
+        const START_TIME = 7 * 60 * 1000; // 7 minutes
+        const END_TIME = 10 * 60 * 1000;  // 10 minutes
+        if (elapsed < START_TIME) return 0;
+        if (elapsed >= END_TIME) return 1;
+        return (elapsed - START_TIME) / (END_TIME - START_TIME);
+    }
+    
+    function addDroplet() {
+        const intensity = getIntensity();
+        if (intensity <= 0) return;
+        if (Math.random() > intensity * 0.3) return;
+        
+        droplets.push({
+            x: Math.random() * canvas.width,
+            y: -20,
+            size: 10 + Math.random() * 30 * intensity,
+            speed: 1 + Math.random() * 2,
+            hue: Math.random() * 60 + 280,
+            opacity: 0.3 + intensity * 0.5
+        });
+    }
+    
+    function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const intensity = getIntensity();
+        
+        if (intensity > 0.5) {
+            const overlayOpacity = (intensity - 0.5) * 0.6;
+            ctx.fillStyle = `rgba(128, 0, 128, ${overlayOpacity})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        droplets.forEach((d, i) => {
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${d.hue}, 80%, 50%, ${d.opacity})`;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(d.x, d.y + d.size, d.size * 0.3, d.size * 0.8, 0, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${d.hue}, 80%, 40%, ${d.opacity * 0.7})`;
+            ctx.fill();
+            d.y += d.speed;
+            if (d.y > canvas.height + 50) droplets.splice(i, 1);
+        });
+        
+        if (intensity >= 1) {
+            ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = 'bold 28px Cormorant Garamond';
+            ctx.fillStyle = '#d4af37';
+            ctx.textAlign = 'center';
+            ctx.fillText('Session Complete', canvas.width/2, canvas.height/2 - 30);
+            ctx.font = '20px Cormorant Garamond';
+            ctx.fillText('Please allow others to experience the mirror', canvas.width/2, canvas.height/2 + 10);
+            ctx.font = '16px Cormorant Garamond';
+            ctx.fillStyle = '#888';
+            ctx.fillText('Thank you for participating!', canvas.width/2, canvas.height/2 + 50);
+        }
+        
+        addDroplet();
+        requestAnimationFrame(render);
+    }
+    render();
+    console.log('Watermark system started - droplets begin at 7 min, takeover at 10 min');
+}
 
 </script>
 </body>
