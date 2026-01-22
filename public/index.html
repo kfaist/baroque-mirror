@@ -77,7 +77,7 @@
         
         .output-area { position: relative; }
         .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: #000; }
-        .video-wrapper { position: relative; width: 100%; aspect-ratio: 4/3; overflow: hidden; }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 3/2; overflow: hidden; }
         .output-video { width: 100%; height: 100%; object-fit: cover; display: block; }
         .video-animation-overlay { position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; pointer-events: none; z-index: 2; opacity: 0.4; mix-blend-mode: overlay; }
         .fullscreen-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.6); background: rgba(10,6,8,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.1rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(5px); }
@@ -102,7 +102,7 @@
         
         .input-preview-section { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(212,175,55,0.3); }
         .input-preview-section h4 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; text-align: center; text-transform: uppercase; }
-        .webcam-pip { position: relative; width: 100%; border: 2px solid rgba(212,175,55,0.5); border-radius: 6px; overflow: hidden; background: #000; box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3); aspect-ratio: 4/3; }
+        .webcam-pip { position: relative; width: 100%; border: 2px solid rgba(212,175,55,0.5); border-radius: 6px; overflow: hidden; background: #000; box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3); aspect-ratio: 3/2; }
         .webcam-pip video { width: 100%; height: 100%; object-fit: cover; display: block; }
         
         #log { display: none; background: rgba(0,0,0,0.6); padding: 12px; height: 100px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.7rem; border: 1px solid rgba(212,175,55,0.2); border-radius: 6px; margin-top: 15px; }
@@ -680,12 +680,12 @@ const caricaturePrompts = [
     "dramatic Baroque lighting, brocade drowning the figure in golden excess, masterful rendering, diagonal dynamism",
 ];
 const styles = {
-    baroque: { base: "baroque masterpiece, dramatic chiaroscuro lighting, Rubens influence, rich oil paint textures, gold leaf accents", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
-    rococo: { base: "rococo painting, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", caricature: "French Revolution caricature, James Gillray style, mocking aristocracy", colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] } },
-    caravaggio: { base: "Caravaggio tenebrism, extreme chiaroscuro, single dramatic spotlight, biblical intensity", caricature: "Revolutionary propaganda poster, bold contrast, woodcut style", colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] } },
-    vermeer: { base: "Vermeer Dutch Golden Age, soft window light, intimate domestic scene, pearl luminosity", caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature", colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] } },
-    rembrandt: { base: "Rembrandt self-portrait style, golden brown palette, impasto brushwork, psychological depth", caricature: "Revolutionary broadsheet illustration, Thomas Rowlandson style", colors: { primary: [139, 90, 43], secondary: [85, 60, 42], accent: [218, 165, 32] } },
-    artemisia: { base: "Artemisia Gentileschi style, powerful feminine subjects, dramatic baroque lighting, intense emotional expression", caricature: "Revolutionary feminist pamphlet, fierce women warriors, Liberty Leading the People energy", colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] } }
+    baroque: { base: "baroque masterpiece, subjects wearing luxurious velvet robes and silk garments, elaborate lace collars and cuffs, pearl necklaces and gold jewelry, powdered wigs or flowing styled hair with ribbons, dramatic chiaroscuro lighting, Rubens influence, rich oil paint textures, gold leaf accents", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
+    rococo: { base: "rococo painting, subjects in elegant pastel silk gowns and embroidered coats, delicate lace details, pearl earrings and cameo brooches, elaborate powdered wigs with flowers, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", caricature: "French Revolution caricature, James Gillray style, mocking aristocracy", colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] } },
+    caravaggio: { base: "Caravaggio tenebrism, subjects in rich dark velvets and dramatic drapery, gold chains and medallions, natural flowing hair, extreme chiaroscuro, single dramatic spotlight, biblical intensity", caricature: "Revolutionary propaganda poster, bold contrast, woodcut style", colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] } },
+    vermeer: { base: "Vermeer Dutch Golden Age, subjects in fine wool and fur-trimmed garments, pearl earrings and delicate jewelry, neat hair with white caps or ribbons, soft window light, intimate domestic scene, pearl luminosity", caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature", colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] } },
+    rembrandt: { base: "Rembrandt self-portrait style, subjects in rich velvet berets and fur-collared cloaks, gold chains of office, natural dignified hair, golden brown palette, impasto brushwork, psychological depth", caricature: "Revolutionary broadsheet illustration, Thomas Rowlandson style", colors: { primary: [139, 90, 43], secondary: [85, 60, 42], accent: [218, 165, 32] } },
+    artemisia: { base: "Artemisia Gentileschi style, subjects in bold crimson and gold garments, dramatic jewelry and crowns, powerful flowing hair, powerful feminine subjects, dramatic baroque lighting, intense emotional expression", caricature: "Revolutionary feminist pamphlet, fierce women warriors, Liberty Leading the People energy", colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] } }
 };
 
 function log(msg, type = '') {
