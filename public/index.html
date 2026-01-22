@@ -221,99 +221,7 @@
             .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest">
-// Progressive watermark system - starts at 7 min, full takeover at 10 min
-function startWatermarkSystem() {
-    const canvas = document.createElement('canvas');
-    canvas.id = 'watermarkCanvas';
-    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;';
-    document.querySelector('.video-container').appendChild(canvas);
-    
-    const ctx = canvas.getContext('2d');
-    let droplets = [];
-    
-    function resize() {
-        const container = document.querySelector('.video-container');
-        canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-    
-    function getIntensity() {
-        if (!sessionStart) return 0;
-        const elapsed = Date.now() - sessionStart;
-        const START_TIME = 7 * 60 * 1000; // 7 minutes
-        const END_TIME = 10 * 60 * 1000;  // 10 minutes
-        if (elapsed < START_TIME) return 0;
-        if (elapsed >= END_TIME) return 1;
-        return (elapsed - START_TIME) / (END_TIME - START_TIME);
-    }
-    
-    function addDroplet() {
-        const intensity = getIntensity();
-        if (intensity <= 0) return;
-        
-        // More droplets as intensity increases
-        if (Math.random() > intensity * 0.3) return;
-        
-        droplets.push({
-            x: Math.random() * canvas.width,
-            y: -20,
-            size: 10 + Math.random() * 30 * intensity,
-            speed: 1 + Math.random() * 2,
-            hue: Math.random() * 60 + 280, // Purple to magenta
-            opacity: 0.3 + intensity * 0.5
-        });
-    }
-    
-    function render() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const intensity = getIntensity();
-        
-        // Add chromatic overlay as intensity builds
-        if (intensity > 0.5) {
-            const overlayOpacity = (intensity - 0.5) * 0.6;
-            ctx.fillStyle = `rgba(128, 0, 128, ${overlayOpacity})`;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        
-        // Render droplets
-        droplets.forEach((d, i) => {
-            ctx.beginPath();
-            ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${d.hue}, 80%, 50%, ${d.opacity})`;
-            ctx.fill();
-            
-            // Drip effect
-            ctx.beginPath();
-            ctx.ellipse(d.x, d.y + d.size, d.size * 0.3, d.size * 0.8, 0, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${d.hue}, 80%, 40%, ${d.opacity * 0.7})`;
-            ctx.fill();
-            
-            d.y += d.speed;
-            if (d.y > canvas.height + 50) droplets.splice(i, 1);
-        });
-        
-        // Full takeover message
-        if (intensity >= 1) {
-            ctx.fillStyle = 'rgba(0,0,0,0.7)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.font = 'bold 24px Cormorant Garamond';
-            ctx.fillStyle = '#d4af37';
-            ctx.textAlign = 'center';
-            ctx.fillText('Session Complete - Please Allow Others to Experience', canvas.width/2, canvas.height/2 - 20);
-            ctx.font = '18px Cormorant Garamond';
-            ctx.fillText('Thank you for participating!', canvas.width/2, canvas.height/2 + 20);
-        }
-        
-        addDroplet();
-        requestAnimationFrame(render);
-    }
-    render();
-}
-
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
@@ -342,8 +250,8 @@ function startWatermarkSystem() {
                         <button class="prompt-btn apply" id="applyPromptBtn" title="Apply Prompt">Apply</button>
                     </div>
                     <div class="slider-row" style="margin-top: 12px;">
-                        <label>Prompt Weight <span class="val" id="promptWeightVal2">0.40</span></label>
-                        <input type="range" id="promptWeightSlider2" min="0" max="100" value="40">
+                        <label>Prompt Weight <span class="val" id="promptWeightVal2">1.00</span></label>
+                        <input type="range" id="promptWeightSlider2" min="0" max="100" value="100">
                     </div>
                 </div>
                 
@@ -366,11 +274,11 @@ function startWatermarkSystem() {
                 
                 <div class="section">
                     <h3>⚜ Transform Controls</h3>
-                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">41</span></label><input type="range" id="strengthSlider" min="41" max="50" value="41"></div>
-                    <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">0.40</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="40"></div>
-                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.67</span></label><input type="range" id="poseSlider" min="0" max="100" value="67"></div>
+                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">50</span></label><input type="range" id="strengthSlider" min="1" max="50" value="50"></div>
+                    <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">1.00</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="100"></div>
+                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.30</span></label><input type="range" id="poseSlider" min="0" max="100" value="30"></div>
                     <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.25</span></label><input type="range" id="edgeSlider" min="0" max="100" value="25"></div>
-                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.49</span></label><input type="range" id="depthSlider" min="0" max="100" value="49"></div>
+                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.20</span></label><input type="range" id="depthSlider" min="0" max="100" value="20"></div>
                     <div class="slider-row"><label>Background Transparency <span class="val" id="bgTransVal">0%</span></label><input type="range" id="bgTransSlider" min="0" max="100" value="0"></div>
                 </div>
                 
@@ -471,7 +379,7 @@ function startWatermarkSystem() {
 // ============================================
 const API_KEY = 'sk_9bFt6nHdK1T6AXG6knDS3K57u1BTS6xe9FiwqwQW52KoK7UpqBBEYnmPGxFvLJmS';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_SDXL-turbo-faceid';
+const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
 
 // ============================================
 // STATE
@@ -484,7 +392,7 @@ let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
 let modeValue = 50;
 let customPrompt = '';
-let params = { strength: 41, promptWeight: 0.40, pose: 0.67, edge: 0.25, depth: 0.49, bgTrans: 0 };
+let params = { strength: 50, promptWeight: 1.00, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
 let capturedStills = {};
 let audioLevels = new Array(32).fill(0);
@@ -1138,8 +1046,6 @@ async function start() {
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         const data = await createRes.json();
         streamId = data.id;
-        sessionStart = Date.now();
-        startWatermarkSystem();
         playbackId = data.output_playback_id;
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
         log('Connecting WebRTC...', 'info');
@@ -1176,34 +1082,7 @@ async function connectWHIP(whipUrl) {
 async function setParams() {
     const prompt = buildPrompt();
     const negPrompt = modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph";
-    const body = {
-        params: {
-            prompt: prompt,
-            negative_prompt: negPrompt,
-            seed: 42,
-            guidance_scale: 1,
-            model_id: "stabilityai/sdxl-turbo",
-            ip_adapter: {
-                type: "faceid",
-                scale: 0.7,
-                enabled: true
-            },
-            controlnets: [
-                {
-                    enabled: true,
-                    model_id: "xinsir/controlnet-depth-sdxl-1.0",
-                    preprocessor: "depth_tensorrt",
-                    conditioning_scale: params.depth
-                },
-                {
-                    enabled: true,
-                    model_id: "xinsir/controlnet-canny-sdxl-1.0",
-                    preprocessor: "canny",
-                    conditioning_scale: params.edge
-                }
-            ]
-        }
-    };
+    const body = { model_id: "streamdiffusion", pipeline: "live-video-to-video", params: { model_id: "stabilityai/sd-turbo", prompt: prompt, negative_prompt: negPrompt, num_inference_steps: params.strength, seed: 42, controlnets: [{ conditioning_scale: params.pose, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" }, { conditioning_scale: params.edge, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" }, { conditioning_scale: params.depth, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }] } };
     try { await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); }
     catch (e) { log(`Params: ${e.message}`, 'info'); }
 }
@@ -1233,7 +1112,7 @@ function connectHLS(url) {
     const video = document.getElementById('output');
     if (Hls.isSupported()) {
         if (hls) hls.destroy();
-        hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 0.2, liveMaxLatencyDuration: 1, liveBackBufferLength: 0, maxBufferLength: 1, liveDurationInfinity: true, highBufferWatchdogPeriod: 2, manifestLoadingTimeOut: 20000, manifestLoadingMaxRetry: 6, manifestLoadingRetryDelay: 1000, levelLoadingTimeOut: 20000, levelLoadingMaxRetry: 6, levelLoadingRetryDelay: 1000, fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 6, fragLoadingRetryDelay: 1000, enableWorker: true, startLevel: -1 });
+        hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 1, liveMaxLatencyDuration: 5, liveDurationInfinity: true, highBufferWatchdogPeriod: 2, manifestLoadingTimeOut: 20000, manifestLoadingMaxRetry: 6, manifestLoadingRetryDelay: 1000, levelLoadingTimeOut: 20000, levelLoadingMaxRetry: 6, levelLoadingRetryDelay: 1000, fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 6, fragLoadingRetryDelay: 1000, enableWorker: true, startLevel: -1 });
         hls.loadSource(url);
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); hideStatusOverlay(); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); hideStatusOverlay(); video.muted = true; video.play().catch(() => {}); }); });
@@ -1283,98 +1162,6 @@ window.addEventListener('load', () => {
     }
     demoAnimate();
 });
-
-// Progressive watermark system - starts at 7 min, full takeover at 10 min
-function startWatermarkSystem() {
-    const canvas = document.createElement('canvas');
-    canvas.id = 'watermarkCanvas';
-    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;';
-    document.querySelector('.video-container').appendChild(canvas);
-    
-    const ctx = canvas.getContext('2d');
-    let droplets = [];
-    
-    function resize() {
-        const container = document.querySelector('.video-container');
-        canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-    
-    function getIntensity() {
-        if (!sessionStart) return 0;
-        const elapsed = Date.now() - sessionStart;
-        const START_TIME = 7 * 60 * 1000; // 7 minutes
-        const END_TIME = 10 * 60 * 1000;  // 10 minutes
-        if (elapsed < START_TIME) return 0;
-        if (elapsed >= END_TIME) return 1;
-        return (elapsed - START_TIME) / (END_TIME - START_TIME);
-    }
-    
-    function addDroplet() {
-        const intensity = getIntensity();
-        if (intensity <= 0) return;
-        
-        // More droplets as intensity increases
-        if (Math.random() > intensity * 0.3) return;
-        
-        droplets.push({
-            x: Math.random() * canvas.width,
-            y: -20,
-            size: 10 + Math.random() * 30 * intensity,
-            speed: 1 + Math.random() * 2,
-            hue: Math.random() * 60 + 280, // Purple to magenta
-            opacity: 0.3 + intensity * 0.5
-        });
-    }
-    
-    function render() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const intensity = getIntensity();
-        
-        // Add chromatic overlay as intensity builds
-        if (intensity > 0.5) {
-            const overlayOpacity = (intensity - 0.5) * 0.6;
-            ctx.fillStyle = `rgba(128, 0, 128, ${overlayOpacity})`;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        
-        // Render droplets
-        droplets.forEach((d, i) => {
-            ctx.beginPath();
-            ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${d.hue}, 80%, 50%, ${d.opacity})`;
-            ctx.fill();
-            
-            // Drip effect
-            ctx.beginPath();
-            ctx.ellipse(d.x, d.y + d.size, d.size * 0.3, d.size * 0.8, 0, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${d.hue}, 80%, 40%, ${d.opacity * 0.7})`;
-            ctx.fill();
-            
-            d.y += d.speed;
-            if (d.y > canvas.height + 50) droplets.splice(i, 1);
-        });
-        
-        // Full takeover message
-        if (intensity >= 1) {
-            ctx.fillStyle = 'rgba(0,0,0,0.7)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.font = 'bold 24px Cormorant Garamond';
-            ctx.fillStyle = '#d4af37';
-            ctx.textAlign = 'center';
-            ctx.fillText('Session Complete - Please Allow Others to Experience', canvas.width/2, canvas.height/2 - 20);
-            ctx.font = '18px Cormorant Garamond';
-            ctx.fillText('Thank you for participating!', canvas.width/2, canvas.height/2 + 20);
-        }
-        
-        addDroplet();
-        requestAnimationFrame(render);
-    }
-    render();
-}
-
 </script>
 </body>
 </html>
