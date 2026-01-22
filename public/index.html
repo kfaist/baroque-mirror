@@ -280,6 +280,7 @@
                     <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.25</span></label><input type="range" id="edgeSlider" min="0" max="100" value="25"></div>
                     <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.20</span></label><input type="range" id="depthSlider" min="0" max="100" value="20"></div>
                     <div class="slider-row"><label>Background Transparency <span class="val" id="bgTransVal">0%</span></label><input type="range" id="bgTransSlider" min="0" max="100" value="0"></div>
+                    <div class="slider-row"><label>Color Intensity <span class="val" id="chromaVal">100%</span></label><input type="range" id="chromaSlider" min="0" max="200" value="100"></div>
                 </div>
                 
                 
@@ -392,7 +393,7 @@ let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
 let modeValue = 0;
 let customPrompt = '';
-let params = { strength: 50, promptWeight: 1.00, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0 };
+let params = { strength: 50, promptWeight: 1.00, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0, chroma: 100 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
 let capturedStills = {};
 let audioLevels = new Array(32).fill(0);
@@ -987,6 +988,7 @@ document.getElementById('poseSlider').oninput = function() { params.pose = parse
 document.getElementById('edgeSlider').oninput = function() { params.edge = parseInt(this.value) / 100; document.getElementById('edgeVal').textContent = params.edge.toFixed(2); if (streamId) setParams(); };
 document.getElementById('depthSlider').oninput = function() { params.depth = parseInt(this.value) / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
 document.getElementById('bgTransSlider').oninput = function() { params.bgTrans = parseInt(this.value); document.getElementById('bgTransVal').textContent = params.bgTrans + '%'; if (streamId) setParams(); };
+document.getElementById('chromaSlider').oninput = function() { params.chroma = parseInt(this.value); document.getElementById('chromaVal').textContent = params.chroma + '%'; document.getElementById('output').style.filter = 'saturate(' + (params.chroma / 100) + ')'; };
 document.getElementById('audioIntensitySlider').oninput = function() { audioParams.intensity = this.value / 100; document.getElementById('audioIntensityVal').textContent = this.value + '%'; };
 document.getElementById('pulseSpeedSlider').oninput = function() { audioParams.pulseSpeed = this.value / 100; document.getElementById('pulseSpeedVal').textContent = this.value + '%'; };
 document.getElementById('particleDensitySlider').oninput = function() { audioParams.particleDensity = this.value / 100; document.getElementById('particleDensityVal').textContent = this.value + '%'; };
