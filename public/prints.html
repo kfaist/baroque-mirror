@@ -111,6 +111,7 @@
             overflow: hidden;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
         
         .capture-card:hover, .capture-card.selected {
@@ -123,19 +124,54 @@
             box-shadow: 0 0 35px rgba(212,175,55,0.5);
         }
         
-        .capture-card img {
+        .capture-card .image-container {
+            position: relative;
             width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            display: block;
+            aspect-ratio: 2/3;
+            overflow: hidden;
+            cursor: grab;
         }
         
-        .capture-label {
-            padding: 10px;
-            text-align: center;
+        .capture-card .image-container:active {
+            cursor: grabbing;
+        }
+        
+        .capture-card img {
+            position: absolute;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            max-width: none;
+            object-fit: cover;
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        
+        .drag-hint {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
             color: #d4af37;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.65rem;
             font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
+            letter-spacing: 1px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .capture-card:hover .drag-hint {
+            opacity: 1;
+        }
+        
+        .capture-card.dragging .drag-hint {
+            opacity: 0;
         }
         
         /* Category Grid */
@@ -533,7 +569,10 @@ function loadCaptures() {
         card.onclick = () => selectCapture(slot, capture);
         
         card.innerHTML = `
-            <img src="${capture.image}" alt="Portrait ${slot}">
+            <div class="image-container" data-slot="${slot}">
+                <img src="${capture.image}" alt="Portrait ${slot}" draggable="false">
+                <div class="drag-hint">⇄ DRAG TO REPOSITION</div>
+            </div>
             <div class="capture-label">Portrait #${slot}</div>
         `;
         
@@ -545,6 +584,9 @@ function loadCaptures() {
         }
     });
 }
+    
+    // Initialize drag functionality
+    setTimeout(initDraggableImages, 100);
 
 function selectCapture(slot, capture) {
     selectedSlot = slot;
@@ -652,6 +694,160 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCaptures();
     loadCatalog();
 });
+
+// Initialize drag functionality for all image containers
+function initDraggableImages() {
+    document.querySelectorAll('.image-container').forEach(container => {
+        const img = container.querySelector('img');
+        const card = container.closest('.capture-card');
+        let isDragging = false;
+        let startX, startY, imgStartX, imgStartY;
+        
+        // Store position offsets
+        let offsetX = 0, offsetY = 0;
+        
+        // Center image initially
+        img.onload = function() {
+            centerImage(container, img);
+        };
+        
+        // If image already loaded
+        if (img.complete) {
+            centerImage(container, img);
+        }
+        
+        container.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            card.classList.add('dragging');
+            startX = e.clientX;
+            startY = e.clientY;
+            
+            const transform = img.style.transform;
+            const match = transform.match(/translate\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px\)/);
+            if (match) {
+                imgStartX = parseFloat(match[1]);
+                imgStartY = parseFloat(match[2]);
+            } else {
+                imgStartX = 0;
+                imgStartY = 0;
+            }
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+            
+            let newX = imgStartX + deltaX;
+            let newY = imgStartY + deltaY;
+            
+            // Constrain to container bounds
+            const containerRect = container.getBoundingClientRect();
+            const imgRect = img.getBoundingClientRect();
+            
+            const maxX = 0;
+            const minX = containerRect.width - img.offsetWidth;
+            const maxY = 0;
+            const minY = containerRect.height - img.offsetHeight;
+            
+            newX = Math.min(maxX, Math.max(minX, newX));
+            newY = Math.min(maxY, Math.max(minY, newY));
+            
+            img.style.transform = `translate(${newX}px, ${newY}px)`;
+            
+            // Store for later use
+            container.dataset.offsetX = newX;
+            container.dataset.offsetY = newY;
+        });
+        
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                card.classList.remove('dragging');
+            }
+        });
+        
+        // Touch support
+        container.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            isDragging = true;
+            card.classList.add('dragging');
+            startX = touch.clientX;
+            startY = touch.clientY;
+            
+            const transform = img.style.transform;
+            const match = transform.match(/translate\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px\)/);
+            if (match) {
+                imgStartX = parseFloat(match[1]);
+                imgStartY = parseFloat(match[2]);
+            } else {
+                imgStartX = 0;
+                imgStartY = 0;
+            }
+        }, { passive: true });
+        
+        container.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - startX;
+            const deltaY = touch.clientY - startY;
+            
+            let newX = imgStartX + deltaX;
+            let newY = imgStartY + deltaY;
+            
+            const containerRect = container.getBoundingClientRect();
+            
+            const maxX = 0;
+            const minX = containerRect.width - img.offsetWidth;
+            const maxY = 0;
+            const minY = containerRect.height - img.offsetHeight;
+            
+            newX = Math.min(maxX, Math.max(minX, newX));
+            newY = Math.min(maxY, Math.max(minY, newY));
+            
+            img.style.transform = `translate(${newX}px, ${newY}px)`;
+            
+            container.dataset.offsetX = newX;
+            container.dataset.offsetY = newY;
+        }, { passive: true });
+        
+        container.addEventListener('touchend', () => {
+            isDragging = false;
+            card.classList.remove('dragging');
+        });
+    });
+}
+
+function centerImage(container, img) {
+    const containerRect = container.getBoundingClientRect();
+    const imgWidth = img.naturalWidth || img.offsetWidth;
+    const imgHeight = img.naturalHeight || img.offsetHeight;
+    
+    // Scale image to cover container
+    const containerRatio = containerRect.width / containerRect.height;
+    const imgRatio = imgWidth / imgHeight;
+    
+    if (imgRatio > containerRatio) {
+        // Image is wider - fit height, center horizontally
+        img.style.height = '100%';
+        img.style.width = 'auto';
+        const scaledWidth = (imgWidth / imgHeight) * containerRect.height;
+        const offsetX = -(scaledWidth - containerRect.width) / 2;
+        img.style.transform = `translate(${offsetX}px, 0px)`;
+    } else {
+        // Image is taller - fit width, center vertically
+        img.style.width = '100%';
+        img.style.height = 'auto';
+        const scaledHeight = (imgHeight / imgWidth) * containerRect.width;
+        const offsetY = -(scaledHeight - containerRect.height) / 2;
+        img.style.transform = `translate(0px, ${offsetY}px)`;
+    }
+}
+
+// Call after rendering captures
 </script>
 </body>
 </html>
