@@ -392,7 +392,7 @@ let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
 let modeValue = 50;
 let customPrompt = '';
-let params = { strength: 50, promptWeight: 1.00, pose: 0.70, edge: 0.70, depth: 0.70, bgTrans: 0 };
+let params = { strength: 50, promptWeight: 1.00, pose: 0.85, edge: 0.85, depth: 0.85, bgTrans: 0 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
 let capturedStills = {};
 let audioLevels = new Array(32).fill(0);
@@ -1088,6 +1088,10 @@ async function setParams() {
             negative_prompt: negPrompt,
             seed: 42,
             guidance_scale: 1,
+            delta: 0.8,
+            enable_similar_image_filter: true,
+            similar_image_filter_threshold: 0.95,
+            similar_image_filter_max_skip_frame: 5,
             model_id: "stabilityai/sdxl-turbo",
             controlnets: [
                 {
