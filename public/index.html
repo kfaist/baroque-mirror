@@ -1202,7 +1202,7 @@ async function connectWHIP(whipUrl) {
 async function setParams() {
     const prompt = buildPrompt();
     const negPrompt = modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph";
-    const body = { model_id: "streamdiffusion-sdxl-faceid", pipeline: "live-video-to-video", params: { model_id: "stabilityai/sdxl-turbo", prompt: prompt, negative_prompt: negPrompt, num_inference_steps: params.strength, seed: 42, ip_adapter: { type: "faceid", scale: 1.5, enabled: true }, controlnets: [{ conditioning_scale: params.pose, enabled: true, model_id: "xinsir/controlnet-depth-sdxl-1.0", preprocessor: "depth_tensorrt" }, { conditioning_scale: params.edge, enabled: true, model_id: "xinsir/controlnet-canny-sdxl-1.0", preprocessor: "canny" }] } };
+    const body = { model_id: "streamdiffusion-sdxl-faceid", pipeline: "live-video-to-video", params: { model_id: "stabilityai/sdxl-turbo", prompt: prompt, negative_prompt: negPrompt, num_inference_steps: params.strength, seed: 42, ip_adapter: { type: "faceid", scale: 1.0, enabled: true }, controlnets: [{ conditioning_scale: params.pose, enabled: true, model_id: "xinsir/controlnet-depth-sdxl-1.0", preprocessor: "depth_tensorrt" }, { conditioning_scale: params.edge, enabled: true, model_id: "xinsir/controlnet-canny-sdxl-1.0", preprocessor: "canny" }] } };
     try { await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); }
     catch (e) { log(`Params: ${e.message}`, 'info'); }
 }
