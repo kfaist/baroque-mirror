@@ -372,11 +372,11 @@
                 
                 <div class="section">
                     <h3>⚜ Transform Controls</h3>
-                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">10</span></label><input type="range" id="strengthSlider" min="1" max="50" value="10"></div>
+                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">5</span></label><input type="range" id="strengthSlider" min="1" max="50" value="5"></div>
                     <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">1.00</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="100"></div>
-                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.80</span></label><input type="range" id="poseSlider" min="0" max="100" value="80"></div>
-                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.70</span></label><input type="range" id="edgeSlider" min="0" max="100" value="70"></div>
-                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.65</span></label><input type="range" id="depthSlider" min="0" max="100" value="65"></div>
+                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.95</span></label><input type="range" id="poseSlider" min="0" max="100" value="95"></div>
+                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.90</span></label><input type="range" id="edgeSlider" min="0" max="100" value="90"></div>
+                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.85</span></label><input type="range" id="depthSlider" min="0" max="100" value="85"></div>
                     <div class="slider-row"><label>Background Transparency <span class="val" id="bgTransVal">0%</span></label><input type="range" id="bgTransSlider" min="0" max="100" value="0"></div>
                     <div class="slider-row"><label>Costume Intensity <span class="val" id="costumeVal">75%</span></label><input type="range" id="costumeSlider" min="0" max="100" value="75"></div>
                 </div>
@@ -491,7 +491,7 @@ let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
 let modeValue = 50;
 let customPrompt = '';
-let params = { strength: 10, promptWeight: 1.00, pose: 0.80, edge: 0.70, depth: 0.65, bgTrans: 0, costume: 75 };
+let params = { strength: 5, promptWeight: 1.00, pose: 0.95, edge: 0.90, depth: 0.85, bgTrans: 0, costume: 75 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
 let capturedStills = {};
 let audioLevels = new Array(32).fill(0);
