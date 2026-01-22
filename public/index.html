@@ -372,11 +372,11 @@
                 
                 <div class="section">
                     <h3>⚜ Transform Controls</h3>
-                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">50</span></label><input type="range" id="strengthSlider" min="1" max="50" value="50"></div>
+                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">25</span></label><input type="range" id="strengthSlider" min="1" max="50" value="25"></div>
                     <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">1.00</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="100"></div>
-                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.30</span></label><input type="range" id="poseSlider" min="0" max="100" value="30"></div>
-                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.25</span></label><input type="range" id="edgeSlider" min="0" max="100" value="25"></div>
-                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.20</span></label><input type="range" id="depthSlider" min="0" max="100" value="20"></div>
+                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.60</span></label><input type="range" id="poseSlider" min="0" max="100" value="60"></div>
+                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.50</span></label><input type="range" id="edgeSlider" min="0" max="100" value="50"></div>
+                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.45</span></label><input type="range" id="depthSlider" min="0" max="100" value="45"></div>
                     <div class="slider-row"><label>Background Transparency <span class="val" id="bgTransVal">0%</span></label><input type="range" id="bgTransSlider" min="0" max="100" value="0"></div>
                 </div>
                 
@@ -490,7 +490,7 @@ let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
 let modeValue = 50;
 let customPrompt = '';
-let params = { strength: 50, promptWeight: 1.00, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0 };
+let params = { strength: 25, promptWeight: 1.00, pose: 0.60, edge: 0.50, depth: 0.45, bgTrans: 0 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
 let capturedStills = {};
 let audioLevels = new Array(32).fill(0);
