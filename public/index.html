@@ -220,6 +220,8 @@
             .video-container { order: 2; width: 100vw !important; margin-left: calc(-50vw + 50%); border-radius: 0 !important; }
             .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
         }
+        .raindrop { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; animation: raindropFade ease-out forwards; }
+        @keyframes raindropFade { 0% { transform: scale(0) rotate(0deg); opacity: 0; } 20% { transform: scale(1.2) rotate(90deg); opacity: 1; } 100% { transform: scale(0.8) rotate(360deg); opacity: 0; } }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -249,10 +251,6 @@
                         <textarea class="prompt-input" id="promptInput" placeholder="Enter custom style prompt or shuffle for inspiration..." rows="2"></textarea>
                         <button class="prompt-btn apply" id="applyPromptBtn" title="Apply Prompt">Apply</button>
                     </div>
-                    <div class="slider-row" style="margin-top: 12px;">
-                        <label>Prompt Weight <span class="val" id="promptWeightVal2">1.00</span></label>
-                        <input type="range" id="promptWeightSlider2" min="0" max="100" value="100">
-                    </div>
                 </div>
                 
                 <div class="section">
@@ -267,8 +265,8 @@
                     </div>
                     <div class="mode-box">
                         <div class="mode-labels"><span>🎨 Opulent Oil Painting</span><span>French Revolution Caricatures 📜</span></div>
-                        <input type="range" id="modeSlider" min="0" max="100" value="50">
-                        <div class="mode-value" id="modeValue">Balanced</div>
+                        <input type="range" id="modeSlider" min="0" max="100" value="0">
+                        <div class="mode-value" id="modeValue">Pure Classical</div>
                     </div>
                 </div>
                 
@@ -390,7 +388,7 @@ let countdownValue = 45;
 let statusDebugLines = [];
 let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
-let modeValue = 50;
+let modeValue = 0;
 let customPrompt = '';
 let params = { strength: 50, promptWeight: 1.00, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
@@ -980,8 +978,7 @@ document.getElementById('modeSlider').oninput = function() {
 };
 
 document.getElementById('strengthSlider').oninput = function() { params.strength = parseInt(this.value); document.getElementById('strengthVal').textContent = params.strength; if (streamId) setParams(); };
-document.getElementById('promptWeightSlider').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); document.getElementById('promptWeightSlider2').value = this.value; document.getElementById('promptWeightVal2').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
-document.getElementById('promptWeightSlider2').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal2').textContent = params.promptWeight.toFixed(2); document.getElementById('promptWeightSlider').value = this.value; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
+document.getElementById('promptWeightSlider').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
 document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = '✓'; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
 document.getElementById('poseSlider').oninput = function() { params.pose = parseInt(this.value) / 100; document.getElementById('poseVal').textContent = params.pose.toFixed(2); if (streamId) setParams(); };
 document.getElementById('edgeSlider').oninput = function() { params.edge = parseInt(this.value) / 100; document.getElementById('edgeVal').textContent = params.edge.toFixed(2); if (streamId) setParams(); };
@@ -1059,6 +1056,7 @@ async function start() {
         document.getElementById('startBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
         startPolling();
+        startSessionTimer();
     } catch (e) {
         log(`ERROR: ${e.message}`, 'error');
         console.error(e);
@@ -1163,5 +1161,69 @@ window.addEventListener('load', () => {
     demoAnimate();
 });
 </script>
+
+// ============================================
+// RAINBOW WATERMARK SYSTEM (7-10 min timeout)
+// ============================================
+const SESSION_DURATION = 600000;
+const BASE_RAIN_START = 420000;
+let sessionStartTime = null;
+let rainAnimationRunning = false;
+
+const rainColors = [
+    'rgba(255,105,180,0.9)', 'rgba(138,43,226,0.9)', 'rgba(75,0,130,0.9)',
+    'rgba(0,191,255,0.9)', 'rgba(127,255,212,0.9)', 'rgba(255,215,0,0.9)',
+    'rgba(255,140,0,0.9)', 'rgba(255,20,147,0.9)', 'rgba(147,112,219,0.9)'
+];
+
+function createRaindrop(progress) {
+    const drop = document.createElement('div');
+    drop.className = 'raindrop';
+    drop.style.left = Math.random() * window.innerWidth + 'px';
+    drop.style.top = Math.random() * window.innerHeight + 'px';
+    const color1 = rainColors[Math.floor(Math.random() * rainColors.length)];
+    const color2 = rainColors[Math.floor(Math.random() * rainColors.length)];
+    const color3 = rainColors[Math.floor(Math.random() * rainColors.length)];
+    const isTakeover = progress > 0.66;
+    let baseOpacity = isTakeover ? 0.4 + ((progress - 0.66) / 0.34 * 0.5) : 0.15 + (progress * 0.35);
+    let sizeMultiplier = isTakeover ? 1.0 + ((progress - 0.66) / 0.34 * 0.8) : 1.5 - (progress * 0.5);
+    let duration = isTakeover ? 6 - ((progress - 0.66) / 0.34 * 2) + Math.random() * 3 : 10 - (progress * 4) + Math.random() * 4;
+    let glowIntensity = isTakeover ? 30 + (Math.pow((progress - 0.66) / 0.34, 1.5) * 120) : (15 + (progress * 50)) * (2.0 - (progress * 1.2));
+    let baseSize = Math.random() < 0.3 ? 20 + Math.random() * 10 : Math.random() < 0.7 ? 40 + Math.random() * 20 : 40 + Math.random() * 50;
+    if (isTakeover) baseSize *= 1.5;
+    const finalSize = baseSize * sizeMultiplier;
+    drop.style.width = finalSize + 'px';
+    drop.style.height = finalSize + 'px';
+    drop.style.background = 'radial-gradient(circle at 40% 40%, ' + color1.replace('0.9', String(baseOpacity)) + ' 0%, ' + color2.replace('0.9', String(baseOpacity * 0.7)) + ' 30%, ' + color3.replace('0.9', String(baseOpacity * 0.4)) + ' 60%, transparent 100%)';
+    drop.style.boxShadow = '0 0 ' + glowIntensity + 'px ' + (glowIntensity * 0.4) + 'px ' + color1 + ', 0 0 ' + (glowIntensity * 2) + 'px ' + (glowIntensity * 0.8) + 'px ' + color2;
+    drop.style.animationDuration = duration + 's';
+    document.body.appendChild(drop);
+    setTimeout(function() { if (drop.parentNode) drop.parentNode.removeChild(drop); }, duration * 1000);
+}
+
+function runRainAnimation() {
+    if (!sessionStartTime || rainAnimationRunning) return;
+    rainAnimationRunning = true;
+    function animateRain() {
+        if (!sessionStartTime) { rainAnimationRunning = false; return; }
+        const elapsed = Date.now() - sessionStartTime;
+        if (elapsed >= BASE_RAIN_START && elapsed < SESSION_DURATION) {
+            const progress = Math.min((elapsed - BASE_RAIN_START) / (SESSION_DURATION - BASE_RAIN_START), 1.0);
+            const exponentialGrowth = Math.pow(progress, 2.5);
+            let dropProbability = 0.03 * (1 + exponentialGrowth * 30);
+            if (progress > 0.66) { dropProbability *= 1 + ((progress - 0.66) / 0.34 * 6); }
+            if (Math.random() < dropProbability) { createRaindrop(progress); }
+        }
+        if (elapsed < SESSION_DURATION) { requestAnimationFrame(animateRain); }
+        else { window.location.href = '/licensing.html?session=complete'; }
+    }
+    animateRain();
+}
+
+function startSessionTimer() {
+    sessionStartTime = Date.now();
+    runRainAnimation();
+    console.log('Session started - rainbow drops at 7min, redirect at 10min');
+}
 </body>
 </html>
