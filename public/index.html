@@ -78,7 +78,7 @@
         .output-area { position: relative; }
         .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: #000; }
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 4/3; overflow: hidden; }
-        .output-video { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .output-video { width: 100%; height: 100%; object-fit: cover; display: block; }
         .video-animation-overlay { position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; pointer-events: none; z-index: 2; opacity: 0.4; mix-blend-mode: overlay; }
         .fullscreen-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.6); background: rgba(10,6,8,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.1rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(5px); }
         .fullscreen-btn:hover { background: rgba(212,175,55,0.3); border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); transform: scale(1.1); }
@@ -221,22 +221,24 @@
             .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
         }
 
-        /* Progressive Watermark Raindrops - CHROMATIC VERSION */
+        /* Progressive Watermark Raindrops - EXACT FROM WORKING DEMO */
         .raindrop {
             position: fixed;
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            animation: raindropFade ease-out forwards;
             border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        @keyframes raindropFade {
-            0% { transform: scale(0); opacity: 0; }
-            15% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.9); opacity: 0; }
+            animation: dropAppear ease-out forwards;
         }
         
-        /* Chromatic ripple halos */
+        @keyframes dropAppear {
+            0% { opacity: 0; transform: scale(0.6); }
+            20% { opacity: 0.5; transform: scale(1); }
+            80% { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.05); }
+        }
+        
+        /* Chromatic ripple halos - 2 layers */
         .raindrop::before {
             content: '';
             position: absolute;
@@ -248,14 +250,12 @@
             border-radius: 50%;
             border: 2px solid rgba(255, 105, 180, 0.6);
             opacity: 0;
-            animation: rippleChromatic 3s ease-out;
+            animation: rippleSubtle 3s ease-out;
             box-shadow: 
                 0 0 12px rgba(255, 105, 180, 0.8),
                 0 0 20px rgba(138, 43, 226, 0.7),
                 0 0 28px rgba(0, 191, 255, 0.6),
-                0 0 35px rgba(127, 255, 212, 0.5),
-                inset 0 0 15px rgba(255, 105, 180, 0.3),
-                inset 0 0 25px rgba(138, 43, 226, 0.2);
+                0 0 35px rgba(127, 255, 212, 0.5);
         }
         
         .raindrop::after {
@@ -269,29 +269,28 @@
             border-radius: 50%;
             border: 2px solid rgba(127, 255, 212, 0.6);
             opacity: 0;
-            animation: rippleChromatic 3s ease-out 0.8s;
+            animation: rippleSubtle 3s ease-out 0.8s;
             box-shadow: 
                 0 0 12px rgba(127, 255, 212, 0.8),
                 0 0 20px rgba(255, 215, 0, 0.7),
-                0 0 28px rgba(255, 140, 0, 0.6),
-                0 0 35px rgba(255, 105, 180, 0.5),
-                inset 0 0 15px rgba(127, 255, 212, 0.3),
-                inset 0 0 25px rgba(255, 215, 0, 0.2);
+                0 0 28px rgba(255, 140, 0, 0.6);
         }
         
-        @keyframes rippleChromatic {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
-            100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; }
+        @keyframes rippleSubtle {
+            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            30% { opacity: 0.15; }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); }
         }
         
         .shimmer-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(115deg, 
-                rgba(255,105,180,0) 0%, rgba(255,105,180,0.05) 20%,
-                rgba(138,43,226,0.05) 30%, rgba(75,0,130,0.05) 40%,
-                rgba(0,191,255,0.05) 50%, rgba(127,255,212,0.05) 60%,
-                rgba(255,215,0,0.05) 70%, rgba(255,140,0,0) 100%);
+                rgba(255,105,180,0) 0%, rgba(255,105,180,0.06) 15%,
+                rgba(138,43,226,0.06) 28%, rgba(75,0,130,0.06) 40%,
+                rgba(0,191,255,0.06) 52%, rgba(127,255,212,0.06) 64%,
+                rgba(255,215,0,0.06) 76%, rgba(255,140,0,0) 100%);
+            background-size: 200% 200%;
             pointer-events: none;
             z-index: 9998;
             opacity: 0;
@@ -303,6 +302,7 @@
             50% { background-position: 100% 50%; }
         }
         .shimmer-overlay.active { opacity: 1; }
+        
         #sessionTimer {
             position: fixed;
             top: 10px;
@@ -321,7 +321,7 @@
 </head>
 <body>
     <div class="shimmer-overlay" id="shimmerOverlay"></div>
-    <div id="sessionTimer">Session: 0:00 / 10:00</div>
+    <div id="sessionTimer">SESSION: 0:00 / 10:00</div>
     <canvas id="bgCanvas"></canvas>
     <canvas id="particleCanvas"></canvas>
     
@@ -1210,7 +1210,7 @@ function connectHLS(url) {
     const video = document.getElementById('output');
     if (Hls.isSupported()) {
         if (hls) hls.destroy();
-        hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 0.1, liveMaxLatencyDuration: 0.5, liveBackBufferLength: 0, maxBufferLength: 0.5, liveDurationInfinity: true, highBufferWatchdogPeriod: 2, manifestLoadingTimeOut: 20000, manifestLoadingMaxRetry: 6, manifestLoadingRetryDelay: 1000, levelLoadingTimeOut: 20000, levelLoadingMaxRetry: 6, levelLoadingRetryDelay: 1000, fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 6, fragLoadingRetryDelay: 1000, enableWorker: true, startLevel: -1 });
+        hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 0.2, liveMaxLatencyDuration: 1, liveBackBufferLength: 0, maxBufferLength: 1, liveDurationInfinity: true, highBufferWatchdogPeriod: 2, manifestLoadingTimeOut: 20000, manifestLoadingMaxRetry: 6, manifestLoadingRetryDelay: 1000, levelLoadingTimeOut: 20000, levelLoadingMaxRetry: 6, levelLoadingRetryDelay: 1000, fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 6, fragLoadingRetryDelay: 1000, enableWorker: true, startLevel: -1 });
         hls.loadSource(url);
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); hideStatusOverlay(); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); hideStatusOverlay(); video.muted = true; video.play().catch(() => {}); }); });
@@ -1262,7 +1262,7 @@ window.addEventListener('load', () => {
 });
 
 // ============================================
-// SESSION DURATION & PROGRESSIVE WATERMARK
+// SESSION DURATION & PROGRESSIVE WATERMARK - EXACT FROM DEMO
 // ============================================
 const SESSION_DURATION = 600000; // 10 minutes in ms
 const BASE_RAIN_START = 420000; // Rain starts at 7 min (420000ms)
@@ -1270,73 +1270,93 @@ let sessionStartTime = null;
 let sessionTimer = null;
 let rainAnimationRunning = false;
 
-const rainColors = [
-    'rgba(255, 105, 180, 0.9)', 'rgba(138, 43, 226, 0.9)',
-    'rgba(75, 0, 130, 0.9)', 'rgba(0, 191, 255, 0.9)',
-    'rgba(127, 255, 212, 0.9)', 'rgba(255, 215, 0, 0.9)',
-    'rgba(255, 140, 0, 0.9)', 'rgba(255, 20, 147, 0.9)',
-    'rgba(147, 112, 219, 0.9)'
+// Vibrant polychroma color palette - iridescent rainbow
+const polychromaColors = [
+    'rgba(255, 105, 180, 0.9)',  // Hot pink
+    'rgba(138, 43, 226, 0.9)',   // Blue violet
+    'rgba(75, 0, 130, 0.9)',     // Indigo
+    'rgba(0, 191, 255, 0.9)',    // Deep sky blue
+    'rgba(127, 255, 212, 0.9)',  // Aquamarine
+    'rgba(50, 205, 50, 0.9)',    // Lime green
+    'rgba(255, 215, 0, 0.9)',    // Gold
+    'rgba(255, 140, 0, 0.9)',    // Dark orange
+    'rgba(255, 20, 147, 0.9)'    // Deep pink
 ];
 
-function createRaindrop(progress) {
+function createRaindrop(intensity) {
     const drop = document.createElement('div');
     drop.className = 'raindrop';
+    
+    // Random position across full viewport
     drop.style.left = Math.random() * window.innerWidth + 'px';
     drop.style.top = Math.random() * window.innerHeight + 'px';
-
-    const color1 = rainColors[Math.floor(Math.random() * rainColors.length)];
-    const color2 = rainColors[Math.floor(Math.random() * rainColors.length)];
-    const color3 = rainColors[Math.floor(Math.random() * rainColors.length)];
-
-    const isTakeover = progress > 0.66;
     
-    // Progressive opacity - more translucent, builds slowly
+    // Pick 3 random colors from palette
+    const color1 = polychromaColors[Math.floor(Math.random() * polychromaColors.length)];
+    const color2 = polychromaColors[Math.floor(Math.random() * polychromaColors.length)];
+    const color3 = polychromaColors[Math.floor(Math.random() * polychromaColors.length)];
+    
+    // EXACT tiered opacity from demo
     let baseOpacity;
-    if (progress < 0.33) {
-        baseOpacity = 0.15 + (progress * 0.15);
-    } else if (progress < 0.66) {
-        baseOpacity = 0.20 + ((progress - 0.33) * 0.20);
+    if (intensity < 0.33) {
+        baseOpacity = 0.17 + (intensity * 0.09);
+    } else if (intensity < 0.66) {
+        baseOpacity = 0.26 + (intensity * 0.09);
     } else {
-        baseOpacity = 0.30 + ((progress - 0.66) * 0.25);
+        baseOpacity = 0.37 + (intensity * 0.11);
     }
     
-    // Size varies more
-    let baseSize;
+    // Mixed sizes: 30% small, 40% medium, 30% large
+    let size;
     const sizeRoll = Math.random();
-    if (isTakeover) {
-        baseSize = sizeRoll < 0.3 ? 40 + Math.random() * 30 : sizeRoll < 0.6 ? 70 + Math.random() * 40 : 90 + Math.random() * 60;
+    if (sizeRoll < 0.3) {
+        size = 20 + Math.random() * 20; // Small: 20-40px
+    } else if (sizeRoll < 0.7) {
+        size = 40 + Math.random() * 30; // Medium: 40-70px
     } else {
-        baseSize = sizeRoll < 0.3 ? 25 + Math.random() * 15 : sizeRoll < 0.7 ? 40 + Math.random() * 25 : 60 + Math.random() * 35;
+        size = 70 + Math.random() * 45; // Large: 70-115px
     }
     
-    let duration = isTakeover ? 5 + Math.random() * 3 : 8 + Math.random() * 4;
+    // Duration based on intensity
+    const duration = 6 + Math.random() * 4 - (intensity * 2);
     
-    // Chromatic glow intensity
-    let glowIntensity = isTakeover ? 35 + (progress * 60) : 20 + (progress * 40);
-
-    // Soft translucent gradient with white highlight
-    const gradient = `radial-gradient(ellipse at 35% 35%, 
-        rgba(255,255,255,${baseOpacity * 0.6}) 0%, 
-        ${color1.replace('0.9', String(baseOpacity * 0.8))} 15%, 
-        ${color2.replace('0.9', String(baseOpacity * 0.5))} 40%, 
-        ${color3.replace('0.9', String(baseOpacity * 0.3))} 70%, 
-        transparent 100%)`;
-
-    drop.style.width = baseSize + 'px';
-    drop.style.height = baseSize + 'px';
+    // Glow intensity increases with progression
+    const glowIntensity = 15 + (intensity * 65);
+    
+    // EXACT gradient - 2-tone before 66%, 3-tone after
+    let gradient;
+    if (intensity < 0.66) {
+        gradient = `radial-gradient(circle at 40% 40%, 
+            ${color1.replace('0.9', String(baseOpacity * 1.3))} 0%, 
+            ${color2.replace('0.9', String(baseOpacity))} 30%,
+            ${color1.replace('0.9', String(baseOpacity * 0.6))} 60%,
+            transparent 100%)`;
+    } else {
+        gradient = `radial-gradient(circle at 40% 40%, 
+            ${color1.replace('0.9', String(baseOpacity * 1.3))} 0%, 
+            ${color2.replace('0.9', String(baseOpacity * 1.1))} 25%,
+            ${color3.replace('0.9', String(baseOpacity))} 50%,
+            ${color1.replace('0.9', String(baseOpacity * 0.6))} 75%,
+            transparent 100%)`;
+    }
+    
+    drop.style.width = size + 'px';
+    drop.style.height = size + 'px';
     drop.style.background = gradient;
     drop.style.animationDuration = duration + 's';
     
     // Multi-layered chromatic glow
     drop.style.boxShadow = `
-        0 0 ${glowIntensity}px ${color1.replace('0.9', '0.5')},
-        0 0 ${glowIntensity * 1.5}px ${color2.replace('0.9', '0.4')},
-        0 0 ${glowIntensity * 2.5}px ${color3.replace('0.9', '0.3')},
-        inset 0 0 ${glowIntensity * 0.4}px rgba(255,255,255,0.4)`;
-
+        0 0 ${glowIntensity * 1.5}px ${color1.replace('0.9', '0.4')},
+        0 0 ${glowIntensity * 2.5}px ${color2.replace('0.9', '0.3')},
+        0 0 ${glowIntensity * 4}px ${color3.replace('0.9', '0.2')},
+        inset 0 0 ${glowIntensity * 0.5}px ${color1.replace('0.9', '0.3')}`;
+    
     document.body.appendChild(drop);
     
-    setTimeout(() => drop.remove(), duration * 1000);
+    setTimeout(() => {
+        if (drop.parentNode) drop.parentNode.removeChild(drop);
+    }, duration * 1000);
 }
 
 function runRainAnimation() {
@@ -1345,7 +1365,7 @@ function runRainAnimation() {
     const elapsed = Date.now() - sessionStartTime;
     const rainElapsed = elapsed - BASE_RAIN_START;
     const rainDuration = SESSION_DURATION - BASE_RAIN_START; // 3 minutes of rain
-    const progress = Math.min(1, Math.max(0, rainElapsed / rainDuration));
+    const intensity = Math.min(1, Math.max(0, rainElapsed / rainDuration));
     
     // Activate shimmer
     const shimmer = document.getElementById('shimmerOverlay');
@@ -1353,26 +1373,28 @@ function runRainAnimation() {
         shimmer.classList.add('active');
     }
     
-    // Calculate drops per cycle based on progress
+    // EXACT drop frequency from demo - CHROMATIC TAKEOVER after 66%
     let dropsThisCycle;
-    if (progress < 0.2) {
-        dropsThisCycle = Math.random() > 0.7 ? 1 : 0; // Very sparse
-    } else if (progress < 0.4) {
-        dropsThisCycle = Math.random() > 0.5 ? 1 : 0; // Sparse
-    } else if (progress < 0.6) {
-        dropsThisCycle = 1 + (Math.random() > 0.5 ? 1 : 0); // Moderate
-    } else if (progress < 0.8) {
-        dropsThisCycle = 2 + Math.floor(Math.random() * 3); // Heavy
+    if (intensity < 0.2) {
+        dropsThisCycle = Math.random() > 0.7 ? 1 : 0;
+    } else if (intensity < 0.4) {
+        dropsThisCycle = Math.random() > 0.5 ? 1 : 0;
+    } else if (intensity < 0.66) {
+        dropsThisCycle = 1 + (Math.random() > 0.5 ? 1 : 0);
+    } else if (intensity < 0.8) {
+        // Start of chromatic takeover - multiply by 5-6x
+        dropsThisCycle = 3 + Math.floor(Math.random() * 5);
     } else {
-        dropsThisCycle = 5 + Math.floor(Math.random() * 20); // CHROMATIC TAKEOVER
+        // Full chromatic takeover - screen fills with drops
+        dropsThisCycle = 8 + Math.floor(Math.random() * 18);
     }
     
     for (let i = 0; i < dropsThisCycle; i++) {
-        setTimeout(() => createRaindrop(progress), Math.random() * 400);
+        setTimeout(() => createRaindrop(intensity), Math.random() * 300);
     }
     
     // Schedule next cycle
-    const interval = progress > 0.8 ? 100 : progress > 0.6 ? 200 : progress > 0.4 ? 400 : 600;
+    const interval = intensity > 0.8 ? 80 : intensity > 0.66 ? 150 : intensity > 0.4 ? 300 : 500;
     setTimeout(runRainAnimation, interval);
 }
 
@@ -1388,7 +1410,7 @@ function updateSessionTimer() {
     
     const timerEl = document.getElementById('sessionTimer');
     if (timerEl) {
-        timerEl.textContent = `Session: ${elapsedMin}:${elapsedSec.toString().padStart(2, '0')} / ${totalMin}:00`;
+        timerEl.textContent = `SESSION: ${elapsedMin}:${elapsedSec.toString().padStart(2, '0')} / ${totalMin}:00`;
     }
     
     // Start rain at 7 minutes
@@ -1410,7 +1432,6 @@ function endSession() {
     rainAnimationRunning = false;
     if (typeof stop === 'function') stop();
     
-    // Redirect to thank you page
     document.body.innerHTML = `
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, #0a0608 0%, #1a0a10 50%, #0a0608 100%); color: #d4af37; font-family: 'Cinzel', serif; text-align: center;">
             <h1 style="font-size: 3rem; margin-bottom: 20px; text-shadow: 0 0 30px rgba(212,175,55,0.5);">⚜ Thank You ⚜</h1>
@@ -1421,15 +1442,7 @@ function endSession() {
     `;
 }
 
-// Hook into the existing start function
-const originalStart = typeof start === 'function' ? start : null;
-function startWithTimer() {
-    sessionStartTime = Date.now();
-    updateSessionTimer();
-    if (originalStart) originalStart();
-}
-
-// Override start button if it exists
+// Hook into start button
 document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('startBtn');
     if (startBtn) {
