@@ -372,12 +372,13 @@
                 
                 <div class="section">
                     <h3>⚜ Transform Controls</h3>
-                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">25</span></label><input type="range" id="strengthSlider" min="1" max="50" value="25"></div>
+                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">10</span></label><input type="range" id="strengthSlider" min="1" max="50" value="10"></div>
                     <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">1.00</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="100"></div>
-                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.60</span></label><input type="range" id="poseSlider" min="0" max="100" value="60"></div>
-                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.50</span></label><input type="range" id="edgeSlider" min="0" max="100" value="50"></div>
-                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.45</span></label><input type="range" id="depthSlider" min="0" max="100" value="45"></div>
+                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.80</span></label><input type="range" id="poseSlider" min="0" max="100" value="80"></div>
+                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.70</span></label><input type="range" id="edgeSlider" min="0" max="100" value="70"></div>
+                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.65</span></label><input type="range" id="depthSlider" min="0" max="100" value="65"></div>
                     <div class="slider-row"><label>Background Transparency <span class="val" id="bgTransVal">0%</span></label><input type="range" id="bgTransSlider" min="0" max="100" value="0"></div>
+                    <div class="slider-row"><label>Costume Intensity <span class="val" id="costumeVal">75%</span></label><input type="range" id="costumeSlider" min="0" max="100" value="75"></div>
                 </div>
                 
                 
@@ -490,7 +491,7 @@ let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
 let modeValue = 50;
 let customPrompt = '';
-let params = { strength: 25, promptWeight: 1.00, pose: 0.60, edge: 0.50, depth: 0.45, bgTrans: 0 };
+let params = { strength: 10, promptWeight: 1.00, pose: 0.80, edge: 0.70, depth: 0.65, bgTrans: 0, costume: 75 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
 let capturedStills = {};
 let audioLevels = new Array(32).fill(0);
@@ -680,12 +681,12 @@ const caricaturePrompts = [
     "dramatic Baroque lighting, brocade drowning the figure in golden excess, masterful rendering, diagonal dynamism",
 ];
 const styles = {
-    baroque: { base: "baroque masterpiece, subjects wearing luxurious velvet robes and silk garments, elaborate lace collars and cuffs, pearl necklaces and gold jewelry, powdered wigs or flowing styled hair with ribbons, dramatic chiaroscuro lighting, Rubens influence, rich oil paint textures, gold leaf accents", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
-    rococo: { base: "rococo painting, subjects in elegant pastel silk gowns and embroidered coats, delicate lace details, pearl earrings and cameo brooches, elaborate powdered wigs with flowers, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", caricature: "French Revolution caricature, James Gillray style, mocking aristocracy", colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] } },
-    caravaggio: { base: "Caravaggio tenebrism, subjects in rich dark velvets and dramatic drapery, gold chains and medallions, natural flowing hair, extreme chiaroscuro, single dramatic spotlight, biblical intensity", caricature: "Revolutionary propaganda poster, bold contrast, woodcut style", colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] } },
-    vermeer: { base: "Vermeer Dutch Golden Age, subjects in fine wool and fur-trimmed garments, pearl earrings and delicate jewelry, neat hair with white caps or ribbons, soft window light, intimate domestic scene, pearl luminosity", caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature", colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] } },
-    rembrandt: { base: "Rembrandt self-portrait style, subjects in rich velvet berets and fur-collared cloaks, gold chains of office, natural dignified hair, golden brown palette, impasto brushwork, psychological depth", caricature: "Revolutionary broadsheet illustration, Thomas Rowlandson style", colors: { primary: [139, 90, 43], secondary: [85, 60, 42], accent: [218, 165, 32] } },
-    artemisia: { base: "Artemisia Gentileschi style, subjects in bold crimson and gold garments, dramatic jewelry and crowns, powerful flowing hair, powerful feminine subjects, dramatic baroque lighting, intense emotional expression", caricature: "Revolutionary feminist pamphlet, fierce women warriors, Liberty Leading the People energy", colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] } }
+    baroque: { base: "baroque masterpiece, PRESERVE FACIAL FEATURES EXACTLY while transforming clothing into luxurious velvet robes and silk garments, add elaborate lace collars and cuffs, pearl necklaces and gold jewelry, style hair into powdered wigs or flowing baroque curls with ribbons and ornaments, dramatic chiaroscuro lighting, Rubens influence, rich oil paint textures, gold leaf accents", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
+    rococo: { base: "rococo painting, PRESERVE FACIAL FEATURES EXACTLY while transforming clothing into elegant pastel silk gowns and embroidered coats, add delicate lace details, pearl earrings and cameo brooches, style hair into elaborate powdered wigs adorned with flowers and feathers, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", caricature: "French Revolution caricature, James Gillray style, mocking aristocracy", colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] } },
+    caravaggio: { base: "Caravaggio tenebrism, PRESERVE FACIAL FEATURES EXACTLY while transforming clothing into rich dark velvets and dramatic drapery, add gold chains and medallions, style hair into natural flowing baroque waves, extreme chiaroscuro, single dramatic spotlight, biblical intensity", caricature: "Revolutionary propaganda poster, bold contrast, woodcut style", colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] } },
+    vermeer: { base: "Vermeer Dutch Golden Age, PRESERVE FACIAL FEATURES EXACTLY while transforming clothing into fine wool and fur-trimmed garments, add pearl earrings and delicate jewelry, style hair neatly with white caps or silk ribbons, soft window light, intimate domestic scene, pearl luminosity", caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature", colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] } },
+    rembrandt: { base: "Rembrandt self-portrait style, PRESERVE FACIAL FEATURES EXACTLY while transforming clothing into rich velvet berets and fur-collared cloaks, add gold chains of office, style hair naturally with dignified waves, golden brown palette, impasto brushwork, psychological depth", caricature: "Revolutionary broadsheet illustration, Thomas Rowlandson style", colors: { primary: [139, 90, 43], secondary: [85, 60, 42], accent: [218, 165, 32] } },
+    artemisia: { base: "Artemisia Gentileschi style, PRESERVE FACIAL FEATURES EXACTLY while transforming clothing into bold crimson and gold garments, add dramatic jewelry and ornate crowns, style hair into powerful flowing waves, powerful feminine subjects, dramatic baroque lighting, intense emotional expression", caricature: "Revolutionary feminist pamphlet, fierce women warriors, Liberty Leading the People energy", colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] } }
 };
 
 function log(msg, type = '') {
@@ -1085,6 +1086,7 @@ document.getElementById('poseSlider').oninput = function() { params.pose = parse
 document.getElementById('edgeSlider').oninput = function() { params.edge = parseInt(this.value) / 100; document.getElementById('edgeVal').textContent = params.edge.toFixed(2); if (streamId) setParams(); };
 document.getElementById('depthSlider').oninput = function() { params.depth = parseInt(this.value) / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
 document.getElementById('bgTransSlider').oninput = function() { params.bgTrans = parseInt(this.value); document.getElementById('bgTransVal').textContent = params.bgTrans + '%'; if (streamId) setParams(); };
+document.getElementById('costumeSlider').oninput = function() { params.costume = parseInt(this.value); document.getElementById('costumeVal').textContent = params.costume + '%'; if (streamId) setParams(); };
 document.getElementById('audioIntensitySlider').oninput = function() { audioParams.intensity = this.value / 100; document.getElementById('audioIntensityVal').textContent = this.value + '%'; };
 document.getElementById('pulseSpeedSlider').oninput = function() { audioParams.pulseSpeed = this.value / 100; document.getElementById('pulseSpeedVal').textContent = this.value + '%'; };
 document.getElementById('particleDensitySlider').oninput = function() { audioParams.particleDensity = this.value / 100; document.getElementById('particleDensityVal').textContent = this.value + '%'; };
