@@ -221,97 +221,191 @@
             .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest">
-// Progressive watermark: droplets start at 7 min, full takeover at 10 min
-function startWatermarkSystem() {
-    const container = document.querySelector('.video-container');
-    if (!container) { console.log('No video container for watermark'); return; }
-    
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+// ============================================
+// SESSION TIMER & WATERMARK SYSTEM
+// ============================================
+const SESSION_DURATION = 10 * 60 * 1000; // 10 minutes
+const WATERMARK_START = 7 * 60 * 1000;   // 7 minutes
+const REDIRECT_URL = '/licensing.html?session=complete';
+
+let sessionStartTime = null;
+let sessionTimerId = null;
+let watermarkIntervalId = null;
+let dripsCreated = [];
+
+function createTimerDisplay() {
+    const timerDiv = document.createElement('div');
+    timerDiv.id = 'session-timer';
+    timerDiv.style.cssText = `
+        position: fixed;
+        top: 15px;
+        right: 15px;
+        background: rgba(10, 6, 8, 0.85);
+        border: 1px solid rgba(212,175,55,0.4);
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-family: 'Cinzel', serif;
+        font-size: 0.85rem;
+        color: #d4af37;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 0 15px rgba(212,175,55,0.2);
+        transition: all 0.3s ease;
+    `;
+    document.body.appendChild(timerDiv);
+    return timerDiv;
+}
+
+function createWatermarkCanvas() {
     const canvas = document.createElement('canvas');
-    canvas.id = 'watermarkCanvas';
-    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;';
-    container.style.position = 'relative';
-    container.appendChild(canvas);
-    
-    const ctx = canvas.getContext('2d');
-    let droplets = [];
-    
+    canvas.id = 'watermark-canvas';
+    canvas.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9998;
+    `;
+    document.body.appendChild(canvas);
     function resize() {
-        canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
     }
     resize();
     window.addEventListener('resize', resize);
-    
-    function getIntensity() {
-        if (!sessionStart) return 0;
-        const elapsed = Date.now() - sessionStart;
-        const START_TIME = 7 * 60 * 1000; // 7 minutes
-        const END_TIME = 10 * 60 * 1000;  // 10 minutes
-        if (elapsed < START_TIME) return 0;
-        if (elapsed >= END_TIME) return 1;
-        return (elapsed - START_TIME) / (END_TIME - START_TIME);
-    }
-    
-    function addDroplet() {
-        const intensity = getIntensity();
-        if (intensity <= 0) return;
-        if (Math.random() > intensity * 0.3) return;
-        
-        droplets.push({
-            x: Math.random() * canvas.width,
-            y: -20,
-            size: 10 + Math.random() * 30 * intensity,
-            speed: 1 + Math.random() * 2,
-            hue: Math.random() * 60 + 280,
-            opacity: 0.3 + intensity * 0.5
-        });
-    }
-    
-    function render() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const intensity = getIntensity();
-        
-        if (intensity > 0.5) {
-            const overlayOpacity = (intensity - 0.5) * 0.6;
-            ctx.fillStyle = `rgba(128, 0, 128, ${overlayOpacity})`;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        
-        droplets.forEach((d, i) => {
-            ctx.beginPath();
-            ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${d.hue}, 80%, 50%, ${d.opacity})`;
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(d.x, d.y + d.size, d.size * 0.3, d.size * 0.8, 0, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${d.hue}, 80%, 40%, ${d.opacity * 0.7})`;
-            ctx.fill();
-            d.y += d.speed;
-            if (d.y > canvas.height + 50) droplets.splice(i, 1);
-        });
-        
-        if (intensity >= 1) {
-            ctx.fillStyle = 'rgba(0,0,0,0.8)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.font = 'bold 28px Cormorant Garamond';
-            ctx.fillStyle = '#d4af37';
-            ctx.textAlign = 'center';
-            ctx.fillText('Session Complete', canvas.width/2, canvas.height/2 - 30);
-            ctx.font = '20px Cormorant Garamond';
-            ctx.fillText('Please allow others to experience the mirror', canvas.width/2, canvas.height/2 + 10);
-            ctx.font = '16px Cormorant Garamond';
-            ctx.fillStyle = '#888';
-            ctx.fillText('Thank you for participating!', canvas.width/2, canvas.height/2 + 50);
-        }
-        
-        addDroplet();
-        requestAnimationFrame(render);
-    }
-    render();
-    console.log('Watermark system started - droplets begin at 7 min, takeover at 10 min');
+    return canvas;
 }
 
+function createRaindrop(canvas, intensity) {
+    const x = Math.random() * canvas.width;
+    const speed = 1.5 + Math.random() * 2;
+    const size = 3 + Math.random() * 4 * intensity;
+    const colors = [
+        'rgba(212,175,55,0.6)',
+        'rgba(255,215,0,0.5)',
+        'rgba(184,134,11,0.5)',
+        'rgba(218,165,32,0.5)',
+        'rgba(255,223,186,0.4)'
+    ];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const drop = {
+        x, y: -20, speed, size, color,
+        settled: false,
+        settleY: canvas.height - Math.random() * 30,
+        opacity: 0.3 + Math.random() * 0.4 * intensity
+    };
+    dripsCreated.push(drop);
+    return drop;
+}
+
+function animateWatermarks(canvas, elapsed) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const watermarkElapsed = elapsed - WATERMARK_START;
+    const intensity = Math.min(1, watermarkElapsed / (SESSION_DURATION - WATERMARK_START));
+    const dropRate = Math.floor(intensity * 3) + 1;
+    if (Math.random() < 0.1 * dropRate) {
+        createRaindrop(canvas, intensity);
+    }
+    dripsCreated.forEach((drop) => {
+        if (!drop.settled) {
+            drop.y += drop.speed;
+            if (drop.y >= drop.settleY) {
+                drop.settled = true;
+                drop.y = drop.settleY;
+            }
+        }
+        ctx.beginPath();
+        ctx.arc(drop.x, drop.y, drop.size, 0, Math.PI * 2);
+        ctx.fillStyle = drop.color;
+        ctx.fill();
+        const gradient = ctx.createRadialGradient(drop.x, drop.y, 0, drop.x, drop.y, drop.size * 2);
+        gradient.addColorStop(0, drop.color);
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.fill();
+    });
+    if (dripsCreated.filter(d => d.settled).length > 20) {
+        const gradient = ctx.createLinearGradient(0, canvas.height - 50, 0, canvas.height);
+        gradient.addColorStop(0, 'transparent');
+        gradient.addColorStop(1, `rgba(212,175,55,${0.2 * intensity})`);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+    }
+}
+
+function formatTime(ms) {
+    const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function updateTimerDisplay(timerDiv, remaining, elapsed) {
+    const progressPercent = Math.min(100, (elapsed / SESSION_DURATION) * 100);
+    let status = '';
+    if (remaining <= 60000) {
+        status = ' ⚠️';
+        timerDiv.style.borderColor = 'rgba(255,100,100,0.6)';
+        timerDiv.style.color = '#ff6b6b';
+    } else if (remaining <= 3 * 60000) {
+        status = ' ⏰';
+        timerDiv.style.borderColor = 'rgba(255,200,100,0.5)';
+        timerDiv.style.color = '#ffd93d';
+    }
+    timerDiv.innerHTML = `
+        <div style="font-size: 0.7rem; opacity: 0.7; margin-bottom: 2px;">SESSION TIME</div>
+        <div style="font-size: 1.1rem; font-weight: bold;">${formatTime(remaining)}${status}</div>
+        <div style="margin-top: 4px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;">
+            <div style="height: 100%; width: ${progressPercent}%; background: linear-gradient(90deg, #d4af37, #ffd700); transition: width 1s;"></div>
+        </div>
+    `;
+}
+
+function startSessionTimer() {
+    sessionStartTime = Date.now();
+    dripsCreated = [];
+    const timerDiv = createTimerDisplay();
+    const canvas = createWatermarkCanvas();
+    sessionTimerId = setInterval(() => {
+        const elapsed = Date.now() - sessionStartTime;
+        const remaining = SESSION_DURATION - elapsed;
+        updateTimerDisplay(timerDiv, remaining, elapsed);
+        if (elapsed >= WATERMARK_START) {
+            animateWatermarks(canvas, elapsed);
+        }
+        if (remaining <= 0) {
+            stopSessionTimer();
+            window.location.href = REDIRECT_URL;
+        }
+    }, 1000);
+    watermarkIntervalId = setInterval(() => {
+        const elapsed = Date.now() - sessionStartTime;
+        if (elapsed >= WATERMARK_START) {
+            const canvas = document.getElementById('watermark-canvas');
+            if (canvas) animateWatermarks(canvas, elapsed);
+        }
+    }, 16);
+    console.log('Session timer started - gold raindrops at 7 min, 10 min session limit');
+}
+
+function stopSessionTimer() {
+    if (sessionTimerId) { clearInterval(sessionTimerId); sessionTimerId = null; }
+    if (watermarkIntervalId) { clearInterval(watermarkIntervalId); watermarkIntervalId = null; }
+    const timerDiv = document.getElementById('session-timer');
+    if (timerDiv) timerDiv.remove();
+    const canvas = document.getElementById('watermark-canvas');
+    if (canvas) canvas.remove();
+    dripsCreated = [];
+    console.log('Session timer stopped');
+}
+
+window.startSessionTimer = startSessionTimer;
+window.stopSessionTimer = stopSessionTimer;
 </script>
 </head>
 <body>
@@ -1139,8 +1233,7 @@ async function start() {
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         const data = await createRes.json();
         streamId = data.id;
-        sessionStart = Date.now();
-        startWatermarkSystem();
+        startSessionTimer();
         playbackId = data.output_playback_id;
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
         log('Connecting WebRTC...', 'info');
@@ -1257,96 +1350,6 @@ window.addEventListener('load', () => {
     }
     demoAnimate();
 });
-
-// Progressive watermark: droplets start at 7 min, full takeover at 10 min
-function startWatermarkSystem() {
-    const container = document.querySelector('.video-container');
-    if (!container) { console.log('No video container for watermark'); return; }
-    
-    const canvas = document.createElement('canvas');
-    canvas.id = 'watermarkCanvas';
-    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;';
-    container.style.position = 'relative';
-    container.appendChild(canvas);
-    
-    const ctx = canvas.getContext('2d');
-    let droplets = [];
-    
-    function resize() {
-        canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-    
-    function getIntensity() {
-        if (!sessionStart) return 0;
-        const elapsed = Date.now() - sessionStart;
-        const START_TIME = 7 * 60 * 1000; // 7 minutes
-        const END_TIME = 10 * 60 * 1000;  // 10 minutes
-        if (elapsed < START_TIME) return 0;
-        if (elapsed >= END_TIME) return 1;
-        return (elapsed - START_TIME) / (END_TIME - START_TIME);
-    }
-    
-    function addDroplet() {
-        const intensity = getIntensity();
-        if (intensity <= 0) return;
-        if (Math.random() > intensity * 0.3) return;
-        
-        droplets.push({
-            x: Math.random() * canvas.width,
-            y: -20,
-            size: 10 + Math.random() * 30 * intensity,
-            speed: 1 + Math.random() * 2,
-            hue: Math.random() * 60 + 280,
-            opacity: 0.3 + intensity * 0.5
-        });
-    }
-    
-    function render() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const intensity = getIntensity();
-        
-        if (intensity > 0.5) {
-            const overlayOpacity = (intensity - 0.5) * 0.6;
-            ctx.fillStyle = `rgba(128, 0, 128, ${overlayOpacity})`;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        
-        droplets.forEach((d, i) => {
-            ctx.beginPath();
-            ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${d.hue}, 80%, 50%, ${d.opacity})`;
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(d.x, d.y + d.size, d.size * 0.3, d.size * 0.8, 0, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${d.hue}, 80%, 40%, ${d.opacity * 0.7})`;
-            ctx.fill();
-            d.y += d.speed;
-            if (d.y > canvas.height + 50) droplets.splice(i, 1);
-        });
-        
-        if (intensity >= 1) {
-            ctx.fillStyle = 'rgba(0,0,0,0.8)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.font = 'bold 28px Cormorant Garamond';
-            ctx.fillStyle = '#d4af37';
-            ctx.textAlign = 'center';
-            ctx.fillText('Session Complete', canvas.width/2, canvas.height/2 - 30);
-            ctx.font = '20px Cormorant Garamond';
-            ctx.fillText('Please allow others to experience the mirror', canvas.width/2, canvas.height/2 + 10);
-            ctx.font = '16px Cormorant Garamond';
-            ctx.fillStyle = '#888';
-            ctx.fillText('Thank you for participating!', canvas.width/2, canvas.height/2 + 50);
-        }
-        
-        addDroplet();
-        requestAnimationFrame(render);
-    }
-    render();
-    console.log('Watermark system started - droplets begin at 7 min, takeover at 10 min');
-}
 
 </script>
 </body>
