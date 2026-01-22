@@ -1118,25 +1118,33 @@ function buildPrompt() {
         return prompt;
     }
     const style = styles[currentStyle];
-    let basePrompt;
-    if (modeValue < 15) basePrompt = style.base;
-    else if (modeValue > 85) basePrompt = style.caricature;
-    else { const cw = (100 - modeValue) / 100; const sw = modeValue / 100; basePrompt = `(${style.base}:${cw.toFixed(2)}), (${style.caricature}:${sw.toFixed(2)})`; }
+    let styleBase;
+    if (modeValue < 15) styleBase = style.base;
+    else if (modeValue > 85) styleBase = style.caricature;
+    else { const cw = (100 - modeValue) / 100; const sw = modeValue / 100; styleBase = `(${style.base}:${cw.toFixed(2)}), (${style.caricature}:${sw.toFixed(2)})`; }
     
-    // Add costume intensity modifiers
+    // Face preservation with heavy costume/background transformation
     const costumeLevel = params.costume / 100;
+    
+    let prompt = "(face exactly as input, preserve facial features precisely, same person, photorealistic face and skin texture:1.5)";
+    prompt += ", (soft painterly glow on face, subtle oil paint texture on skin:0.8)";
+    prompt += `, (${styleBase}:0.9)`;
+    
+    // Costume intensity affects body transformation
     if (costumeLevel > 0.5) {
-        basePrompt += `, (elaborate baroque costume, ornate period clothing, luxurious velvet and silk fabrics, lace collars and cuffs, pearl and gold jewelry, styled period hair with ornaments:${costumeLevel.toFixed(2)})`;
+        prompt += `, (elaborate baroque costume replacing all clothing, luxurious velvet robes, silk garments, dramatic drapery, ornate lace collar and cuffs, pearl necklaces, gold jewelry, gemstone brooches:${(costumeLevel * 1.5).toFixed(2)})`;
+        prompt += `, (baroque styled hair, powdered wig OR flowing curls with ribbons and pearl ornaments, period-appropriate hairstyle:${(costumeLevel * 1.3).toFixed(2)})`;
     } else if (costumeLevel > 0.2) {
-        basePrompt += `, (period costume elements, elegant fabrics, subtle jewelry, styled hair:${costumeLevel.toFixed(2)})`;
+        prompt += `, (period costume elements, elegant fabrics, subtle jewelry, styled hair:${costumeLevel.toFixed(2)})`;
     }
     
-    // Add baroque background
-    basePrompt += ", ornate gilded frame, rich tapestry background, classical architecture, candlelit atmosphere";
+    // Always add rich baroque background
+    prompt += ", (ornate gilded baroque frame, rich velvet curtain background, classical columns, candlelit golden atmosphere, oil painting texture:1.2)";
     
-    if (params.bgTrans > 50) basePrompt += ", transparent background, isolated subject, no background, subject only";
-    else if (params.bgTrans > 20) basePrompt += ", soft faded background, subject focus, minimal background";
-    return basePrompt;
+    if (params.bgTrans > 50) prompt += ", transparent background, isolated subject, no background, subject only";
+    else if (params.bgTrans > 20) prompt += ", soft faded background, subject focus, minimal background";
+    
+    return prompt;
 }
 
 async function start() {
