@@ -220,12 +220,7 @@
             .video-container { order: 2; width: 100vw !important; margin-left: calc(-50vw + 50%); border-radius: 0 !important; }
             .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
         }
-    
-.mode-buttons { display: flex; gap: 10px; margin: 10px 0; }
-.mode-btn { flex: 1; padding: 12px 16px; border: 1px solid #d4af37; background: transparent; color: #d4af37; font-family: 'Cormorant Garamond', serif; font-size: 14px; cursor: pointer; transition: all 0.3s; border-radius: 4px; }
-.mode-btn:hover { background: rgba(212, 175, 55, 0.2); }
-.mode-btn.active { background: #d4af37; color: #1a1a2e; font-weight: bold; }
-</style>
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
@@ -271,10 +266,9 @@
                         <button class="style-btn" data-style="artemisia">Artemisia</button>
                     </div>
                     <div class="mode-box">
-                        <div class="mode-buttons">
-                            <button id="btnOpulent" class="mode-btn active">🎨 Opulent Oil Painting</button>
-                            <button id="btnSatire" class="mode-btn">French Revolution Caricatures 📜</button>
-                        </div>
+                        <div class="mode-labels"><span>🎨 Opulent Oil Painting</span><span>French Revolution Caricatures 📜</span></div>
+                        <input type="range" id="modeSlider" min="0" max="100" value="50">
+                        <div class="mode-value" id="modeValue">Balanced</div>
                     </div>
                 </div>
                 
@@ -396,7 +390,7 @@ let countdownValue = 45;
 let statusDebugLines = [];
 let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
-let modeValue = 0;
+let modeValue = 50;
 let customPrompt = '';
 let params = { strength: 50, promptWeight: 1.00, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
