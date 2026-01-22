@@ -379,7 +379,7 @@
 // ============================================
 const API_KEY = 'sk_9bFt6nHdK1T6AXG6knDS3K57u1BTS6xe9FiwqwQW52KoK7UpqBBEYnmPGxFvLJmS';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
+const PIPELINE_ID = 'pip_SD15';
 
 // ============================================
 // STATE
@@ -1082,7 +1082,37 @@ async function connectWHIP(whipUrl) {
 async function setParams() {
     const prompt = buildPrompt();
     const negPrompt = modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph";
-    const body = { model_id: "streamdiffusion", pipeline: "live-video-to-video", params: { model_id: "stabilityai/sd-turbo", prompt: prompt, negative_prompt: negPrompt, num_inference_steps: params.strength, seed: 42, controlnets: [{ conditioning_scale: params.pose, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" }, { conditioning_scale: params.edge, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" }, { conditioning_scale: params.depth, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }] } };
+    const body = {
+        params: {
+            prompt: prompt,
+            negative_prompt: negPrompt,
+            seed: 42,
+            guidance_scale: 1,
+            num_inference_steps: 50,
+            t_index_list: [11, 17],
+            model_id: "Lykon/dreamshaper-8",
+            use_lcm_lora: true,
+            lcm_lora_id: "latent-consistency/lcm-lora-sdv1-5",
+            acceleration: "tensorrt",
+            do_add_noise: true,
+            use_denoising_batch: true,
+            controlnets: [
+                {
+                    enabled: true,
+                    model_id: "lllyasviel/control_v11f1p_sd15_depth",
+                    preprocessor: "depth_tensorrt",
+                    conditioning_scale: params.depth
+                },
+                {
+                    enabled: true,
+                    model_id: "lllyasviel/control_v11p_sd15_canny",
+                    preprocessor: "canny",
+                    conditioning_scale: params.edge,
+                    preprocessor_params: { low_threshold: 100, high_threshold: 200 }
+                }
+            ]
+        }
+    };
     try { await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); }
     catch (e) { log(`Params: ${e.message}`, 'info'); }
 }
