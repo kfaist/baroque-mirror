@@ -227,13 +227,13 @@ function startWatermarkSystem() {
     const canvas = document.createElement('canvas');
     canvas.id = 'watermarkCanvas';
     canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;';
-    document.querySelector('.output-container').appendChild(canvas);
+    document.querySelector('.video-container').appendChild(canvas);
     
     const ctx = canvas.getContext('2d');
     let droplets = [];
     
     function resize() {
-        const container = document.querySelector('.output-container');
+        const container = document.querySelector('.video-container');
         canvas.width = container.offsetWidth;
         canvas.height = container.offsetHeight;
     }
@@ -1289,13 +1289,13 @@ function startWatermarkSystem() {
     const canvas = document.createElement('canvas');
     canvas.id = 'watermarkCanvas';
     canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;';
-    document.querySelector('.output-container').appendChild(canvas);
+    document.querySelector('.video-container').appendChild(canvas);
     
     const ctx = canvas.getContext('2d');
     let droplets = [];
     
     function resize() {
-        const container = document.querySelector('.output-container');
+        const container = document.querySelector('.video-container');
         canvas.width = container.offsetWidth;
         canvas.height = container.offsetHeight;
     }
