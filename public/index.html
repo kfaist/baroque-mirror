@@ -1122,6 +1122,18 @@ function buildPrompt() {
     if (modeValue < 15) basePrompt = style.base;
     else if (modeValue > 85) basePrompt = style.caricature;
     else { const cw = (100 - modeValue) / 100; const sw = modeValue / 100; basePrompt = `(${style.base}:${cw.toFixed(2)}), (${style.caricature}:${sw.toFixed(2)})`; }
+    
+    // Add costume intensity modifiers
+    const costumeLevel = params.costume / 100;
+    if (costumeLevel > 0.5) {
+        basePrompt += `, (elaborate baroque costume, ornate period clothing, luxurious velvet and silk fabrics, lace collars and cuffs, pearl and gold jewelry, styled period hair with ornaments:${costumeLevel.toFixed(2)})`;
+    } else if (costumeLevel > 0.2) {
+        basePrompt += `, (period costume elements, elegant fabrics, subtle jewelry, styled hair:${costumeLevel.toFixed(2)})`;
+    }
+    
+    // Add baroque background
+    basePrompt += ", ornate gilded frame, rich tapestry background, classical architecture, candlelit atmosphere";
+    
     if (params.bgTrans > 50) basePrompt += ", transparent background, isolated subject, no background, subject only";
     else if (params.bgTrans > 20) basePrompt += ", soft faded background, subject focus, minimal background";
     return basePrompt;
