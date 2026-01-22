@@ -267,8 +267,8 @@
                     </div>
                     <div class="mode-box">
                         <div class="mode-labels"><span>🎨 Opulent Oil Painting</span><span>French Revolution Caricatures 📜</span></div>
-                        <input type="range" id="modeSlider" min="0" max="100" value="0">
-                        <div class="mode-value" id="modeValue">Opulent Oil Painting</div>
+                        <input type="range" id="modeSlider" min="0" max="100" value="50">
+                        <div class="mode-value" id="modeValue">Balanced</div>
                     </div>
                 </div>
                 
@@ -390,7 +390,7 @@ let countdownValue = 45;
 let statusDebugLines = [];
 let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
-let modeValue = 0;
+let modeValue = 50;
 let customPrompt = '';
 let params = { strength: 50, promptWeight: 1.00, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
