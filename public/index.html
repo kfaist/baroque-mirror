@@ -1187,20 +1187,18 @@ async function connectWHIP(whipUrl) {
 }
 
 async function setParams() {
-    // abstractValue: 0 = abstract (fewer steps, kaleidoscope), 100 = representational (more steps, painterly portraits)
+    // abstractValue: 0 = abstract, 100 = representational (painterly portraits)
     const strength = Math.max(1, Math.round(1 + (abstractValue / 100) * 7)); // 1-8
     
-    // Build prompt and add universal suffix
+    // Build prompt and add universal suffix + STRONG painterly emphasis
     const basePrompt = buildPrompt();
-    const prompt = basePrompt + ", shallow depth of field, tack sharp focus, 8k ultra crisp, luminous";
+    const prompt = basePrompt + ", shallow depth of field, tack sharp focus, 8k ultra crisp, luminous, oil painting, traditional media, canvas texture, visible brushstrokes, masterpiece painting";
     
-    // Stronger negative for abstract (no faces), lighter for representational (allow painterly faces)
-    let negPrompt;
-    if (abstractValue < 33) {
-        negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, illustration, cgi, 3d render, digital art, comic, manga, face, portrait, person, human, figure";
-    } else {
-        negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, illustration, cgi, 3d render, digital art, comic, manga, photograph, photo";
-    }
+    // Negative prompt - block CGI/3D/digital look
+    const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, illustration, cgi, 3d render, digital art, comic, manga, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray";
+    
+    // Use small guidance for representational to push painterly style
+    const guidance = abstractValue > 50 ? 0.5 : 0;
     
     const body = { 
         model_id: "streamdiffusion",
@@ -1210,7 +1208,7 @@ async function setParams() {
             prompt: prompt, 
             negative_prompt: negPrompt, 
             num_inference_steps: strength, 
-            guidance_scale: 0,  // MUST be 0 for SDXL-turbo to follow input video
+            guidance_scale: guidance,
             seed: 42
         } 
     };
