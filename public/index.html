@@ -1194,8 +1194,8 @@ async function setParams() {
     const basePrompt = buildPrompt();
     const prompt = basePrompt + ", shallow depth of field, tack sharp focus, 8k ultra crisp, luminous, oil painting, traditional media, canvas texture, visible brushstrokes, masterpiece painting";
     
-    // Negative prompt - block CGI/3D/digital look
-    const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, illustration, cgi, 3d render, digital art, comic, manga, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray";
+    // Negative prompt - block CGI/3D/digital look and unwanted character types
+    const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray, girl, model, babe, fairy, bride, princess";
     
     // Use small guidance for representational to push painterly style
     const guidance = abstractValue > 50 ? 0.5 : 0;
