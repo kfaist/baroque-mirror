@@ -1168,13 +1168,39 @@ async function setParams() {
 }
 
 function startPolling() {
-    let attempts = 0, maxAttempts = 120, hlsConnected = false;
+    let attempts = 0, maxAttempts = 180, hlsConnected = false;
+    
+    const getPlaybackId = async () => {
+        if (playbackId) return true;
+        try {
+            const res = await fetch(`${API_BASE}/streams/${streamId}`, { headers: { 'Authorization': `Bearer ${API_KEY}` } });
+            const data = await res.json();
+            if (data.output_playback_id) {
+                playbackId = data.output_playback_id;
+                log(`Output ready: ${playbackId.slice(-8)}`, 'success');
+                return true;
+            }
+            log(`AI warming up (${attempts})...`, 'info');
+            return false;
+        } catch (e) { log(`Status: ${e.message}`, 'info'); return false; }
+    };
+    
     const poll = async () => {
         attempts++;
         try {
+            // First ensure we have a playbackId
+            if (!playbackId) {
+                const hasId = await getPlaybackId();
+                if (!hasId) {
+                    if (attempts < maxAttempts) pollTimer = setTimeout(poll, 2000);
+                    return;
+                }
+            }
+            
             const res = await fetch(`https://livepeer.studio/api/playback/${playbackId}`);
             const data = await res.json();
             if (attempts % 5 === 0) log(`Waiting for AI output (${attempts})...`, 'info');
+            
             if (data.meta?.live === 1 && !hlsConnected) {
                 log('STREAM LIVE!', 'success');
                 const hlsUrl = data.meta?.source?.find(s => s.hrn === 'HLS (TS)')?.url;
