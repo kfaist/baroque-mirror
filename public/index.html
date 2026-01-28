@@ -279,13 +279,6 @@
                         </label>
                         <input type="range" id="abstractSlider" min="0" max="100" value="50" style="margin-top: 25px;">
                     </div>
-                    <div class="slider-row" style="margin-top: 20px;">
-                        <label>
-                            <span style="float:left">Sharp</span>
-                            <span style="float:right">Soft Blur</span>
-                        </label>
-                        <input type="range" id="dofSlider" min="0" max="100" value="30" style="margin-top: 25px;">
-                    </div>
                 </div>
                 
                 
@@ -996,14 +989,6 @@ document.getElementById('abstractSlider').oninput = function() {
     if (streamId) setParams(); 
 };
 
-// Depth of Field: Sharp (0) to Soft Blur (100)
-let dofValue = 30;
-document.getElementById('dofSlider').oninput = function() { 
-    dofValue = parseInt(this.value); 
-    log(`Depth of Field: ${dofValue}%`, 'info');
-    if (streamId) setParams(); 
-};
-
 document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = '✓'; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
 
 document.getElementById('startBtn').onclick = start;
@@ -1171,18 +1156,7 @@ async function setParams() {
     const strength = Math.max(1, Math.round(1 + (abstractValue / 100) * 7)); // 1-8
     
     // Build prompt based on style
-    const basePrompt = buildPrompt();
-    
-    // Depth of field additions
-    let dofPrompt = "";
-    if (dofValue > 70) {
-        dofPrompt = ", shallow depth of field, soft bokeh, dreamy blur";
-    } else if (dofValue > 40) {
-        dofPrompt = ", soft focus, gentle blur";
-    }
-    // Sharp (dofValue < 40) = no blur prompt needed
-    
-    const prompt = basePrompt + dofPrompt;
+    const prompt = buildPrompt();
     const negPrompt = "text, letters, words, spelling, low quality, distorted, blurry";
     
     const body = { 
@@ -1199,11 +1173,10 @@ async function setParams() {
     };
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`Steps: ${strength}, DOF: ${dofValue}%`, 'success');
+        if (res.ok) log(`Steps: ${strength}`, 'success');
         else log(`Params failed: ${res.status}`, 'error');
     }
     catch (e) { log(`Params: ${e.message}`, 'info'); }
-}
 }
 
 function startPolling() {
