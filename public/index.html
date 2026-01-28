@@ -371,7 +371,7 @@
 // ============================================
 const API_KEY = 'sk_wdNUnsKxxwH6v64BHMwHaWT39Mhwk5ZrqZzXDRmAXxxAqCgVGusff2Y8jxiBofuP';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_SDXL-turbo';  // SDXL-turbo with ControlNets for face preservation
+const PIPELINE_ID = 'pip_SDXL-turbo-faceid';  // FaceID for good faces
 
 // ============================================
 // CONNECTION TIMING - INCREASED TOLERANCE
@@ -1197,41 +1197,28 @@ async function connectWHIP(whipUrl) {
 }
 
 async function setParams() {
-    // abstractValue: 0 = abstract, 100 = representational (painterly portraits)
-    const strength = Math.max(1, Math.round(1 + (abstractValue / 100) * 7)); // 1-8
-    
-    // Build prompt
+    const strength = Math.max(1, Math.round(1 + (abstractValue / 100) * 7));
     const basePrompt = buildPrompt();
-    const prompt = basePrompt + ", oil painting, baroque portrait, masterpiece, thick impasto brushstrokes, canvas texture, museum quality, classical painting";
-    
-    // Heavy negative prompt for painterly look
-    const negPrompt = "photograph, photo, realistic, photorealistic, hyperrealistic, text, low quality, blurry, cartoon, anime, cgi, 3d render, digital art, plastic, smooth skin, airbrushed, video game, unreal engine, octane, vray, cinema4d, modern, contemporary";
+    const prompt = basePrompt + ", oil painting, traditional media, canvas texture, visible brushstrokes, masterpiece painting";
+    const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray, girl, model, babe, fairy, bride, princess";
     
     const body = { 
         model_id: "streamdiffusion",
         pipeline: "live-video-to-video",
         params: { 
-            model_id: "stabilityai/sdxl-turbo",
+            model_id: "stabilityai/sdxl-turbo", 
             prompt: prompt, 
-            negative_prompt: negPrompt,
-            num_inference_steps: strength,
+            negative_prompt: negPrompt, 
+            num_inference_steps: strength, 
             guidance_scale: 0,
             seed: 42
         } 
     };
-    
     try { 
-        const res = await fetch(`${API_BASE}/streams/${streamId}`, { 
-            method: 'PATCH', 
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, 
-            body: JSON.stringify(body) 
-        }); 
-        if (res.ok) {
-            log(`Style: ${currentStyle.toUpperCase()}, Steps: ${strength}`, 'success');
-            console.log('Prompt:', prompt);
-        } else {
-            log(`Params failed: ${res.status}`, 'error');
-        }
+        const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
+        if (res.ok) log(`Style: ${currentStyle.toUpperCase()}, Steps: ${strength}`, 'success');
+        else log(`Params failed: ${res.status}`, 'error');
+        console.log('Prompt:', prompt);
     }
     catch (e) { log(`Params error: ${e.message}`, 'info'); }
 }
