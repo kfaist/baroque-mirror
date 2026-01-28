@@ -1046,7 +1046,7 @@ function buildPrompt() {
     }
     const style = styles[currentStyle];
     // Pick a random baroque scene prompt for extra flavor
-    const scenePrompt = baroquePrompts[Math.floor(Math.random() * baroquePrompts.length)];
+    const scenePrompt = caricaturePrompts[Math.floor(Math.random() * caricaturePrompts.length)];
     
     // Slider: 0 = abstract (no faces, kaleidoscope), 100 = representational (painterly portraits)
     if (abstractValue < 33) {
