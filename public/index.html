@@ -1,5 +1,5 @@
-<!-- deploy-1769081642 -->
-<!-- v1769081282 -->
+<!-- deploy-1769634500 -->
+<!-- v2-ipadapter-style-fix -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -1197,28 +1197,42 @@ async function connectWHIP(whipUrl) {
 }
 
 async function setParams() {
+    const style = styles[currentStyle];
     const strength = Math.max(1, Math.round(1 + (abstractValue / 100) * 7));
     const basePrompt = buildPrompt();
     const prompt = basePrompt + ", oil painting, traditional media, canvas texture, visible brushstrokes, masterpiece painting";
-    const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray, girl, model, babe, fairy, bride, princess";
+    const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray";
+    
+    // IP Adapter scale: lower = more face preservation, higher = more style
+    // abstractValue 0-100 maps to ipScale 0.3-0.8
+    const ipScale = 0.3 + (abstractValue / 100) * 0.5;
     
     const body = { 
-        model_id: "streamdiffusion",
-        pipeline: "live-video-to-video",
         params: { 
-            model_id: "stabilityai/sdxl-turbo", 
             prompt: prompt, 
             negative_prompt: negPrompt, 
             num_inference_steps: strength, 
             guidance_scale: 0,
-            seed: 42
+            seed: 42,
+            ip_adapter: {
+                type: "regular",
+                scale: ipScale,
+                enabled: true,
+                weight_type: "linear"
+            },
+            ip_adapter_style_image_url: style.styleImage
         } 
     };
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`Style: ${currentStyle.toUpperCase()}, Steps: ${strength}`, 'success');
-        else log(`Params failed: ${res.status}`, 'error');
+        if (res.ok) log(`Style: ${currentStyle.toUpperCase()}, IP:${ipScale.toFixed(2)}, Steps:${strength}`, 'success');
+        else { 
+            const err = await res.text();
+            log(`Params failed: ${res.status} - ${err}`, 'error');
+        }
         console.log('Prompt:', prompt);
+        console.log('Style image:', style.styleImage);
+        console.log('IP scale:', ipScale);
     }
     catch (e) { log(`Params error: ${e.message}`, 'info'); }
 }
