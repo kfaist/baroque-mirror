@@ -1163,6 +1163,8 @@ async function setParams() {
     const prompt = buildPrompt();
     const negPrompt = "text, letters, words, spelling, " + (modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph");
     const body = { 
+        model_id: "streamdiffusion",
+        pipeline: "live-video-to-video",
         params: { 
             model_id: "stabilityai/sdxl-turbo", 
             prompt: prompt, 
@@ -1175,6 +1177,7 @@ async function setParams() {
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
         if (res.ok) log(`Prompt: "${prompt.substring(0, 40)}..."`, 'success');
+        else log(`Params failed: ${res.status}`, 'error');
     }
     catch (e) { log(`Params: ${e.message}`, 'info'); }
 }
