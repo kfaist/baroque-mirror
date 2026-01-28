@@ -371,7 +371,7 @@
 // ============================================
 const API_KEY = 'sk_wdNUnsKxxwH6v64BHMwHaWT39Mhwk5ZrqZzXDRmAXxxAqCgVGusff2Y8jxiBofuP';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_SDXL-turbo-faceid';  // FaceID pipeline for better face preservation
+const PIPELINE_ID = 'pip_SDXL-turbo';  // Back to regular SDXL-turbo for prompt control
 
 // ============================================
 // CONNECTION TIMING - INCREASED TOLERANCE
@@ -1213,12 +1213,7 @@ async function setParams() {
             negative_prompt: negPrompt, 
             num_inference_steps: strength, 
             guidance_scale: guidance,
-            seed: 42,
-            ip_adapter: {
-                enabled: true,
-                scale: 1.0,
-                type: "faceid"
-            }
+            seed: 42
         } 
     };
     try { 
