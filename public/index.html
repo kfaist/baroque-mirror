@@ -597,12 +597,30 @@ const caricaturePrompts = [
     "dramatic Baroque lighting, brocade drowning the figure in golden excess, masterful rendering, diagonal dynamism",
 ];
 const styles = {
-    baroque: { base: "painterly brushstrokes, thick impasto, iridescent glaze, rainbow kaleidoscope icing world, high saturation, neon accents, prismatic, electric cyan, magenta, chartreuse, dichroic glass, iridescent pastels, pearlescent haze, watercolor bloom", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
-    rococo: { base: "rococo painting, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", caricature: "French Revolution caricature, James Gillray style, mocking aristocracy", colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] } },
-    caravaggio: { base: "Caravaggio tenebrism, extreme chiaroscuro, single dramatic spotlight, biblical intensity", caricature: "Revolutionary propaganda poster, bold contrast, woodcut style", colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] } },
-    vermeer: { base: "Vermeer Dutch Golden Age, soft window light, intimate domestic scene, pearl luminosity", caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature", colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] } },
-    rembrandt: { base: "Rembrandt self-portrait style, golden brown palette, impasto brushwork, psychological depth", caricature: "Revolutionary broadsheet illustration, Thomas Rowlandson style", colors: { primary: [139, 90, 43], secondary: [85, 60, 42], accent: [218, 165, 32] } },
-    artemisia: { base: "Artemisia Gentileschi style, powerful feminine subjects, dramatic baroque lighting, intense emotional expression", caricature: "Revolutionary feminist pamphlet, fierce women warriors, Liberty Leading the People energy", colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] } }
+    baroque: { 
+        abstract: "painterly brushstrokes, thick impasto, iridescent glaze, rainbow kaleidoscope icing world, high saturation, neon accents, prismatic, electric cyan, magenta, chartreuse, dichroic glass, iridescent pastels, pearlescent haze, watercolor bloom", 
+        representational: "baroque oil painting portrait, Rubens style, dramatic chiaroscuro, rich velvet textures, golden light, classical composition, museum quality masterpiece"
+    },
+    rococo: { 
+        abstract: "pastel cotton candy clouds, soft pink and powder blue swirls, delicate pearlescent foam, dreamy soft focus, romantic haze, ornamental flourishes dissolving into light",
+        representational: "rococo portrait painting, Fragonard style, soft romantic lighting, pastel palette, silk and lace textures, aristocratic elegance, powdered beauty"
+    },
+    caravaggio: { 
+        abstract: "deep shadows exploding into golden light beams, dramatic contrast, pools of darkness with piercing luminance, chiaroscuro abstraction",
+        representational: "Caravaggio tenebrism portrait, extreme chiaroscuro, single dramatic spotlight, biblical intensity, raw human emotion, oil on canvas texture"
+    },
+    vermeer: { 
+        abstract: "soft diffused window light dissolving into pearl luminosity, quiet intimate glow, cream and blue atmospheric haze, gentle light particles",
+        representational: "Vermeer Dutch Golden Age portrait, soft window light from left, pearl earring luminosity, intimate domestic mood, photorealistic detail, serene expression"
+    },
+    rembrandt: { 
+        abstract: "golden brown atmospheric glow, warm amber light emerging from darkness, thick impasto texture swirls, psychological depth in color",
+        representational: "Rembrandt self-portrait style, golden brown palette, dramatic side lighting, impasto brushwork, penetrating gaze, aged canvas texture, soul-revealing"
+    },
+    artemisia: { 
+        abstract: "fierce crimson and gold energy, powerful dynamic swirls, intense emotional color explosions, dramatic movement in light",
+        representational: "Artemisia Gentileschi portrait style, powerful feminine subject, dramatic baroque lighting, intense emotional expression, defiant strength, rich oil textures"
+    }
 };
 
 function log(msg, type = '') {
@@ -1015,7 +1033,17 @@ function buildPrompt() {
         return customPrompt;
     }
     const style = styles[currentStyle];
-    return style.base;
+    // Blend between abstract (0) and representational (100) based on slider
+    if (abstractValue < 33) {
+        // Mostly abstract
+        return style.abstract;
+    } else if (abstractValue > 66) {
+        // Mostly representational
+        return style.representational;
+    } else {
+        // Blend both
+        return style.abstract + ", " + style.representational;
+    }
 }
 
 // ============================================
