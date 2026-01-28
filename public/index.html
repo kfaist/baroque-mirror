@@ -402,9 +402,8 @@ let countdownValue = 45;
 let statusDebugLines = [];
 let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
-let modeValue = 0;
 let customPrompt = '';
-let params = { strength: 50, promptWeight: 0.47, pose: 0.30, edge: 0.36, depth: 0.24, bgTrans: 0 };
+let params = { strength: 50, promptWeight: 0.47 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
 let capturedStills = {};
 let audioLevels = new Array(32).fill(0);
@@ -691,14 +690,8 @@ function captureStill(slotNumber) {
 function loadCapturedStills() { capturedStills = {}; }
 
 function shufflePrompt() {
-    let allPrompts;
-    if (modeValue < 50) {
-        allPrompts = promptInspirations;
-    } else if (modeValue > 50) {
-        allPrompts = satireCaptions;
-    } else {
-        allPrompts = Math.random() < 0.5 ? satireCaptions : promptInspirations;
-    }
+    // Always use promptInspirations (modeValue slider was removed)
+    const allPrompts = promptInspirations;
     const randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
     document.getElementById('promptInput').value = randomPrompt;
     customPrompt = randomPrompt;
@@ -1029,12 +1022,8 @@ function buildPrompt() {
         return prompt;
     }
     const style = styles[currentStyle];
-    let basePrompt;
-    if (modeValue < 15) basePrompt = style.base;
-    else if (modeValue > 85) basePrompt = style.caricature;
-    else { const cw = (100 - modeValue) / 100; const sw = modeValue / 100; basePrompt = `(${style.base}:${cw.toFixed(2)}), (${style.caricature}:${sw.toFixed(2)})`; }
-    if (params.bgTrans > 50) basePrompt += ", transparent background, isolated subject, no background, subject only";
-    else if (params.bgTrans > 20) basePrompt += ", soft faded background, subject focus, minimal background";
+    // Always use base style (modeValue slider was removed)
+    let basePrompt = style.base;
     return basePrompt;
 }
 
