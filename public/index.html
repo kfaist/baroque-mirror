@@ -271,12 +271,14 @@
                 </div>
                 
                 <div class="section">
-                    <h3>⚜ Transform Controls</h3>
-                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">50</span></label><input type="range" id="strengthSlider" min="1" max="50" value="50"></div>
-                    <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">0.47</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="47"></div>
-                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.30</span></label><input type="range" id="poseSlider" min="0" max="100" value="30"></div>
-                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.36</span></label><input type="range" id="edgeSlider" min="0" max="100" value="36"></div>
-                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.24</span></label><input type="range" id="depthSlider" min="0" max="100" value="24"></div>
+                    <h3>⚜ Transform</h3>
+                    <div class="slider-row">
+                        <label>
+                            <span style="float:left">Abstract</span>
+                            <span style="float:right">Representational</span>
+                        </label>
+                        <input type="range" id="abstractSlider" min="0" max="100" value="50" style="margin-top: 25px;">
+                    </div>
                 </div>
                 
                 
@@ -975,12 +977,15 @@ document.querySelectorAll('.style-btn').forEach(btn => {
     };
 });
 
-document.getElementById('strengthSlider').oninput = function() { params.strength = parseInt(this.value); document.getElementById('strengthVal').textContent = params.strength; if (streamId) setParams(); };
-document.getElementById('promptWeightSlider').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
+// Abstract (0) to Representational (100) slider
+let abstractValue = 50;
+document.getElementById('abstractSlider').oninput = function() { 
+    abstractValue = parseInt(this.value); 
+    log(`Transform: ${abstractValue}% representational`, 'info');
+    if (streamId) setParams(); 
+};
+
 document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = '✓'; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
-document.getElementById('poseSlider').oninput = function() { params.pose = parseInt(this.value) / 100; document.getElementById('poseVal').textContent = params.pose.toFixed(2); if (streamId) setParams(); };
-document.getElementById('edgeSlider').oninput = function() { params.edge = parseInt(this.value) / 100; document.getElementById('edgeVal').textContent = params.edge.toFixed(2); if (streamId) setParams(); };
-document.getElementById('depthSlider').oninput = function() { params.depth = parseInt(this.value) / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
 
 document.getElementById('startBtn').onclick = start;
 document.getElementById('stopBtn').onclick = stop;
@@ -1146,8 +1151,25 @@ async function connectWHIP(whipUrl) {
 }
 
 async function setParams() {
-    const prompt = buildPrompt();
-    const negPrompt = "text, letters, words, spelling, " + (modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph");
+    // abstractValue: 0 = full abstract, 50 = stylized, 100 = representational
+    // Map to strength (num_inference_steps): abstract=1, representational=8
+    // Map to prompt weight: abstract=heavy prompt, representational=follow input
+    const strength = Math.max(1, Math.round(1 + (abstractValue / 100) * 7)); // 1-8
+    const promptStrength = 1.0 - (abstractValue / 100) * 0.8; // 1.0 to 0.2
+    
+    let prompt;
+    if (abstractValue < 30) {
+        // Abstract: heavy stylization
+        prompt = buildPrompt();
+    } else if (abstractValue < 70) {
+        // Middle: stylized but recognizable  
+        prompt = "stylized portrait, " + buildPrompt();
+    } else {
+        // Representational: follow the input closely
+        prompt = "realistic portrait photograph, natural lighting, detailed face, " + buildPrompt();
+    }
+    
+    const negPrompt = "text, letters, words, spelling, blurry, low quality, distorted";
     const body = { 
         model_id: "streamdiffusion",
         pipeline: "live-video-to-video",
@@ -1155,14 +1177,14 @@ async function setParams() {
             model_id: "stabilityai/sdxl-turbo", 
             prompt: prompt, 
             negative_prompt: negPrompt, 
-            num_inference_steps: 4, 
-            guidance_scale: 0, 
+            num_inference_steps: strength, 
+            guidance_scale: promptStrength, 
             seed: 42
         } 
     };
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`Prompt: "${prompt.substring(0, 40)}..."`, 'success');
+        if (res.ok) log(`Strength: ${strength}, Prompt: "${prompt.substring(0, 30)}..."`, 'success');
         else log(`Params failed: ${res.status}`, 'error');
     }
     catch (e) { log(`Params: ${e.message}`, 'info'); }
