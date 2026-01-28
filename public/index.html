@@ -1129,7 +1129,7 @@ async function connectWHIP(whipUrl) {
     localStream.getTracks().forEach(track => { inputPC.addTrack(track, localStream); });
     const offer = await inputPC.createOffer();
     await inputPC.setLocalDescription(offer);
-    await new Promise(resolve => { if (inputPC.iceGatheringState === 'complete') resolve(); else { inputPC.onicegatheringstatechange = () => { if (inputPC.iceGatheringState === 'complete') resolve(); }; setTimeout(resolve, 5000); } });
+    await new Promise(resolve => { if (inputPC.iceGatheringState === 'complete') resolve(); else { inputPC.onicegatheringstatechange = () => { if (inputPC.iceGatheringState === 'complete') resolve(); }; setTimeout(resolve, 20000); } });
     const res = await fetch(whipUrl, { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: inputPC.localDescription.sdp });
     if (!res.ok) throw new Error(`WHIP failed: ${res.status}`);
     const answer = await res.text();
