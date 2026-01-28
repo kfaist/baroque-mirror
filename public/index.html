@@ -599,37 +599,37 @@ const caricaturePrompts = [
 const styles = {
     baroque: { 
         abstract: "painterly brushstrokes, thick impasto, iridescent glaze, rainbow kaleidoscope icing world, high saturation, neon accents, prismatic, electric cyan, magenta, chartreuse, dichroic glass, iridescent pastels, pearlescent haze, watercolor bloom", 
-        representational: "baroque oil painting portrait, Rubens style, dramatic chiaroscuro, rich velvet textures, golden light, classical composition, museum quality masterpiece",
+        representational: "baroque oil painting portrait, dramatic chiaroscuro, rich velvet textures, golden light, classical composition, museum quality masterpiece",
         colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] },
         styleImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Peter_Paul_Rubens_-_Self-Portrait_-_WGA20380.jpg/440px-Peter_Paul_Rubens_-_Self-Portrait_-_WGA20380.jpg"
     },
     rococo: { 
         abstract: "pastel cotton candy clouds, soft pink and powder blue swirls, delicate pearlescent foam, dreamy soft focus, romantic haze, ornamental flourishes dissolving into light",
-        representational: "rococo portrait painting, Fragonard style, soft romantic lighting, pastel palette, silk and lace textures, aristocratic elegance, powdered beauty",
+        representational: "rococo portrait painting, soft romantic lighting, pastel palette, silk and lace textures, aristocratic elegance, powdered beauty",
         colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] },
         styleImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Fragonard_-_swing.jpg/400px-Fragonard_-_swing.jpg"
     },
     caravaggio: { 
         abstract: "deep shadows exploding into golden light beams, dramatic contrast, pools of darkness with piercing luminance, chiaroscuro abstraction",
-        representational: "Caravaggio tenebrism portrait, extreme chiaroscuro, single dramatic spotlight, biblical intensity, raw human emotion, oil on canvas texture",
+        representational: "tenebrism portrait, extreme chiaroscuro, single dramatic spotlight, biblical intensity, raw human emotion, oil on canvas texture",
         colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] },
         styleImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Michelangelo_Caravaggio_065.jpg/440px-Michelangelo_Caravaggio_065.jpg"
     },
     vermeer: { 
         abstract: "soft diffused window light dissolving into pearl luminosity, quiet intimate glow, cream and blue atmospheric haze, gentle light particles",
-        representational: "Vermeer Dutch Golden Age portrait, soft window light from left, pearl earring luminosity, intimate domestic mood, photorealistic detail, serene expression",
+        representational: "Dutch Golden Age portrait, soft window light from left, pearl luminosity, intimate domestic mood, photorealistic detail, serene expression",
         colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] },
         styleImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/440px-1665_Girl_with_a_Pearl_Earring.jpg"
     },
     rembrandt: { 
         abstract: "golden brown atmospheric glow, warm amber light emerging from darkness, thick impasto texture swirls, psychological depth in color",
-        representational: "Rembrandt self-portrait style, golden brown palette, dramatic side lighting, impasto brushwork, penetrating gaze, aged canvas texture, soul-revealing",
+        representational: "self-portrait style, golden brown palette, dramatic side lighting, impasto brushwork, penetrating gaze, aged canvas texture, soul-revealing",
         colors: { primary: [139, 90, 43], secondary: [85, 60, 42], accent: [218, 165, 32] },
         styleImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg/440px-Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg"
     },
     artemisia: { 
         abstract: "fierce crimson and gold energy, powerful dynamic swirls, intense emotional color explosions, dramatic movement in light",
-        representational: "Artemisia Gentileschi portrait style, powerful feminine subject, dramatic baroque lighting, intense emotional expression, defiant strength, rich oil textures",
+        representational: "portrait style, powerful feminine subject, dramatic baroque lighting, intense emotional expression, defiant strength, rich oil textures",
         colors: { primary: [178, 34, 34], secondary: [75, 0, 130], accent: [255, 215, 0] },
         styleImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Artemisia_Gentileschi_-_Self-Portrait_as_a_Lute_Player.jpg/440px-Artemisia_Gentileschi_-_Self-Portrait_as_a_Lute_Player.jpg"
     }
@@ -1203,16 +1203,18 @@ async function setParams() {
     const prompt = basePrompt + ", oil painting, traditional media, canvas texture, visible brushstrokes, masterpiece painting";
     const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray";
     
-    // IP Adapter scale: lower = more face preservation, higher = more style
-    // abstractValue 0-100 maps to ipScale 0-1
-    const ipScale = abstractValue / 100;
+    // Inverse weighting: slider left = prompt-heavy, slider right = IP adapter-heavy
+    // abstractValue 0 = ipScale 1.0, guidance 0 (IP adapter dominates)
+    // abstractValue 100 = ipScale 0.3, guidance 3 (prompt dominates)
+    const ipScale = 1.0 - (abstractValue / 100) * 0.7;  // 1.0 -> 0.3
+    const guidance = (abstractValue / 100) * 3;  // 0 -> 3
     
     const body = { 
         params: { 
             prompt: prompt, 
             negative_prompt: negPrompt, 
             num_inference_steps: strength, 
-            guidance_scale: 0,
+            guidance_scale: guidance,
             seed: 42,
             ip_adapter: {
                 type: "regular",
@@ -1225,7 +1227,7 @@ async function setParams() {
     };
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`Style: ${currentStyle.toUpperCase()}, IP:${ipScale.toFixed(2)}, Steps:${strength}`, 'success');
+        if (res.ok) log(`Style: ${currentStyle.toUpperCase()}, IP:${ipScale.toFixed(2)}, G:${guidance.toFixed(1)}`, 'success');
         else { 
             const err = await res.text();
             log(`Params failed: ${res.status} - ${err}`, 'error');
