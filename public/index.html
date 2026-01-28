@@ -1206,15 +1206,11 @@ async function setParams() {
     const prompt = basePrompt + ", oil painting, traditional media, canvas texture, visible brushstrokes, masterpiece painting";
     const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray";
     
-    // Inverse weighting: slider left = prompt-heavy, slider right = IP adapter-heavy
+    // Inverse weighting: slider left = IP adapter (style image), slider right = text prompt
     // abstractValue 0 = ipScale 1.0, guidance 0 (IP adapter dominates)
     // abstractValue 100 = ipScale 0.3, guidance 3 (prompt dominates)
     const ipScale = 1.0 - (abstractValue / 100) * 0.7;  // 1.0 -> 0.3
     const guidance = (abstractValue / 100) * 3;  // 0 -> 3
-    
-    // Depth ControlNet: higher = more face structure preservation
-    // Scale with slider: more abstract = less depth constraint
-    const depthScale = 0.3 + (abstractValue / 100) * 0.4;  // 0.3 -> 0.7
     
     const body = { 
         params: { 
@@ -1229,23 +1225,12 @@ async function setParams() {
                 enabled: true,
                 weight_type: "linear"
             },
-            ip_adapter_style_image_url: style.styleImage,
-            controlnets: [
-                {
-                    enabled: true,
-                    model_id: "xinsir/controlnet-depth-sdxl-1.0",
-                    preprocessor: "depth_tensorrt",
-                    conditioning_scale: depthScale,
-                    control_guidance_start: 0,
-                    control_guidance_end: 1,
-                    preprocessor_params: {}
-                }
-            ]
+            ip_adapter_style_image_url: style.styleImage
         } 
     };
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`${currentStyle.toUpperCase()} IP:${ipScale.toFixed(2)} D:${depthScale.toFixed(2)}`, 'success');
+        if (res.ok) log(`${currentStyle.toUpperCase()} IP:${ipScale.toFixed(2)} G:${guidance.toFixed(1)}`, 'success');
         else { 
             const err = await res.text();
             log(`Params failed: ${res.status} - ${err}`, 'error');
