@@ -413,31 +413,31 @@ const MAX_PARTICLES = 300;
 
 const promptInspirations = [
     // WHIPPED CREAM KALEIDOSCOPE RAINBOW
-    "whipped cream kaleidoscope rainbow, I created a 3D model of WHAT LOVE FEELS LIKE, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "marshmallow gumball, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "soda pop and candy kaleidoscope, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "tumbling inside of a rainbow kaleidoscope full of dichroic glass confetti and iridescent sequins, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "dichroic glass confetti and iridescent sequins, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "holographic soda pop fizz and candy wrapper kaleidoscope, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "glitter bomb explosion inside a snow globe, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "neon electric cotton candy clouds, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "bubble wrap popping in slow motion with rainbow light, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "gummy avalanche in crystal cave, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "disco ball fragments floating in honey, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "sprinkles tornado inside a cupcake, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "jelly bean waterfall over chrome sculpture, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "soap bubble cathedral with stained glass reflections, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
+    "whipped cream kaleidoscope rainbow",
+    "marshmallow gumball",
+    "soda pop and candy kaleidoscope",
+    "tumbling inside of a rainbow kaleidoscope full of dichroic glass confetti and iridescent sequins",
+    "dichroic glass confetti and iridescent sequins",
+    "holographic soda pop fizz and candy wrapper kaleidoscope",
+    "glitter bomb explosion inside a snow globe",
+    "neon electric cotton candy clouds",
+    "bubble wrap popping in slow motion with rainbow light",
+    "gummy avalanche in crystal cave",
+    "disco ball fragments floating in honey",
+    "sprinkles tornado inside a cupcake",
+    "jelly bean waterfall over chrome sculpture",
+    "soap bubble cathedral with stained glass reflections",
     // BAROQUE
-    "baroque acanthus scroll, luminous mechanical cells pulsing with bioluminescence, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "rococo seashell motif, fibonacci spiral in mother of pearl and gold leaf, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "baroque cartouche, living cells dividing within ornate gilded frame, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "gilded baroque frame containing swirling galaxy of tiny stars, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "ornate rococo mirror reflecting infinite recursive golden frames, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "baroque ceiling fresco, trompe l'oeil clouds with bioluminescent edges, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "gilded acanthus leaves unfurling in time-lapse, gold and green, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "baroque pearl drop earring, lustrous sphere in golden filigree, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "ornate snuff box enamel, miniature painting in jeweled frame, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous",
-    "gilded book spine details, leather and gold tooling patterns, shallow depth of field, tack sharp focus, 8k ultra crisp, luminous"
+    "baroque acanthus scroll, luminous mechanical cells pulsing with bioluminescence",
+    "rococo seashell motif, fibonacci spiral in mother of pearl and gold leaf",
+    "baroque cartouche, living cells dividing within ornate gilded frame",
+    "gilded baroque frame containing swirling galaxy of tiny stars",
+    "ornate rococo mirror reflecting infinite recursive golden frames",
+    "baroque ceiling fresco, trompe l'oeil clouds with bioluminescent edges",
+    "gilded acanthus leaves unfurling in time-lapse, gold and green",
+    "baroque pearl drop earring, lustrous sphere in golden filigree",
+    "ornate snuff box enamel, miniature painting in jeweled frame",
+    "gilded book spine details, leather and gold tooling patterns"
 ];
 
 
@@ -597,7 +597,7 @@ const caricaturePrompts = [
     "dramatic Baroque lighting, brocade drowning the figure in golden excess, masterful rendering, diagonal dynamism",
 ];
 const styles = {
-    baroque: { base: "shallow depth of field, tack sharp focus, 8k ultra crisp, luminous, painterly brushstrokes, thick impasto, iridescent glaze, rainbow kaleidoscope icing world, high saturation, neon accents, prismatic, electric cyan, magenta, chartreuse, dichroic glass, iridescent pastels, pearlescent haze, watercolor bloom", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
+    baroque: { base: "painterly brushstrokes, thick impasto, iridescent glaze, rainbow kaleidoscope icing world, high saturation, neon accents, prismatic, electric cyan, magenta, chartreuse, dichroic glass, iridescent pastels, pearlescent haze, watercolor bloom", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
     rococo: { base: "rococo painting, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", caricature: "French Revolution caricature, James Gillray style, mocking aristocracy", colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] } },
     caravaggio: { base: "Caravaggio tenebrism, extreme chiaroscuro, single dramatic spotlight, biblical intensity", caricature: "Revolutionary propaganda poster, bold contrast, woodcut style", colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] } },
     vermeer: { base: "Vermeer Dutch Golden Age, soft window light, intimate domestic scene, pearl luminosity", caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature", colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] } },
@@ -1155,8 +1155,9 @@ async function setParams() {
     // num_inference_steps: 1-4 for abstract, 4-8 for representational
     const strength = Math.max(1, Math.round(1 + (abstractValue / 100) * 7)); // 1-8
     
-    // Build prompt based on style
-    const prompt = buildPrompt();
+    // Build prompt and add universal suffix
+    const basePrompt = buildPrompt();
+    const prompt = basePrompt + ", shallow depth of field, tack sharp focus, 8k ultra crisp, luminous";
     const negPrompt = "text, letters, words, spelling, low quality, distorted, blurry";
     
     const body = { 
