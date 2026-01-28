@@ -940,7 +940,7 @@ let drawVideoOverlay, drawBackground, drawParticles;
 
 function animate() {
     time++;
-    // updateAudio(); disabled for performance
+    updateAudio();
     if (drawBackground) drawBackground();
     if (drawParticles) drawParticles();
     if (drawVideoOverlay) drawVideoOverlay();
@@ -1091,7 +1091,7 @@ async function start() {
         const isMobile = window.innerWidth <= 768; localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: isMobile ? 640 : 1280 }, height: { ideal: isMobile ? 480 : 720 }, frameRate: { ideal: isMobile ? 24 : 30 } }, audio: true });
         document.getElementById('local').srcObject = localStream; log(`Tracks: ${localStream.getTracks().map(t => t.kind + ':' + t.readyState).join(', ')}`, 'info');
         log('Camera ready', 'success');
-        // initAudio disabled for performance
+        initAudio(localStream);
         initMotionDetection();
         drawBackground = initBackground();
         if (window.innerWidth > 768) { drawParticles = initParticles(); } else { drawParticles = () => {}; }
