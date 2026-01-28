@@ -591,7 +591,7 @@ const caricaturePrompts = [
     "dramatic Baroque lighting, brocade drowning the figure in golden excess, masterful rendering, diagonal dynamism",
 ];
 const styles = {
-    baroque: { base: "baroque masterpiece, dramatic chiaroscuro lighting, Rubens influence, rich oil paint textures, gold leaf accents", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
+    baroque: { base: "painterly brushstrokes, thick impasto, iridescent glaze, rainbow kaleidoscope icing world, soft focus, high saturation, neon accents, prismatic, electric cyan, magenta, chartreuse, dichroic glass, iridescent pastels, pearlescent haze, watercolor bloom", caricature: "French Revolution political cartoon, Honoré Daumier style, satirical exaggeration, lithograph texture", colors: { primary: [212, 175, 55], secondary: [114, 47, 55], accent: [244, 228, 186] } },
     rococo: { base: "rococo painting, Fragonard style, pastel palette, soft romantic lighting, ornamental flourishes", caricature: "French Revolution caricature, James Gillray style, mocking aristocracy", colors: { primary: [255, 182, 193], secondary: [176, 224, 230], accent: [255, 250, 205] } },
     caravaggio: { base: "Caravaggio tenebrism, extreme chiaroscuro, single dramatic spotlight, biblical intensity", caricature: "Revolutionary propaganda poster, bold contrast, woodcut style", colors: { primary: [139, 69, 19], secondary: [25, 25, 112], accent: [255, 215, 0] } },
     vermeer: { base: "Vermeer Dutch Golden Age, soft window light, intimate domestic scene, pearl luminosity", caricature: "Dutch satirical print, Bruegel grotesque, peasant caricature", colors: { primary: [70, 130, 180], secondary: [255, 223, 186], accent: [255, 255, 240] } },
@@ -1161,7 +1161,7 @@ async function connectWHIP(whipUrl) {
 
 async function setParams() {
     const prompt = buildPrompt();
-    const negPrompt = modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph";
+    const negPrompt = "text, letters, words, spelling, " + (modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph");
     const body = { 
         params: { 
             model_id: "stabilityai/sdxl-turbo", 
