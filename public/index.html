@@ -1204,8 +1204,8 @@ async function setParams() {
     const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray";
     
     // IP Adapter scale: lower = more face preservation, higher = more style
-    // abstractValue 0-100 maps to ipScale 0.3-0.8
-    const ipScale = 0.3 + (abstractValue / 100) * 0.5;
+    // abstractValue 0-100 maps to ipScale 0.5-1.2 (cranked up for visible effect)
+    const ipScale = 0.5 + (abstractValue / 100) * 0.7;
     
     const body = { 
         params: { 
