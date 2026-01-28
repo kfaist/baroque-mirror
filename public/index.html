@@ -1202,17 +1202,10 @@ async function setParams() {
     
     // Build prompt
     const basePrompt = buildPrompt();
-    const prompt = basePrompt + ", oil painting, baroque portrait, masterpiece, thick brushstrokes, canvas texture";
+    const prompt = basePrompt + ", oil painting, baroque portrait, masterpiece, thick impasto brushstrokes, canvas texture, museum quality, classical painting";
     
-    // Negative prompt - block CGI/digital looks
-    const negPrompt = "text, low quality, blurry, cartoon, anime, cgi, 3d render, digital art, plastic, smooth, airbrushed, video game, unreal engine";
-    
-    // Get style image URL for current artist
-    const styleImageUrl = styles[currentStyle].styleImage;
-    
-    // ControlNet scales for SDXL - preserve face structure
-    const depthScale = 0.5 + (abstractValue / 100) * 0.3;   // 0.5-0.8
-    const cannyScale = 0.3 + (abstractValue / 100) * 0.2;   // 0.3-0.5
+    // Heavy negative prompt for painterly look
+    const negPrompt = "photograph, photo, realistic, photorealistic, hyperrealistic, text, low quality, blurry, cartoon, anime, cgi, 3d render, digital art, plastic, smooth skin, airbrushed, video game, unreal engine, octane, vray, cinema4d, modern, contemporary";
     
     const body = { 
         model_id: "streamdiffusion",
@@ -1223,28 +1216,7 @@ async function setParams() {
             negative_prompt: negPrompt,
             num_inference_steps: strength,
             guidance_scale: 0,
-            seed: 42,
-            ip_adapter: {
-                enabled: true,
-                scale: 1.2,
-                type: "regular",
-                weight_type: "linear"
-            },
-            ip_adapter_style_image_url: styleImageUrl,
-            controlnets: [
-                {
-                    enabled: true,
-                    model_id: "xinsir/controlnet-depth-sdxl-1.0",
-                    preprocessor: "depth_tensorrt",
-                    conditioning_scale: depthScale
-                },
-                {
-                    enabled: true,
-                    model_id: "xinsir/controlnet-canny-sdxl-1.0",
-                    preprocessor: "canny",
-                    conditioning_scale: cannyScale
-                }
-            ]
+            seed: 42
         } 
     };
     
@@ -1255,12 +1227,10 @@ async function setParams() {
             body: JSON.stringify(body) 
         }); 
         if (res.ok) {
-            log(`Style: ${currentStyle.toUpperCase()}, Depth: ${depthScale.toFixed(2)}`, 'success');
-            console.log('SDXL params:', { style: currentStyle, depth: depthScale, canny: cannyScale, styleImage: styleImageUrl });
+            log(`Style: ${currentStyle.toUpperCase()}, Steps: ${strength}`, 'success');
+            console.log('Prompt:', prompt);
         } else {
-            const errText = await res.text();
             log(`Params failed: ${res.status}`, 'error');
-            console.error('Params error:', errText);
         }
     }
     catch (e) { log(`Params error: ${e.message}`, 'info'); }
