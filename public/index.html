@@ -1091,12 +1091,6 @@ async function start() {
         const isMobile = window.innerWidth <= 768; localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: isMobile ? 640 : 1280 }, height: { ideal: isMobile ? 480 : 720 }, frameRate: { ideal: isMobile ? 24 : 30 } }, audio: true });
         document.getElementById('local').srcObject = localStream; log(`Tracks: ${localStream.getTracks().map(t => t.kind + ':' + t.readyState).join(', ')}`, 'info');
         log('Camera ready', 'success');
-        initAudio(localStream);
-        initMotionDetection();
-        drawBackground = initBackground();
-        if (window.innerWidth > 768) { drawParticles = initParticles(); } else { drawParticles = () => {}; }
-        drawVideoOverlay = initVideoOverlay();
-        if (!animationId) animate();
         log('Creating Daydream stream...', 'info');
         const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ pipeline_id: PIPELINE_ID }) });
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
@@ -1106,7 +1100,7 @@ async function start() {
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
         log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
-        log('Video streaming to AI', 'success');
+        log('Video streaming to AI', 'success'); initAudio(localStream); initMotionDetection(); drawBackground = initBackground(); if (window.innerWidth > 768) { drawParticles = initParticles(); } else { drawParticles = () => {}; } drawVideoOverlay = initVideoOverlay(); if (!animationId) animate();
         log('AI initializing...', 'info');
         await new Promise(r => setTimeout(r, 3000));
         await setParams();
