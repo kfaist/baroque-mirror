@@ -940,7 +940,7 @@ let drawVideoOverlay, drawBackground, drawParticles;
 
 function animate() {
     time++;
-    updateAudio();
+    // updateAudio(); disabled for performance
     if (drawBackground) drawBackground();
     if (drawParticles) drawParticles();
     if (drawVideoOverlay) drawVideoOverlay();
@@ -1088,13 +1088,13 @@ async function start() {
     showStatusOverlay();
     try {
         log('Getting camera...', 'info');
-        localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, audio: true });
+        const isMobile = window.innerWidth <= 768; localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: isMobile ? 640 : 1280 }, height: { ideal: isMobile ? 480 : 720 }, frameRate: { ideal: isMobile ? 24 : 30 } }, audio: false });
         document.getElementById('local').srcObject = localStream;
         log('Camera ready', 'success');
-        initAudio(localStream);
+        // initAudio disabled for performance
         initMotionDetection();
         drawBackground = initBackground();
-        drawParticles = initParticles();
+        if (window.innerWidth > 768) { drawParticles = initParticles(); } else { drawParticles = () => {}; }
         drawVideoOverlay = initVideoOverlay();
         if (!animationId) animate();
         log('Creating Daydream stream...', 'info');
@@ -1205,7 +1205,7 @@ function stop() {
 window.addEventListener('load', () => {
     loadCapturedStills();
     drawBackground = initBackground();
-    drawParticles = initParticles();
+    if (window.innerWidth > 768) { drawParticles = initParticles(); } else { drawParticles = () => {}; }
     drawVideoOverlay = initVideoOverlay();
     function demoAnimate() {
         time++;
