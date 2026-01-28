@@ -1223,8 +1223,9 @@ async function setParams() {
     };
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`Steps: ${strength}`, 'success');
+        if (res.ok) log(`Style: ${currentStyle}, Steps: ${strength}, Guidance: ${guidance.toFixed(1)}`, 'success');
         else log(`Params failed: ${res.status}`, 'error');
+        console.log('Prompt sent:', prompt);
     }
     catch (e) { log(`Params: ${e.message}`, 'info'); }
 }
