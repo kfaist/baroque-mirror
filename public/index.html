@@ -1207,13 +1207,6 @@ async function setParams() {
     // Negative prompt
     const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray, girl, model, babe, fairy, bride, princess";
     
-    // Guidance and IP adapter scale based on slider
-    const guidance = 1.0 + (abstractValue / 100);  // 1.0 to 2.0
-    const ipScale = 0.5 + (abstractValue / 100) * 0.8;  // 0.5 to 1.3
-    
-    // Get style image for current style
-    const styleImage = styles[currentStyle].styleImage;
-    
     const body = { 
         model_id: "streamdiffusion",
         pipeline: "live-video-to-video",
@@ -1222,15 +1215,8 @@ async function setParams() {
             prompt: prompt, 
             negative_prompt: negPrompt, 
             num_inference_steps: strength, 
-            guidance_scale: guidance,
-            seed: 42,
-            ip_adapter: {
-                enabled: true,
-                scale: ipScale,
-                type: "faceid",
-                weight_type: "linear"
-            },
-            ip_adapter_style_image_url: styleImage
+            guidance_scale: 0,
+            seed: 42
         } 
     };
     try { 
