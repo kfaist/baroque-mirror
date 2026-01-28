@@ -1119,7 +1119,30 @@ async function start() {
         const localVideo = document.getElementById('local'); localVideo.srcObject = localStream; localVideo.play().catch(e => log('Local video play error: ' + e.message, 'error')); log(`Tracks: ${localStream.getTracks().map(t => t.kind + ':' + t.readyState).join(', ')}`, 'info');
         log('Camera ready', 'success');
         log('Creating Daydream stream...', 'info');
-        const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ pipeline_id: PIPELINE_ID }) });
+        // Build initial prompt for stream creation
+        const initPrompt = buildPrompt() + ", shallow depth of field, tack sharp focus, 8k ultra crisp, luminous";
+        const initNegPrompt = abstractValue < 33 
+            ? "text, letters, words, spelling, low quality, blurry, cartoon, anime, illustration, cgi, 3d render, digital art, comic, manga, face, portrait, person, human, figure"
+            : "text, letters, words, spelling, low quality, blurry, cartoon, anime, illustration, cgi, 3d render, digital art, comic, manga, photograph, photo";
+        const initStrength = Math.max(1, Math.round(1 + (abstractValue / 100) * 7));
+        
+        const createRes = await fetch(`${API_BASE}/streams`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, 
+            body: JSON.stringify({ 
+                pipeline_id: PIPELINE_ID,
+                model_id: "streamdiffusion",
+                pipeline: "live-video-to-video",
+                params: {
+                    model_id: "stabilityai/sdxl-turbo",
+                    prompt: initPrompt,
+                    negative_prompt: initNegPrompt,
+                    num_inference_steps: initStrength,
+                    guidance_scale: 0,
+                    seed: 42
+                }
+            }) 
+        });
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         const data = await createRes.json();
         streamId = data.id;
