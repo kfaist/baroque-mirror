@@ -1027,26 +1027,35 @@ document.querySelectorAll('.style-btn').forEach(btn => {
 
 // Abstract (0) to Representational (100) slider
 let abstractValue = 50;
-document.getElementById('abstractSlider').oninput = function() { 
+document.getElementById('abstractSlider').oninput = async function() { 
     abstractValue = parseInt(this.value); 
     log(`Transform: ${abstractValue}%`, 'info');
-    if (streamId) setParams(); 
+    if (streamId) {
+        const success = await setParams();
+        if (!success) log('Slider change queued - stream warming up', 'info');
+    }
 };
 
 // Depth slider (face structure preservation)
 let depthValue = 50;
-document.getElementById('depthSlider').oninput = function() { 
+document.getElementById('depthSlider').oninput = async function() { 
     depthValue = parseInt(this.value);
     document.getElementById('depthValue').textContent = depthValue + '%';
-    if (streamId) setParams(); 
+    if (streamId) {
+        const success = await setParams();
+        if (!success) log('Slider change queued - stream warming up', 'info');
+    }
 };
 
 // Edge/Canny slider (edge detection)
 let edgeValue = 0;
-document.getElementById('edgeSlider').oninput = function() { 
+document.getElementById('edgeSlider').oninput = async function() { 
     edgeValue = parseInt(this.value);
     document.getElementById('edgeValue').textContent = edgeValue + '%';
-    if (streamId) setParams(); 
+    if (streamId) {
+        const success = await setParams();
+        if (!success) log('Slider change queued - stream warming up', 'info');
+    }
 };
 
 document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = '✓'; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
@@ -1179,14 +1188,9 @@ async function start() {
         await connectWHIP(data.whip_url);
         log('Video streaming to AI', 'success'); initAudio(localStream); initMotionDetection(); drawBackground = initBackground(); if (window.innerWidth > 768) { drawParticles = initParticles(); } else { drawParticles = () => {}; } drawVideoOverlay = initVideoOverlay(); if (!animationId) animate();
         
-        // Set params immediately after WebRTC connected, then retry to ensure it sticks
+        // Set params with persistent retry until stream is ready
         log('Setting AI style...', 'info');
-        await setParams();
-        // Retry after short delays to override any defaults
-        setTimeout(() => setParams(), 500);
-        setTimeout(() => setParams(), 1500);
-        setTimeout(() => setParams(), 3000);
-        log('Style applied', 'success');
+        startParamRetry();
         
         log('Waiting for output...', 'info');
         document.getElementById('startBtn').style.display = 'none';
@@ -1227,6 +1231,29 @@ async function connectWHIP(whipUrl) {
     if (!res.ok) throw new Error(`WHIP failed: ${res.status}`);
     const answer = await res.text();
     await inputPC.setRemoteDescription({ type: 'answer', sdp: answer });
+}
+
+let paramRetryTimer = null;
+let paramRetryCount = 0;
+const MAX_PARAM_RETRIES = 30; // Try for up to 60 seconds (every 2 sec)
+
+function startParamRetry() {
+    paramRetryCount = 0;
+    trySetParams();
+}
+
+async function trySetParams() {
+    paramRetryCount++;
+    const success = await setParams();
+    if (success) {
+        log('Style applied!', 'success');
+        paramRetryTimer = null;
+    } else if (paramRetryCount < MAX_PARAM_RETRIES && streamId) {
+        log(`Stream warming up (${paramRetryCount}/${MAX_PARAM_RETRIES})...`, 'info');
+        paramRetryTimer = setTimeout(trySetParams, 2000);
+    } else {
+        log('Could not apply params - try adjusting sliders manually', 'error');
+    }
 }
 
 async function setParams() {
@@ -1291,12 +1318,16 @@ async function setParams() {
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
         const responseText = await res.text();
         console.log('PATCH response:', res.status, responseText);
-        if (res.ok) log(`${currentStyle.toUpperCase()} IP:${ipScale.toFixed(2)} D:${depthValue}% E:${edgeValue}%`, 'success');
+        if (res.ok) {
+            log(`${currentStyle.toUpperCase()} IP:${ipScale.toFixed(2)} D:${depthValue}% E:${edgeValue}%`, 'success');
+            return true;
+        }
         else { 
-            log(`Params failed: ${res.status} - ${responseText}`, 'error');
+            log(`Params: ${res.status} - waiting for stream...`, 'info');
+            return false;
         }
     }
-    catch (e) { log(`Params error: ${e.message}`, 'info'); console.error('PATCH error:', e); }
+    catch (e) { log(`Params error: ${e.message}`, 'info'); console.error('PATCH error:', e); return false; }
 }
 
 function startPolling() {
