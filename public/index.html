@@ -1157,8 +1157,8 @@ async function setParams() {
     
     // Build prompt and add universal suffix
     const basePrompt = buildPrompt();
-    const prompt = basePrompt + ", shallow depth of field, tack sharp focus, 8k ultra crisp, luminous";
-    const negPrompt = "text, letters, words, spelling, low quality, distorted, blurry";
+    const prompt = basePrompt + ", shallow depth of field, tack sharp focus, 8k ultra crisp, luminous, abstract, no people";
+    const negPrompt = "text, letters, words, spelling, low quality, distorted, blurry, human, person, face, portrait, figure, body, cartoon, anime, character, woman, man, girl, boy";
     
     const body = { 
         model_id: "streamdiffusion",
