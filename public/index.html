@@ -1212,6 +1212,10 @@ async function setParams() {
     const ipScale = 1.0 - (abstractValue / 100) * 0.7;  // 1.0 -> 0.3
     const guidance = (abstractValue / 100) * 3;  // 0 -> 3
     
+    // Depth ControlNet: higher = more face structure preservation
+    // Scale with slider: more abstract = less depth constraint
+    const depthScale = 0.3 + (abstractValue / 100) * 0.4;  // 0.3 -> 0.7
+    
     const body = { 
         params: { 
             prompt: prompt, 
@@ -1225,12 +1229,23 @@ async function setParams() {
                 enabled: true,
                 weight_type: "linear"
             },
-            ip_adapter_style_image_url: style.styleImage
+            ip_adapter_style_image_url: style.styleImage,
+            controlnets: [
+                {
+                    enabled: true,
+                    model_id: "xinsir/controlnet-depth-sdxl-1.0",
+                    preprocessor: "depth_tensorrt",
+                    conditioning_scale: depthScale,
+                    control_guidance_start: 0,
+                    control_guidance_end: 1,
+                    preprocessor_params: {}
+                }
+            ]
         } 
     };
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`Style: ${currentStyle.toUpperCase()}, IP:${ipScale.toFixed(2)}, G:${guidance.toFixed(1)}`, 'success');
+        if (res.ok) log(`${currentStyle.toUpperCase()} IP:${ipScale.toFixed(2)} D:${depthScale.toFixed(2)}`, 'success');
         else { 
             const err = await res.text();
             log(`Params failed: ${res.status} - ${err}`, 'error');
