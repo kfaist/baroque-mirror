@@ -1280,15 +1280,17 @@ async function setParams() {
             controlnets: controlnets
         } 
     };
+    console.log('PATCH body:', JSON.stringify(body, null, 2));
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`${currentStyle.toUpperCase()} D:${depthValue}% E:${edgeValue}%`, 'success');
+        const responseText = await res.text();
+        console.log('PATCH response:', res.status, responseText);
+        if (res.ok) log(`${currentStyle.toUpperCase()} IP:${ipScale.toFixed(2)} G:${guidance.toFixed(1)} D:${depthValue}% E:${edgeValue}%`, 'success');
         else { 
-            const err = await res.text();
-            log(`Params failed: ${res.status} - ${err}`, 'error');
+            log(`Params failed: ${res.status} - ${responseText}`, 'error');
         }
     }
-    catch (e) { log(`Params error: ${e.message}`, 'info'); }
+    catch (e) { log(`Params error: ${e.message}`, 'info'); console.error('PATCH error:', e); }
 }
 
 function startPolling() {
