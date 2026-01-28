@@ -279,6 +279,13 @@
                         </label>
                         <input type="range" id="abstractSlider" min="0" max="100" value="50" style="margin-top: 25px;">
                     </div>
+                    <div class="slider-row" style="margin-top: 20px;">
+                        <label>
+                            <span style="float:left">Sharp</span>
+                            <span style="float:right">Soft Blur</span>
+                        </label>
+                        <input type="range" id="dofSlider" min="0" max="100" value="30" style="margin-top: 25px;">
+                    </div>
                 </div>
                 
                 
@@ -985,6 +992,14 @@ document.getElementById('abstractSlider').oninput = function() {
     if (streamId) setParams(); 
 };
 
+// Depth of Field: Sharp (0) to Soft Blur (100)
+let dofValue = 30;
+document.getElementById('dofSlider').oninput = function() { 
+    dofValue = parseInt(this.value); 
+    log(`Depth of Field: ${dofValue}%`, 'info');
+    if (streamId) setParams(); 
+};
+
 document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = '✓'; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
 
 document.getElementById('startBtn').onclick = start;
@@ -1157,19 +1172,29 @@ async function setParams() {
     const strength = Math.max(1, Math.round(1 + (abstractValue / 100) * 7)); // 1-8
     const promptStrength = 1.0 - (abstractValue / 100) * 0.8; // 1.0 to 0.2
     
+    // Depth of field prompt additions
+    let dofPrompt = "";
+    if (dofValue > 70) {
+        dofPrompt = ", shallow depth of field, soft bokeh background, dreamy blur, gaussian blur";
+    } else if (dofValue > 40) {
+        dofPrompt = ", soft focus, gentle blur, slightly out of focus background";
+    } else {
+        dofPrompt = ", sharp focus, crisp details, deep depth of field";
+    }
+    
     let prompt;
     if (abstractValue < 30) {
         // Abstract: heavy stylization
-        prompt = buildPrompt();
+        prompt = buildPrompt() + dofPrompt;
     } else if (abstractValue < 70) {
         // Middle: stylized but recognizable  
-        prompt = "stylized portrait, " + buildPrompt();
+        prompt = "stylized portrait, " + buildPrompt() + dofPrompt;
     } else {
         // Representational: follow the input closely
-        prompt = "realistic portrait photograph, natural lighting, detailed face, " + buildPrompt();
+        prompt = "realistic portrait photograph, natural lighting, detailed face, " + buildPrompt() + dofPrompt;
     }
     
-    const negPrompt = "text, letters, words, spelling, blurry, low quality, distorted";
+    const negPrompt = "text, letters, words, spelling, low quality, distorted";
     const body = { 
         model_id: "streamdiffusion",
         pipeline: "live-video-to-video",
@@ -1184,7 +1209,7 @@ async function setParams() {
     };
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`Strength: ${strength}, Prompt: "${prompt.substring(0, 30)}..."`, 'success');
+        if (res.ok) log(`Strength: ${strength}, DOF: ${dofValue}%`, 'success');
         else log(`Params failed: ${res.status}`, 'error');
     }
     catch (e) { log(`Params: ${e.message}`, 'info'); }
