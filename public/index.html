@@ -1136,17 +1136,14 @@ async function start() {
         playbackId = data.output_playback_id;
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
         
-        // Set params after stream creation (don't block on failure)
-        log('Setting AI style...', 'info');
-        try { await setParams(); log('Style applied', 'success'); } 
-        catch (e) { log('Style will apply after connect', 'info'); }
-        
         log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
         log('Video streaming to AI', 'success'); initAudio(localStream); initMotionDetection(); drawBackground = initBackground(); if (window.innerWidth > 768) { drawParticles = initParticles(); } else { drawParticles = () => {}; } drawVideoOverlay = initVideoOverlay(); if (!animationId) animate();
         
-        // Retry setParams after WebRTC connected
-        setTimeout(async () => { try { await setParams(); } catch(e) {} }, 2000);
+        // Set params immediately after WebRTC connected
+        log('Setting AI style...', 'info');
+        await setParams();
+        log('Style applied', 'success');
         
         log('Waiting for output...', 'info');
         document.getElementById('startBtn').style.display = 'none';
