@@ -1033,12 +1033,12 @@ function buildPrompt() {
         return customPrompt;
     }
     const style = styles[currentStyle];
-    // Blend between abstract (0) and representational (100) based on slider
+    // Slider: 0 = abstract (no faces, kaleidoscope), 100 = representational (painterly portraits)
     if (abstractValue < 33) {
-        // Mostly abstract
-        return style.abstract;
+        // Abstract - kaleidoscope, no faces
+        return style.abstract + ", abstract, no people, no faces";
     } else if (abstractValue > 66) {
-        // Mostly representational
+        // Representational - painterly portraits
         return style.representational;
     } else {
         // Blend both
@@ -1174,14 +1174,20 @@ async function connectWHIP(whipUrl) {
 }
 
 async function setParams() {
-    // abstractValue: 0 = full abstract (fewer steps, looser), 100 = representational (more steps, tighter)
-    // num_inference_steps: 1-4 for abstract, 4-8 for representational
+    // abstractValue: 0 = abstract (fewer steps, kaleidoscope), 100 = representational (more steps, painterly portraits)
     const strength = Math.max(1, Math.round(1 + (abstractValue / 100) * 7)); // 1-8
     
     // Build prompt and add universal suffix
     const basePrompt = buildPrompt();
     const prompt = basePrompt + ", shallow depth of field, tack sharp focus, 8k ultra crisp, luminous";
-    const negPrompt = "text, letters, words, spelling, low quality, distorted, blurry, cartoon, anime, illustration, drawing, sketch, cgi, 3d render, digital art, comic, manga";
+    
+    // Stronger negative for abstract (no faces), lighter for representational (allow painterly faces)
+    let negPrompt;
+    if (abstractValue < 33) {
+        negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, illustration, cgi, 3d render, digital art, comic, manga, face, portrait, person, human, figure";
+    } else {
+        negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, illustration, cgi, 3d render, digital art, comic, manga, photograph, photo";
+    }
     
     const body = { 
         model_id: "streamdiffusion",
