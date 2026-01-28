@@ -1089,7 +1089,7 @@ async function start() {
     try {
         log('Getting camera...', 'info');
         const isMobile = window.innerWidth <= 768; localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: isMobile ? 640 : 1280 }, height: { ideal: isMobile ? 480 : 720 }, frameRate: { ideal: isMobile ? 24 : 30 } }, audio: true });
-        document.getElementById('local').srcObject = localStream; log(`Tracks: ${localStream.getTracks().map(t => t.kind + ':' + t.readyState).join(', ')}`, 'info');
+        const localVideo = document.getElementById('local'); localVideo.srcObject = localStream; localVideo.play().catch(e => log('Local video play error: ' + e.message, 'error')); log(`Tracks: ${localStream.getTracks().map(t => t.kind + ':' + t.readyState).join(', ')}`, 'info');
         log('Camera ready', 'success');
         log('Creating Daydream stream...', 'info');
         const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ pipeline_id: PIPELINE_ID }) });
