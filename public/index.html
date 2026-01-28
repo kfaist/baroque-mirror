@@ -378,9 +378,22 @@ const API_BASE = 'https://api.daydream.live/v1';
 const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
 
 // ============================================
+// CONNECTION TIMING - INCREASED TOLERANCE
+// ============================================
+const ICE_DISCONNECT_WAIT = 30000;  // Wait 30 seconds before considering disconnected
+const AI_WARMUP_TIME = 45000;       // AI takes up to 45 seconds to warm up
+const STATUS_CHECK_INTERVAL = 3000; // Check stream status every 3 seconds
+const MAX_RECONNECT_ATTEMPTS = 3;
+
+// ============================================
 // STATE
 // ============================================
-let localStream, inputPC, streamId, playbackId, hls, pollTimer;
+let localStream, inputPC, outputPC, streamId, playbackId, hls, pollTimer, statusTimer;
+let iceDisconnectTimer = null;
+let reconnectAttempts = 0;
+let whepUrl = null;
+let outputConnected = false;
+let aiProcessing = false;
 let countdownTimer = null;
 let countdownValue = 45;
 let statusDebugLines = [];
@@ -1119,7 +1132,23 @@ async function start() {
 
 async function connectWHIP(whipUrl) {
     inputPC = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }, { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' }, { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' }, { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }], iceCandidatePoolSize: 10 });
-    inputPC.oniceconnectionstatechange = () => { log(`ICE: ${inputPC.iceConnectionState}`, inputPC.iceConnectionState === 'connected' ? 'success' : 'info'); if (inputPC.iceConnectionState === 'connected') { setTimeout(async () => { try { const stats = await inputPC.getStats(); stats.forEach(s => { if (s.type === 'outbound-rtp' && s.kind === 'video') { log(`Video: ${s.bytesSent} bytes, ${s.framesSent} frames`, 'info'); } }); } catch(e) {} }, 3000); } if (inputPC.iceConnectionState === 'failed') { log('Connection failed - reconnecting...', 'error'); setTimeout(() => { stop(); setTimeout(() => { document.getElementById('startBtn').click(); }, 1000); }, 500); } else if (inputPC.iceConnectionState === 'disconnected') { log('Connection unstable - waiting...', 'info'); setTimeout(() => { if (inputPC && inputPC.iceConnectionState === 'disconnected') { log('Reconnecting...', 'error'); stop(); setTimeout(() => { document.getElementById('startBtn').click(); }, 1000); } }, 5000); } };
+    inputPC.oniceconnectionstatechange = () => {
+        const state = inputPC.iceConnectionState;
+        log(`ICE: ${state}`, state === 'connected' ? 'success' : 'info');
+        if (iceDisconnectTimer) { clearTimeout(iceDisconnectTimer); iceDisconnectTimer = null; }
+        if (state === 'connected') {
+            reconnectAttempts = 0;
+            setTimeout(async () => { if (!inputPC) return; try { const stats = await inputPC.getStats(); stats.forEach(s => { if (s.type === 'outbound-rtp' && s.kind === 'video') { log(`Video: ${s.bytesSent} bytes, ${s.framesSent} frames`, 'info'); } }); } catch(e) {} }, 3000);
+        }
+        else if (state === 'disconnected') {
+            log(`Connection paused - waiting ${ICE_DISCONNECT_WAIT/1000}s before reconnect...`, 'info');
+            iceDisconnectTimer = setTimeout(() => { if (inputPC && inputPC.iceConnectionState === 'disconnected') { log('Connection timeout - recovering', 'error'); if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) { reconnectAttempts++; log(`Reconnect ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}...`, 'info'); stop(); setTimeout(() => { document.getElementById('startBtn').click(); }, 1000); } } }, ICE_DISCONNECT_WAIT);
+        }
+        else if (state === 'failed') {
+            log('Connection failed - recovering...', 'error');
+            if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) { reconnectAttempts++; setTimeout(() => { stop(); setTimeout(() => { document.getElementById('startBtn').click(); }, 1000); }, 2000); }
+        }
+    };
     localStream.getTracks().forEach(track => { inputPC.addTrack(track, localStream); });
     const offer = await inputPC.createOffer();
     await inputPC.setLocalDescription(offer);
@@ -1174,6 +1203,7 @@ function connectHLS(url) {
 
 function stop() {
     if (pollTimer) clearTimeout(pollTimer);
+    if (iceDisconnectTimer) clearTimeout(iceDisconnectTimer);
     hideStatusOverlay();
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
     if (inputPC) { inputPC.close(); inputPC = null; }
