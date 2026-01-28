@@ -371,7 +371,7 @@
 // ============================================
 const API_KEY = 'sk_wdNUnsKxxwH6v64BHMwHaWT39Mhwk5ZrqZzXDRmAXxxAqCgVGusff2Y8jxiBofuP';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_SDXL-turbo';  // Back to SDXL-turbo - SD15 not responding
+const PIPELINE_ID = 'pip_SDXL-turbo-faceid';  // FaceID for good faces + style images
 
 // ============================================
 // CONNECTION TIMING - INCREASED TOLERANCE
@@ -1202,10 +1202,16 @@ async function setParams() {
     
     // Build prompt
     const basePrompt = buildPrompt();
-    const prompt = basePrompt + ", oil painting, traditional media, canvas texture, visible brushstrokes, masterpiece painting, thick impasto brushwork, chiaroscuro lighting";
+    const prompt = basePrompt + ", oil painting, baroque portrait, masterpiece";
     
-    // Negative prompt - heavy on blocking CGI/3D
-    const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray, girl, model, babe, fairy, bride, princess, porcelain, doll, wax figure, mannequin, synthetic, artificial, computer generated, render, hyperrealistic, photorealistic";
+    // Negative prompt
+    const negPrompt = "text, low quality, blurry, cartoon, anime, cgi, 3d render, digital art";
+    
+    // Get style image URL for current artist
+    const styleImageUrl = styles[currentStyle].styleImage;
+    
+    // IP adapter scale - controls style influence
+    const ipScale = 0.8 + (abstractValue / 100) * 0.5;  // 0.8 to 1.3
     
     const body = { 
         model_id: "streamdiffusion",
@@ -1215,15 +1221,32 @@ async function setParams() {
             prompt: prompt, 
             negative_prompt: negPrompt, 
             num_inference_steps: strength, 
-            guidance_scale: 0,  // SDXL-turbo requires 0
-            seed: 42
+            guidance_scale: 0,
+            seed: 42,
+            ip_adapter: {
+                enabled: true,
+                scale: ipScale,
+                type: "faceid",
+                weight_type: "linear"
+            },
+            ip_adapter_style_image_url: styleImageUrl
         } 
     };
+    
     try { 
-        const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`Style: ${currentStyle.toUpperCase()}, Steps: ${strength}`, 'success');
-        else log(`Params failed: ${res.status}`, 'error');
-        console.log('SDXL-turbo Prompt:', prompt);
+        const res = await fetch(`${API_BASE}/streams/${streamId}`, { 
+            method: 'PATCH', 
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, 
+            body: JSON.stringify(body) 
+        }); 
+        if (res.ok) {
+            log(`Style: ${currentStyle.toUpperCase()}, IP Scale: ${ipScale.toFixed(1)}`, 'success');
+            console.log('FaceID params:', { style: currentStyle, styleImage: styleImageUrl, ipScale });
+        } else {
+            const errText = await res.text();
+            log(`Params failed: ${res.status}`, 'error');
+            console.error('Params error:', errText);
+        }
     }
     catch (e) { log(`Params error: ${e.message}`, 'info'); }
 }
