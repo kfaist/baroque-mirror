@@ -371,7 +371,7 @@
 // ============================================
 const API_KEY = 'sk_wdNUnsKxxwH6v64BHMwHaWT39Mhwk5ZrqZzXDRmAXxxAqCgVGusff2Y8jxiBofuP';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_SDXL-turbo-faceid';  // FaceID for face preservation + style images
+const PIPELINE_ID = 'pip_SD15';  // SD1.5 with ControlNets for face + prompt control
 
 // ============================================
 // CONNECTION TIMING - INCREASED TOLERANCE
@@ -1207,23 +1207,55 @@ async function setParams() {
     // Negative prompt
     const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray, girl, model, babe, fairy, bride, princess";
     
+    // Delta controls how much the video follows the original vs generated
+    // Lower delta = more faithful to original face, higher = more stylized
+    const delta = 0.4 + (abstractValue / 100) * 0.4;  // 0.4 to 0.8
+    
+    // Guidance scale for SD1.5 (not turbo)
+    const guidance = 5 + (abstractValue / 100) * 3;  // 5 to 8
+    
     const body = { 
         model_id: "streamdiffusion",
         pipeline: "live-video-to-video",
         params: { 
-            model_id: "stabilityai/sdxl-turbo", 
+            model_id: "Lykon/dreamshaper-8",  // SD1.5 model good for portraits
             prompt: prompt, 
             negative_prompt: negPrompt, 
             num_inference_steps: strength, 
-            guidance_scale: 0,
-            seed: 42
+            guidance_scale: guidance,
+            delta: delta,
+            width: 512,
+            height: 512,
+            seed: 42,
+            // ControlNets for face preservation
+            controlnets: [
+                {
+                    enabled: true,
+                    model_id: "lllyasviel/control_v11f1p_sd15_depth",
+                    preprocessor: "depth_tensorrt",
+                    conditioning_scale: 0.6  // Depth for spatial structure
+                },
+                {
+                    enabled: true,
+                    model_id: "lllyasviel/control_v11f1e_sd15_tile",
+                    preprocessor: "feedback",
+                    conditioning_scale: 0.15,
+                    preprocessor_params: { feedback_strength: 0.5 }
+                },
+                {
+                    enabled: true,
+                    model_id: "lllyasviel/control_v11p_sd15_canny",
+                    preprocessor: "canny",
+                    conditioning_scale: 0.4  // Edge detection for face details
+                }
+            ]
         } 
     };
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`Style: ${currentStyle}, Steps: ${strength}, Guidance: ${guidance.toFixed(1)}`, 'success');
+        if (res.ok) log(`Style: ${currentStyle}, Steps: ${strength}, Guidance: ${guidance.toFixed(1)}, Delta: ${delta.toFixed(2)}`, 'success');
         else log(`Params failed: ${res.status}`, 'error');
-        console.log('Prompt sent:', prompt);
+        console.log('SD1.5 Prompt sent:', prompt);
     }
     catch (e) { log(`Params: ${e.message}`, 'info'); }
 }
