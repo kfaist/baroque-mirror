@@ -1045,16 +1045,19 @@ function buildPrompt() {
         return customPrompt;
     }
     const style = styles[currentStyle];
+    // Pick a random baroque scene prompt for extra flavor
+    const scenePrompt = caricaturePrompts[Math.floor(Math.random() * caricaturePrompts.length)];
+    
     // Slider: 0 = abstract (no faces, kaleidoscope), 100 = representational (painterly portraits)
     if (abstractValue < 33) {
         // Abstract - kaleidoscope, no faces
         return style.abstract + ", abstract, no people, no faces";
     } else if (abstractValue > 66) {
-        // Representational - painterly portraits
-        return style.representational;
+        // Representational - painterly portraits with baroque scene details
+        return style.representational + ", " + scenePrompt;
     } else {
-        // Blend both
-        return style.abstract + ", " + style.representational;
+        // Blend both with scene details
+        return style.abstract + ", " + style.representational + ", " + scenePrompt;
     }
 }
 
