@@ -371,7 +371,7 @@
 // ============================================
 const API_KEY = 'sk_wdNUnsKxxwH6v64BHMwHaWT39Mhwk5ZrqZzXDRmAXxxAqCgVGusff2Y8jxiBofuP';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_SD15';  // SD1.5 with ControlNets for face + style control
+const PIPELINE_ID = 'pip_SDXL-turbo';  // SDXL-turbo with ControlNets for face preservation
 
 // ============================================
 // CONNECTION TIMING - INCREASED TOLERANCE
@@ -1202,34 +1202,31 @@ async function setParams() {
     
     // Build prompt
     const basePrompt = buildPrompt();
-    const prompt = basePrompt + ", oil painting, baroque portrait, masterpiece";
+    const prompt = basePrompt + ", oil painting, baroque portrait, masterpiece, thick brushstrokes, canvas texture";
     
-    // Negative prompt
-    const negPrompt = "text, low quality, blurry, cartoon, anime, cgi, 3d render, digital art";
+    // Negative prompt - block CGI/digital looks
+    const negPrompt = "text, low quality, blurry, cartoon, anime, cgi, 3d render, digital art, plastic, smooth, airbrushed, video game, unreal engine";
     
     // Get style image URL for current artist
     const styleImageUrl = styles[currentStyle].styleImage;
     
-    // ControlNet scales - these preserve face structure!
-    const depthScale = 0.4 + (abstractValue / 100) * 0.2;   // 0.4-0.6
-    const cannyScale = 0.3 + (abstractValue / 100) * 0.15;  // 0.3-0.45
-    const tileScale = 0.1 + (abstractValue / 100) * 0.1;    // 0.1-0.2
+    // ControlNet scales for SDXL - preserve face structure
+    const depthScale = 0.5 + (abstractValue / 100) * 0.3;   // 0.5-0.8
+    const cannyScale = 0.3 + (abstractValue / 100) * 0.2;   // 0.3-0.5
     
     const body = { 
         model_id: "streamdiffusion",
         pipeline: "live-video-to-video",
         params: { 
-            model_id: "Lykon/dreamshaper-8",
+            model_id: "stabilityai/sdxl-turbo",
             prompt: prompt, 
             negative_prompt: negPrompt,
-            width: 512,
-            height: 512,
+            num_inference_steps: strength,
+            guidance_scale: 0,
             seed: 42,
-            guidance_scale: 1,
-            delta: 0.7,
             ip_adapter: {
                 enabled: true,
-                scale: 1.3,
+                scale: 1.2,
                 type: "regular",
                 weight_type: "linear"
             },
@@ -1237,23 +1234,15 @@ async function setParams() {
             controlnets: [
                 {
                     enabled: true,
-                    model_id: "lllyasviel/control_v11f1p_sd15_depth",
+                    model_id: "xinsir/controlnet-depth-sdxl-1.0",
                     preprocessor: "depth_tensorrt",
                     conditioning_scale: depthScale
                 },
                 {
                     enabled: true,
-                    model_id: "lllyasviel/control_v11f1e_sd15_tile",
-                    preprocessor: "feedback",
-                    conditioning_scale: tileScale,
-                    preprocessor_params: { feedback_strength: 0.5 }
-                },
-                {
-                    enabled: true,
-                    model_id: "lllyasviel/control_v11p_sd15_canny",
+                    model_id: "xinsir/controlnet-canny-sdxl-1.0",
                     preprocessor: "canny",
-                    conditioning_scale: cannyScale,
-                    preprocessor_params: { low_threshold: 100, high_threshold: 200 }
+                    conditioning_scale: cannyScale
                 }
             ]
         } 
@@ -1267,7 +1256,7 @@ async function setParams() {
         }); 
         if (res.ok) {
             log(`Style: ${currentStyle.toUpperCase()}, Depth: ${depthScale.toFixed(2)}`, 'success');
-            console.log('SD1.5 params:', { style: currentStyle, depth: depthScale, canny: cannyScale });
+            console.log('SDXL params:', { style: currentStyle, depth: depthScale, canny: cannyScale, styleImage: styleImageUrl });
         } else {
             const errText = await res.text();
             log(`Params failed: ${res.status}`, 'error');
