@@ -1213,7 +1213,12 @@ async function setParams() {
             negative_prompt: negPrompt, 
             num_inference_steps: strength, 
             guidance_scale: guidance,
-            seed: 42
+            seed: 42,
+            ip_adapter: {
+                enabled: true,
+                scale: 1.0,
+                type: "faceid"
+            }
         } 
     };
     try { 
