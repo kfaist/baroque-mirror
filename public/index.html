@@ -1012,15 +1012,10 @@ document.addEventListener('fullscreenchange', () => { document.getElementById('f
 
 function buildPrompt() {
     if (customPrompt) {
-        let prompt = customPrompt;
-        if (params.bgTrans > 50) prompt += ", transparent background, isolated subject, no background, subject only";
-        else if (params.bgTrans > 20) prompt += ", soft faded background, subject focus, minimal background";
-        return prompt;
+        return customPrompt;
     }
     const style = styles[currentStyle];
-    // Always use base style (modeValue slider was removed)
-    let basePrompt = style.base;
-    return basePrompt;
+    return style.base;
 }
 
 // ============================================
@@ -1157,8 +1152,8 @@ async function setParams() {
     
     // Build prompt and add universal suffix
     const basePrompt = buildPrompt();
-    const prompt = basePrompt + ", shallow depth of field, tack sharp focus, 8k ultra crisp, luminous, abstract, no people";
-    const negPrompt = "text, letters, words, spelling, low quality, distorted, blurry, human, person, face, portrait, figure, body, cartoon, anime, character, woman, man, girl, boy";
+    const prompt = basePrompt + ", shallow depth of field, tack sharp focus, 8k ultra crisp, luminous";
+    const negPrompt = "text, letters, words, spelling, low quality, distorted, blurry, cartoon, anime, illustration, drawing, sketch, cgi, 3d render, digital art, comic, manga";
     
     const body = { 
         model_id: "streamdiffusion",
