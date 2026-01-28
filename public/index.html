@@ -279,6 +279,20 @@
                         </label>
                         <input type="range" id="abstractSlider" min="0" max="100" value="50" style="margin-top: 25px;">
                     </div>
+                    <div class="slider-row" style="margin-top: 15px;">
+                        <label>
+                            <span style="float:left">Depth</span>
+                            <span style="float:right; opacity: 0.7;" id="depthValue">50%</span>
+                        </label>
+                        <input type="range" id="depthSlider" min="0" max="100" value="50" style="margin-top: 25px;">
+                    </div>
+                    <div class="slider-row" style="margin-top: 15px;">
+                        <label>
+                            <span style="float:left">Edge</span>
+                            <span style="float:right; opacity: 0.7;" id="edgeValue">0%</span>
+                        </label>
+                        <input type="range" id="edgeSlider" min="0" max="100" value="0" style="margin-top: 25px;">
+                    </div>
                 </div>
                 
                 
@@ -1015,7 +1029,23 @@ document.querySelectorAll('.style-btn').forEach(btn => {
 let abstractValue = 50;
 document.getElementById('abstractSlider').oninput = function() { 
     abstractValue = parseInt(this.value); 
-    log(`Transform: ${abstractValue}% representational`, 'info');
+    log(`Transform: ${abstractValue}%`, 'info');
+    if (streamId) setParams(); 
+};
+
+// Depth slider (face structure preservation)
+let depthValue = 50;
+document.getElementById('depthSlider').oninput = function() { 
+    depthValue = parseInt(this.value);
+    document.getElementById('depthValue').textContent = depthValue + '%';
+    if (streamId) setParams(); 
+};
+
+// Edge/Canny slider (edge detection)
+let edgeValue = 0;
+document.getElementById('edgeSlider').oninput = function() { 
+    edgeValue = parseInt(this.value);
+    document.getElementById('edgeValue').textContent = edgeValue + '%';
     if (streamId) setParams(); 
 };
 
@@ -1210,8 +1240,28 @@ async function setParams() {
     const ipScale = 1.0 - (abstractValue / 100) * 0.7;  // 1.0 -> 0.3
     const guidance = (abstractValue / 100) * 3;  // 0 -> 3
     
-    // Depth ControlNet: preserves face structure
-    const depthScale = 0.4 + (abstractValue / 100) * 0.3;  // 0.4 -> 0.7
+    // ControlNet scales from sliders
+    const depthScale = depthValue / 100;  // 0 -> 1
+    const edgeScale = edgeValue / 100;    // 0 -> 1
+    
+    // Build controlnets array
+    const controlnets = [];
+    if (depthValue > 0) {
+        controlnets.push({
+            enabled: true,
+            model_id: "xinsir/controlnet-depth-sdxl-1.0",
+            preprocessor: "depth_tensorrt",
+            conditioning_scale: depthScale
+        });
+    }
+    if (edgeValue > 0) {
+        controlnets.push({
+            enabled: true,
+            model_id: "xinsir/controlnet-canny-sdxl-1.0",
+            preprocessor: "canny",
+            conditioning_scale: edgeScale
+        });
+    }
     
     const body = { 
         params: { 
@@ -1227,17 +1277,12 @@ async function setParams() {
                 weight_type: "linear"
             },
             ip_adapter_style_image_url: style.styleImage,
-            controlnets: [{
-                enabled: true,
-                model_id: "xinsir/controlnet-depth-sdxl-1.0",
-                preprocessor: "depth_tensorrt",
-                conditioning_scale: depthScale
-            }]
+            controlnets: controlnets
         } 
     };
     try { 
         const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
-        if (res.ok) log(`${currentStyle.toUpperCase()} IP:${ipScale.toFixed(2)} D:${depthScale.toFixed(2)}`, 'success');
+        if (res.ok) log(`${currentStyle.toUpperCase()} D:${depthValue}% E:${edgeValue}%`, 'success');
         else { 
             const err = await res.text();
             log(`Params failed: ${res.status} - ${err}`, 'error');
