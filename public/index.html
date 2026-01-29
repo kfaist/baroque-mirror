@@ -1103,6 +1103,7 @@ async function start() {
             pipeline_id: PIPELINE_ID,
             pipeline_params: {
                 prompt: buildPrompt(),
+                delta: 0.7,
                 negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
                 ip_adapter: { type: 'faceid', scale: 0.5, enabled: true },
                 ip_adapter_style_image_url: styles[currentStyle].styleImage,
@@ -1154,7 +1155,8 @@ async function setParams() {
     const body = { 
         params: { 
             model_id: MODEL_ID, 
-            prompt: prompt, 
+            prompt: prompt,
+            delta: 0.7, 
             negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
             ip_adapter: { type: 'faceid', scale: ipScale, enabled: true },
             ip_adapter_style_image_url: styles[currentStyle].styleImage,
