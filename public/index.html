@@ -1016,12 +1016,21 @@ document.getElementById('promptInput').addEventListener('keydown', (e) => {
 });
 
 document.querySelectorAll('.style-btn').forEach(btn => {
-    btn.onclick = () => {
+    btn.onclick = async () => {
+        console.log('BUTTON CLICKED:', btn.dataset.style);
         document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentStyle = btn.dataset.style;
+        console.log('currentStyle now:', currentStyle);
+        console.log('streamId:', streamId);
         log(`Style: ${currentStyle.toUpperCase()}`, 'info');
-        if (streamId) setParams();
+        if (streamId) {
+            console.log('Calling setParams...');
+            const result = await setParams();
+            console.log('setParams returned:', result);
+        } else {
+            console.log('NO STREAM ID - cannot call setParams');
+        }
     };
 });
 
