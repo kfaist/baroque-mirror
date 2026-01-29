@@ -236,8 +236,8 @@
     
     <div class="content">
         <div class="header">
-            <div class="header-top"><span>COLUMBUS MUSEUM OF ART</span><span>⚜</span><span>WONDERBALL 2026</span></div>
-            <h1>⚜ BAROQUE MIRROR: SELF-PORTRAIT ⚜</h1>
+            <div class="header-top"><span>COLUMBUS MUSEUM OF ART</span><span></span><span>WONDERBALL 2026</span></div>
+            <h1> BAROQUE MIRROR: SELF-PORTRAIT </h1>
             <div class="header-sub">Live AI Art Transformation</div>
             <div class="header-credit">by Krista Faist</div>
         </div>
@@ -245,21 +245,21 @@
         <div class="main">
             <div class="controls">
                 <div class="session-section">
-                    <button class="session-btn" id="startBtn">Begin Session ⚜</button>
-                    <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ■</button>
+                    <button class="session-btn" id="startBtn">Begin Session </button>
+                    <button class="session-btn stop" id="stopBtn" style="display:none;">End Session </button>
                 </div>
                 
                 <div class="prompt-section">
-                    <h3>⚜ Prompt</h3>
+                    <h3> Prompt</h3>
                     <div class="prompt-container">
-                        <button class="prompt-btn shuffle" id="shuffleBtn" title="Random Prompt">🎲</button>
+                        <button class="prompt-btn shuffle" id="shuffleBtn" title="Random Prompt"></button>
                         <textarea class="prompt-input" id="promptInput" placeholder="Enter custom style prompt or shuffle for inspiration..." rows="2"></textarea>
                         <button class="prompt-btn apply" id="applyPromptBtn" title="Apply Prompt">Apply</button>
                     </div>
                 </div>
                 
                 <div class="section">
-                    <h3>⚜ Master Style</h3>
+                    <h3> Master Style</h3>
                     <div class="style-grid">
                         <button class="style-btn active" data-style="baroque">Baroque</button>
                         <button class="style-btn" data-style="rococo">Rococo</button>
@@ -271,7 +271,7 @@
                 </div>
                 
                 <div class="section">
-                    <h3>⚜ Transform</h3>
+                    <h3> Transform</h3>
                     <div class="slider-row">
                         <label>
                             <span style="float:left">Master Style</span>
@@ -296,7 +296,7 @@
                 </div>
                 
                 
-                <div id="log">⚜ Baroque Mirror ready...</div>
+                <div id="log"> Baroque Mirror ready...</div>
             </div>
             
             <div class="output-area">
@@ -309,7 +309,7 @@
                         <div class="status-message" id="statusMessage">Negotiating with pixels. Please wait up to 45 seconds...</div>
                         <div class="status-debug" id="statusDebug"></div>
                     </div>
-                    <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
+                    <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen"></button>
                     <div class="frame-overlay"></div>
                 </div>
                 <div class="statement-section">
@@ -342,24 +342,24 @@
                 </div>
                 <a href="/prints" class="mobile-action-btn shop">
                     <span class="shop-line">SHOP PRINTS</span>
-                    <span class="shop-divider">⚜</span>
+                    <span class="shop-divider"></span>
                     <span class="shop-line">MINT NFTs</span>
                 </a>
             </div>
             
             <div class="capture-panel">
                 <div class="input-preview-section">
-                    <h4>⚜ Live Input</h4>
+                    <h4> Live Input</h4>
                     <div class="webcam-pip"><video id="local" autoplay muted playsinline></video></div>
                 </div>
                 
                 <a href="/prints" class="purchase-btn-large" id="purchaseBtn">
                     <span class="purchase-line">Shop Prints</span>
-                    <span class="purchase-divider">⚜</span>
+                    <span class="purchase-divider"></span>
                     <span class="purchase-line">Mint NFTs</span>
                 </a>
                 
-                <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
+                <div class="capture-panel-header"><h3> Captures</h3></div>
                 
                 <div class="capture-grid">
                     <div class="capture-slot" data-slot="1"><span class="capture-slot-number">EXP_01</span><img src="" alt="Captured still 1"><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
@@ -398,7 +398,7 @@ const MAX_RECONNECT_ATTEMPTS = 3;
 // ============================================
 // STATE
 // ============================================
-let localStream, inputPC, outputPC, streamId, playbackId, hls, pollTimer, statusTimer;
+let localStream, inputPC, outputPC, streamId, playbackId, hls, pollTimer, statusTimer, streamReady = false;
 let iceDisconnectTimer = null;
 let reconnectAttempts = 0;
 let whepUrl = null;
@@ -1067,7 +1067,7 @@ document.getElementById('edgeSlider').oninput = async function() {
     }
 };
 
-document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = '✓'; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
+document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = ''; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
 
 document.getElementById('startBtn').onclick = start;
 document.getElementById('stopBtn').onclick = stop;
@@ -1086,7 +1086,7 @@ function toggleFullscreen() {
     }
 }
 
-document.addEventListener('fullscreenchange', () => { document.getElementById('fullscreenBtn').textContent = document.fullscreenElement ? '✕' : '⛶'; });
+document.addEventListener('fullscreenchange', () => { document.getElementById('fullscreenBtn').textContent = document.fullscreenElement ? '' : ''; });
 
 function buildPrompt() {
     if (customPrompt) {
@@ -1369,10 +1369,16 @@ async function setParams() {
         console.log('PATCH response:', res.status, responseText);
         if (res.ok) {
             log(`${currentStyle.toUpperCase()} IP:${ipScale.toFixed(2)} D:${depthValue}% E:${edgeValue}%`, 'success');
+            streamReady = true;
             return true;
         }
+        else if (res.status === 404) {
+            log(`Stream warming up... will retry`, 'info');
+            if (!streamReady) setTimeout(() => setParams(), 2000);
+            return false;
+        }
         else { 
-            log(`Params: ${res.status} - waiting for stream...`, 'info');
+            log(`Params: ${res.status}`, 'info');
             return false;
         }
     }
@@ -1485,5 +1491,4 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
-< ! - -   d e p l o y   t r i g g e r   - - >  
- 
+<!-- deploy trigger -->
