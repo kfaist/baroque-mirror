@@ -1089,24 +1089,12 @@ function toggleFullscreen() {
 document.addEventListener('fullscreenchange', () => { document.getElementById('fullscreenBtn').textContent = document.fullscreenElement ? '' : ''; });
 
 function buildPrompt() {
+    // If user entered a custom prompt, use it directly
     if (customPrompt) {
         return customPrompt;
     }
-    const style = styles[currentStyle];
-    // Pick a random baroque scene prompt for extra flavor
-    const scenePrompt = caricaturePrompts[Math.floor(Math.random() * caricaturePrompts.length)];
-    
-    // Slider: 0 = abstract (no faces, kaleidoscope), 100 = representational (painterly portraits)
-    if (abstractValue < 33) {
-        // Abstract - kaleidoscope, no faces
-        return style.abstract + ", abstract, no people, no faces";
-    } else if (abstractValue > 66) {
-        // Representational - painterly portraits with baroque scene details
-        return style.representational + ", " + scenePrompt;
-    } else {
-        // Blend both with scene details
-        return style.abstract + ", " + style.representational + ", " + scenePrompt;
-    }
+    // Default: just return a simple base prompt, let the style image do the work
+    return "portrait, artistic";
 }
 
 // ============================================
@@ -1307,7 +1295,7 @@ async function trySetParams() {
 async function setParams() {
     const style = styles[currentStyle];
     const basePrompt = buildPrompt();
-    const prompt = basePrompt + ", oil painting, traditional media, canvas texture, visible brushstrokes, masterpiece painting";
+    const prompt = basePrompt;  // Clean prompt, no hardcoded suffixes
     const negPrompt = "text, letters, words, spelling, low quality, blurry, cartoon, anime, manga, illustration, cgi, 3d render, digital art, comic, plastic, smooth skin, airbrushed, video game, unreal engine, octane render, vray";
     
     // Master Style slider: left = style image (high IP scale), right = text prompt (low IP scale, high guidance)
@@ -1352,6 +1340,7 @@ async function setParams() {
             negative_prompt: negPrompt, 
             guidance_scale: guidance,
             seed: 42,
+            delta: 0.3,
             ip_adapter: {
                 type: "faceid",
                 scale: ipScale,
