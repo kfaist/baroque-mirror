@@ -106,9 +106,9 @@
         }
         
         .capture-card {
-            background: rgba(15,10,12,0.85);
-            border: 2px solid rgba(212,175,55,0.3);
-            border-radius: 10px;
+            background: transparent;
+            border: 3px solid #ffffff;
+            border-radius: 0;
             overflow: hidden;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -117,13 +117,12 @@
         }
         
         .capture-card:hover, .capture-card.selected {
-            border-color: #d4af37;
-            box-shadow: 0 0 25px rgba(212,175,55,0.3);
-            transform: translateY(-3px);
+            border-color: #ffffff;
+            box-shadow: 0 0 25px rgba(255,255,255,0.3);
         }
         
         .capture-card.selected {
-            box-shadow: 0 0 35px rgba(212,175,55,0.5);
+            box-shadow: 0 0 35px rgba(255,255,255,0.5);
         }
         
         .capture-card .image-container {
@@ -210,11 +209,7 @@
         .capture-card.has-size .size-badge { opacity: 1; }
         
         .capture-label {
-            padding: 10px;
-            text-align: center;
-            color: #f4e4ba;
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(212,175,55,0.2);
+            display: none;
         }
         
         /* Category Grid */
