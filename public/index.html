@@ -1213,6 +1213,7 @@ async function start() {
                         }
                     ]
                 }
+            })
         });
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         const data = await createRes.json();
@@ -1472,5 +1473,5 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
-< ! - -   d e p l o y   t r i g g e r   - - >  
+< ! - -   d e p l o y   t r i g g e r   - - >  
  
