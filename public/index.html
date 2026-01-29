@@ -71,24 +71,24 @@
             <div class="section">
                 <div class="section-title">✦ MASTER STYLE</div>
                 <div class="style-grid">
-                    <button class="style-btn active" data-style="baroque" onclick="setStyle(this)">Baroque</button>
+                    <button class="style-btn active" data-style="rubens" onclick="setStyle(this)">Rubens</button>
                     <button class="style-btn" data-style="rococo" onclick="setStyle(this)">Rococo</button>
                     <button class="style-btn" data-style="caravaggio" onclick="setStyle(this)">Caravaggio</button>
                     <button class="style-btn" data-style="vermeer" onclick="setStyle(this)">Vermeer</button>
                     <button class="style-btn" data-style="rembrandt" onclick="setStyle(this)">Rembrandt</button>
-                    <button class="style-btn" data-style="vangogh" onclick="setStyle(this)">Van Gogh</button>
+                    <button class="style-btn" data-style="artemisia" onclick="setStyle(this)">Artemisia</button>
                 </div>
             </div>
             
             <div class="section">
                 <div class="section-title">✦ TRANSFORM</div>
                 <div class="slider-box">
-                    <div class="slider-labels"><span>Abstract</span><span>Realistic</span></div>
-                    <input type="range" id="depthSlider" min="0" max="100" value="30" onchange="updateParams()">
+                    <div class="slider-labels"><span>Abstract</span><span>Master Style</span></div>
+                    <input type="range" id="styleSlider" min="0" max="100" value="50" onchange="updateParams()">
                 </div>
                 <div class="slider-box">
-                    <div class="slider-labels"><span>Smooth</span><span>Edges</span></div>
-                    <input type="range" id="edgeSlider" min="0" max="100" value="20" onchange="updateParams()">
+                    <div class="slider-labels"><span>Painterly</span><span>Your Face</span></div>
+                    <input type="range" id="depthSlider" min="0" max="100" value="50" onchange="updateParams()">
                 </div>
             </div>
             
@@ -99,32 +99,33 @@
 <script>
 const API_KEY = 'sk_wdNUnsKxxwH6v64BHMwHaWT39Mhwk5ZrqZzXDRmAXxxAqCgVGusff2Y8jxiBofuP';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
+const PIPELINE_ID = 'pip_SDXL-turbo-faceid';
+const MODEL_ID = 'stabilityai/sdxl-turbo';
 
-const stylePrompts = {
-    baroque: 'baroque oil painting, dramatic chiaroscuro, Rubens style, golden light, rich velvet textures',
-    rococo: 'rococo painting, pastel colors, Fragonard style, soft light, ornate gilded frame',
-    caravaggio: 'Caravaggio painting, dramatic tenebrism, deep shadows, single light source, renaissance',
-    vermeer: 'Vermeer painting, soft diffused light, Dutch golden age, pearl earring, domestic scene',
-    rembrandt: 'Rembrandt portrait, golden brown tones, impasto technique, dramatic lighting, Dutch master',
-    vangogh: 'Van Gogh painting, swirling brushstrokes, vibrant colors, post-impressionist, starry night style'
+const styles = {
+    rubens: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Peter_Paul_Rubens_-_Self-Portrait_-_WGA20380.jpg/440px-Peter_Paul_Rubens_-_Self-Portrait_-_WGA20380.jpg',
+    rococo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Fragonard_-_swing.jpg/400px-Fragonard_-_swing.jpg',
+    caravaggio: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Michelangelo_Caravaggio_065.jpg/440px-Michelangelo_Caravaggio_065.jpg',
+    vermeer: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/440px-1665_Girl_with_a_Pearl_Earring.jpg',
+    rembrandt: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg/440px-Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg',
+    artemisia: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Self-portrait_as_the_Allegory_of_Painting_%28La_Pittura%29_-_Artemisia_Gentileschi.jpg/440px-Self-portrait_as_the_Allegory_of_Painting_%28La_Pittura%29_-_Artemisia_Gentileschi.jpg'
 };
 
 const prompts = [
-    "royal portrait with crown and ermine",
+    "royal portrait with golden crown",
     "mythological scene with angels",
     "still life with flowers and fruit",
-    "dramatic storm clouds and lightning",
-    "golden sunlight through cathedral windows",
-    "mysterious figure in candlelight",
-    "lush garden with fountains",
-    "celestial beings in clouds",
-    "rich velvet drapes and gold",
-    "ancient ruins at sunset"
+    "dramatic storm clouds",
+    "golden cathedral light",
+    "mysterious candlelit figure",
+    "lush garden fountain",
+    "celestial clouds",
+    "velvet drapes and gold",
+    "ancient ruins sunset"
 ];
 
 let streamId = null;
-let currentStyle = 'baroque';
+let currentStyle = 'rubens';
 
 function log(msg, type = 'info') {
     const el = document.getElementById('log');
@@ -148,12 +149,6 @@ function setStyle(btn) {
     if (streamId) updateParams();
 }
 
-function buildPrompt() {
-    const custom = document.getElementById('promptInput').value.trim();
-    const style = stylePrompts[currentStyle];
-    return custom ? `${custom}, ${style}` : style;
-}
-
 async function start() {
     const btn = document.getElementById('startBtn');
     btn.disabled = true;
@@ -166,10 +161,27 @@ async function start() {
         log('Camera ready', 'success');
         
         log('Creating stream...');
+        const ipScale = document.getElementById('styleSlider').value / 100;
+        const depthScale = document.getElementById('depthSlider').value / 100;
+        const prompt = document.getElementById('promptInput').value || 'portrait';
+        
         const createRes = await fetch(`${API_BASE}/streams`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
-            body: JSON.stringify({ pipeline_id: PIPELINE_ID })
+            body: JSON.stringify({
+                pipeline_id: PIPELINE_ID,
+                pipeline_params: {
+                    prompt: prompt,
+                    negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry, low quality',
+                    ip_adapter: { type: 'faceid', scale: ipScale, enabled: true },
+                    ip_adapter_style_image_url: styles[currentStyle],
+                    controlnets: [
+                        { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: depthScale, control_guidance_start: 0, control_guidance_end: 1 },
+                        { enabled: true, model_id: 'xinsir/controlnet-canny-sdxl-1.0', preprocessor: 'canny', conditioning_scale: 0, control_guidance_start: 0, control_guidance_end: 1 },
+                        { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
+                    ]
+                }
+            })
         });
         
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
@@ -177,7 +189,6 @@ async function start() {
         streamId = data.id;
         log(`Stream: ${streamId}`, 'success');
         
-        // Set iframe to WebRTC player
         document.getElementById('output').src = `https://lvpr.tv/?v=${data.output_playback_id}&lowLatency=force`;
         
         log('Connecting WebRTC...');
@@ -186,7 +197,6 @@ async function start() {
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
         
-        // Wait for ICE
         await new Promise(r => {
             if (pc.iceGatheringState === 'complete') r();
             else pc.onicegatheringstatechange = () => { if (pc.iceGatheringState === 'complete') r(); };
@@ -205,9 +215,6 @@ async function start() {
         btn.textContent = 'LIVE';
         btn.classList.add('running');
         
-        // Set initial params after short delay
-        setTimeout(updateParams, 2000);
-        
     } catch (e) {
         log(`Error: ${e.message}`, 'error');
         btn.disabled = false;
@@ -218,11 +225,11 @@ async function start() {
 async function updateParams() {
     if (!streamId) return;
     
-    const depth = document.getElementById('depthSlider').value / 100;
-    const edge = document.getElementById('edgeSlider').value / 100;
-    const prompt = buildPrompt();
+    const ipScale = document.getElementById('styleSlider').value / 100;
+    const depthScale = document.getElementById('depthSlider').value / 100;
+    const prompt = document.getElementById('promptInput').value || 'portrait';
     
-    log(`Updating: depth=${depth.toFixed(2)} edge=${edge.toFixed(2)}`);
+    log(`Updating: ip=${ipScale.toFixed(2)} depth=${depthScale.toFixed(2)}`);
     
     try {
         const res = await fetch(`${API_BASE}/streams/${streamId}`, {
@@ -230,18 +237,15 @@ async function updateParams() {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
             body: JSON.stringify({
                 params: {
-                    model_id: 'stabilityai/sd-turbo',
+                    model_id: MODEL_ID,
                     prompt: prompt,
-                    negative_prompt: 'blurry, low quality, modern, photograph, realistic face',
-                    num_inference_steps: 50,
-                    seed: 42,
-                    t_index_list: [0, 8, 17],
+                    negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry, low quality',
+                    ip_adapter: { type: 'faceid', scale: ipScale, enabled: true },
+                    ip_adapter_style_image_url: styles[currentStyle],
                     controlnets: [
-                        { enabled: true, model_id: 'thibaud/controlnet-sd21-openpose-diffusers', preprocessor: 'pose_tensorrt', conditioning_scale: 0, control_guidance_start: 0, control_guidance_end: 1 },
-                        { enabled: true, model_id: 'thibaud/controlnet-sd21-hed-diffusers', preprocessor: 'soft_edge', conditioning_scale: edge, control_guidance_start: 0, control_guidance_end: 1 },
-                        { enabled: true, model_id: 'thibaud/controlnet-sd21-canny-diffusers', preprocessor: 'canny', conditioning_scale: 0, control_guidance_start: 0, control_guidance_end: 1, preprocessor_params: { high_threshold: 200, low_threshold: 100 } },
-                        { enabled: true, model_id: 'thibaud/controlnet-sd21-depth-diffusers', preprocessor: 'depth_tensorrt', conditioning_scale: depth, control_guidance_start: 0, control_guidance_end: 1 },
-                        { enabled: true, model_id: 'thibaud/controlnet-sd21-color-diffusers', preprocessor: 'passthrough', conditioning_scale: 0.3, control_guidance_start: 0, control_guidance_end: 1 }
+                        { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: depthScale, control_guidance_start: 0, control_guidance_end: 1 },
+                        { enabled: true, model_id: 'xinsir/controlnet-canny-sdxl-1.0', preprocessor: 'canny', conditioning_scale: 0, control_guidance_start: 0, control_guidance_end: 1 },
+                        { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
                     ]
                 }
             })
