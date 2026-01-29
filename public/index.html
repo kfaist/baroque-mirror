@@ -32,7 +32,7 @@
         /* FLAT 3-COLUMN GRID - EXACTLY LIKE DANCE */
         .main { display: grid; grid-template-columns: 400px 1fr 200px; gap: 25px; padding: 25px; max-width: 1900px; margin: 0 auto; }
         
-        .controls, .capture-panel { background: rgba(15,10,12,0.5); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 20px; backdrop-filter: blur(8px); box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.3); }
+        .controls, .capture-panel { background: rgba(15,10,12,0.25); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 20px; backdrop-filter: blur(8px); box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.3); }
         .capture-panel { padding: 15px; }
         
         .section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
@@ -143,7 +143,7 @@
         .statement-section { margin-top: 12px; position: relative; width: 100%; box-sizing: border-box; }
         .shimmer-bg { position: relative; padding: 20px; background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(255,255,255,0.06)); overflow: hidden; }
         .shimmer-bg::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), rgba(255,200,255,0.08), transparent); animation: shimmer 8s infinite; pointer-events: none; }
-        .shimmer-block { position: relative; background: rgba(0,0,0,0.85); padding: 36px 44px; overflow: hidden; }
+        .shimmer-block { position: relative; background: rgba(15,10,12,0.5); padding: 36px 44px; overflow: hidden; }
         .shimmer-block::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.06), rgba(255,200,255,0.04), transparent); animation: shimmer 6s infinite; pointer-events: none; }
         @keyframes shimmer { 0% { transform: translateX(0); } 50% { transform: translateX(100%); } 100% { transform: translateX(100%); } }
         .shimmer-block h2 { position: relative; color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 4px; margin: 0 0 15px 0; text-transform: uppercase; }
