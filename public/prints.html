@@ -439,21 +439,72 @@
         
         .confirm-section {
             text-align: center;
-            padding: 20px;
-            margin-top: 20px;
+            padding: 30px 20px;
+            margin-top: 30px;
+            background: rgba(15,10,12,0.9);
+            border: 2px solid rgba(212,175,55,0.4);
+            border-radius: 12px;
             display: none;
         }
         
         .confirm-section.show { display: block; }
         
-        .confirm-btn {
+        .confirm-title {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+        
+        .confirm-product {
+            color: #f4e4ba;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .confirm-price {
+            color: #d4af37;
+            font-size: 1.8rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .confirm-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-add-cart {
+            background: transparent;
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            padding: 15px 35px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-add-cart:hover {
+            background: rgba(212,175,55,0.15);
+            box-shadow: 0 0 20px rgba(212,175,55,0.3);
+        }
+        
+        .btn-buy-now {
             background: linear-gradient(180deg, #d4af37 0%, #a8872a 100%);
             color: #0a0608;
             border: none;
             padding: 15px 40px;
             font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            letter-spacing: 3px;
+            font-size: 1rem;
+            letter-spacing: 2px;
             text-transform: uppercase;
             border-radius: 8px;
             cursor: pointer;
@@ -461,21 +512,22 @@
             box-shadow: 0 4px 20px rgba(212,175,55,0.4);
         }
         
-        .confirm-btn:hover {
+        .btn-buy-now:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 30px rgba(212,175,55,0.6);
         }
         
-        .confirm-btn:disabled {
+        .btn-buy-now:disabled, .btn-add-cart:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
         
-        .confirm-details {
-            margin-top: 10px;
-            color: rgba(244,228,186,0.8);
-            font-size: 0.95rem;
+        .confirm-hint {
+            margin-top: 15px;
+            color: rgba(244,228,186,0.6);
+            font-size: 0.85rem;
+            font-style: italic;
         }
         
         .processing {
@@ -515,8 +567,14 @@
             </div>
             
             <div id="confirmSection" class="confirm-section">
-                <button class="confirm-btn" onclick="confirmPurchase()">Confirm & Checkout</button>
-                <div class="confirm-details" id="confirmDetails"></div>
+                <div class="confirm-title">⚜ Your Selection ⚜</div>
+                <div class="confirm-product" id="confirmProduct"></div>
+                <div class="confirm-price" id="confirmPrice"></div>
+                <div class="confirm-buttons">
+                    <button class="btn-add-cart" onclick="addToCart()">Add to Cart</button>
+                    <button class="btn-buy-now" onclick="buyNow()">Buy Now</button>
+                </div>
+                <div class="confirm-hint">Drag image above to adjust framing before purchase</div>
             </div>
         </div>
     </div>
@@ -698,26 +756,78 @@ function selectSize(productId, element) {
 
 function updateConfirmSection() {
     const section = document.getElementById('confirmSection');
-    const details = document.getElementById('confirmDetails');
+    const productEl = document.getElementById('confirmProduct');
+    const priceEl = document.getElementById('confirmPrice');
     
     if (selectedCapture && selectedProduct) {
         section.classList.add('show');
-        details.innerHTML = `
-            <strong>${selectedProduct.subtitle || selectedProduct.name}</strong> — $${selectedProduct.price}
-            <br><span style="font-size: 0.85rem; opacity: 0.7;">Drag image above to adjust framing, then confirm</span>
-        `;
+        productEl.textContent = selectedProduct.subtitle || selectedProduct.name;
+        priceEl.textContent = `$${selectedProduct.price}`;
+        
+        // Scroll to confirm section
+        setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
     } else {
         section.classList.remove('show');
     }
 }
 
-async function confirmPurchase() {
+async function addToCart() {
     if (!selectedCapture || !selectedProduct) {
         alert('Please select a portrait and size first');
         return;
     }
     
-    const btn = event.currentTarget;
+    // For now, store in localStorage as a simple cart
+    let cart = JSON.parse(localStorage.getItem('baroqueCart') || '[]');
+    
+    const card = document.querySelector('.capture-card.selected');
+    const container = card.querySelector('.image-container');
+    const img = container.querySelector('img');
+    
+    const transform = img.style.transform;
+    const match = transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
+    const offsetX = match ? parseFloat(match[1]) : 0;
+    const offsetY = match ? parseFloat(match[2]) : 0;
+    
+    cart.push({
+        productId: selectedProduct.id,
+        productName: selectedProduct.subtitle || selectedProduct.name,
+        price: selectedProduct.price,
+        imageData: selectedCapture.image,
+        cropData: {
+            offsetX, offsetY,
+            aspectRatio: selectedAspectRatio,
+            containerWidth: container.offsetWidth,
+            containerHeight: container.offsetHeight
+        },
+        addedAt: Date.now()
+    });
+    
+    localStorage.setItem('baroqueCart', JSON.stringify(cart));
+    
+    // Show confirmation
+    const btn = document.querySelector('.btn-add-cart');
+    const originalText = btn.textContent;
+    btn.textContent = '✓ Added!';
+    btn.style.background = 'rgba(16,185,129,0.3)';
+    btn.style.borderColor = '#10B981';
+    btn.style.color = '#10B981';
+    
+    setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+    }, 2000);
+}
+
+async function buyNow() {
+    if (!selectedCapture || !selectedProduct) {
+        alert('Please select a portrait and size first');
+        return;
+    }
+    
+    const btn = document.querySelector('.btn-buy-now');
     if (btn.classList.contains('processing')) return;
     
     btn.classList.add('processing');
@@ -761,7 +871,7 @@ async function confirmPurchase() {
         console.error('Order error:', e);
         alert('Unable to process order: ' + e.message);
         btn.classList.remove('processing');
-        btn.textContent = 'Confirm & Checkout';
+        btn.textContent = 'Buy Now';
     }
 }
 
