@@ -1282,7 +1282,6 @@ async function connectWHIP(whipUrl) {
     await inputPC.setRemoteDescription({ type: 'answer', sdp: answer });
 }
 
-let paramRetryTimer = null;
 let paramRetryCount = 0;
 const MAX_PARAM_RETRIES = 30; // Try for up to 60 seconds (every 2 sec)
 
