@@ -1,4 +1,4 @@
-<!-- deploy-1769634500 -->
+<!-- deploy-1769645997-pipeline-params-fix -->
 <!-- v2-ipadapter-style-fix -->
 <!DOCTYPE html>
 <html>
@@ -1173,10 +1173,21 @@ async function start() {
         const localVideo = document.getElementById('local'); localVideo.srcObject = localStream; localVideo.play().catch(e => log('Local video play error: ' + e.message, 'error')); log(`Tracks: ${localStream.getTracks().map(t => t.kind + ':' + t.readyState).join(', ')}`, 'info');
         log('Camera ready', 'success');
         log('Creating Daydream stream...', 'info');
+        // Use pipeline_params at creation (NOT params - that's only for PATCH)
+        const initialPrompt = buildPrompt();
+        const ipScale = (100 - abstractValue) / 100 * 0.8 + 0.1;  // 0.1-0.9 based on slider
+        const depthScale = depthValue / 100;
         const createRes = await fetch(`${API_BASE}/streams`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, 
-            body: JSON.stringify({ pipeline_id: PIPELINE_ID }) 
+            body: JSON.stringify({ 
+                pipeline_id: PIPELINE_ID,
+                pipeline_params: {
+                    prompt: initialPrompt,
+                    ip_adapter: { type: "faceid", scale: ipScale, enabled: true },
+                    controlnet: { type: "depth", scale: depthScale, enabled: depthScale > 0 }
+                }
+            }) 
         });
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         const data = await createRes.json();
