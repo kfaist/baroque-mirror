@@ -175,9 +175,9 @@
         .statement-content .contact-info strong { color: rgba(212,175,55,0.8); letter-spacing: 2px; font-weight: normal; }
         .statement-content .license-note { font-style: italic; opacity: 0.85; }
 
-        .shimmer-bg { position: relative; padding: 20px; background: linear-gradient(135deg, rgba(255,100,150,0.12), rgba(255,200,100,0.10), rgba(100,255,200,0.12), rgba(150,100,255,0.12), rgba(255,100,150,0.10)); background-size: 400% 400%; animation: oilSlick 8s ease infinite; overflow: hidden; border-radius: 16px; }
+        .shimmer-bg { position: relative; padding: 20px; background: linear-gradient(135deg, rgba(255,100,150,0.12), rgba(255,200,100,0.10), rgba(100,255,200,0.12), rgba(150,100,255,0.12), rgba(255,100,150,0.10)); background-size: 400% 400%; animation: oilSlick 8s ease infinite; overflow: hidden; border-radius: 16px; border: 2px solid rgba(212,175,55,0.5); }
         .shimmer-bg::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,150,200,0.25), rgba(200,255,220,0.2), rgba(180,200,255,0.25), transparent); animation: shimmer 4s infinite; pointer-events: none; }
-        .shimmer-block { position: relative; background: transparent; padding: 36px 44px; overflow: hidden; border-radius: 12px; backdrop-filter: blur(10px); }
+        .shimmer-block { position: relative; background: rgba(10,6,8,0.6); padding: 36px 44px; overflow: hidden; border-radius: 12px; backdrop-filter: blur(10px); }
         .shimmer-block::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,180,220,0.1), rgba(180,255,220,0.08), rgba(200,180,255,0.1), transparent); animation: shimmer 5s infinite; pointer-events: none; }
         @keyframes shimmer { 0% { transform: translateX(0); } 50% { transform: translateX(100%); } 100% { transform: translateX(100%); } }
         @keyframes oilSlick { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
@@ -1594,6 +1594,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
