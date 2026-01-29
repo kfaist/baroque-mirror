@@ -108,6 +108,10 @@
         .webcam-pip { position: relative; width: 100%; border: 2px solid rgba(212,175,55,0.5); border-radius: 6px; overflow: hidden; background: #000; box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3); aspect-ratio: 4/3; }
         .webcam-pip video { width: 100%; height: 100%; object-fit: cover; display: block; }
         
+        .source-toggle { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
+        .source-btn { padding: 8px 16px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.2rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .source-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; }
+        .source-btn.active { background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(4,120,87,0.35)); border-color: #10b981; }
         #log { display: none; background: rgba(0,0,0,0.6); padding: 12px; height: 100px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.7rem; border: 1px solid rgba(212,175,55,0.2); border-radius: 6px; margin-top: 15px; }
         .success { color: #4ade80; }
         .error { color: #f87171; }
@@ -217,6 +221,8 @@
             .mobile-action-btn { flex: 1; display: flex; font-size: 1.1rem; font-weight: 700; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px; border: 1px solid rgba(212,175,55,0.5); border-radius: 8px; font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.3s ease; min-height: 65px; }
             .mobile-action-btn.capture { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; font-weight: 700; }
             .mobile-action-btn.capture:active { transform: scale(0.95); }
+            .mobile-action-btn.upload { background: rgba(20,15,18,0.9); color: #06b6d4; border-color: rgba(6,182,212,0.5); flex: 0.7; }
+            .mobile-action-btn.upload:active { background: linear-gradient(180deg, rgba(6,182,212,0.3), rgba(8,145,178,0.4)); }
             .mobile-recent-still { flex: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; position: relative; min-height: 65px; overflow: hidden; }
             .mobile-recent-still .placeholder-text { color: rgba(244,228,186,0.4); font-size: 0.65rem; font-style: italic; }
             .mobile-recent-still img { display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
@@ -346,6 +352,10 @@
             
             <div class="mobile-action-bar">
                 <button class="mobile-action-btn capture" onclick="captureNextSlot()">CAPTURE</button>
+                <label class="mobile-action-btn upload">
+                    📁 UPLOAD
+                    <input type="file" accept="image/*" onchange="handleImageUpload(event)" style="display:none;">
+                </label>
                 <div class="mobile-recent-still" id="mobileRecentStill">
                     <img src="" alt="Recent capture">
                     <span class="placeholder-text">No captures</span>
@@ -780,6 +790,69 @@ function captureAndPush() {
 
 function captureNextSlot() {
     captureAndPush();
+}
+
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.getElementById("uploadedImageCanvas");
+            const ctx = canvas.getContext("2d");
+            const localVideo = document.getElementById("local");
+            
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            
+            // Hide webcam, show canvas
+            localVideo.style.display = "none";
+            canvas.style.display = "block";
+            
+            // Update active states
+            document.getElementById("webcamBtn")?.classList.remove("active");
+            document.getElementById("uploadBtn")?.classList.add("active");
+            
+            log("Using uploaded image as source", "success");
+            
+            // If streaming, update the input
+            if (streamId && inputPC) {
+                const stream = canvas.captureStream(30);
+                const videoTrack = stream.getVideoTracks()[0];
+                const sender = inputPC.getSenders().find(s => s.track?.kind === "video");
+                if (sender && videoTrack) {
+                    sender.replaceTrack(videoTrack);
+                }
+            }
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function switchToWebcam() {
+    const canvas = document.getElementById("uploadedImageCanvas");
+    const localVideo = document.getElementById("local");
+    
+    canvas.style.display = "none";
+    localVideo.style.display = "block";
+    
+    document.getElementById("webcamBtn")?.classList.add("active");
+    document.getElementById("uploadBtn")?.classList.remove("active");
+    
+    log("Switched to webcam", "success");
+    
+    // If streaming, switch back to webcam track
+    if (streamId && inputPC && localStream) {
+        const videoTrack = localStream.getVideoTracks()[0];
+        const sender = inputPC.getSenders().find(s => s.track?.kind === "video");
+        if (sender && videoTrack) {
+            sender.replaceTrack(videoTrack);
+        }
+    }
 }
 
 
