@@ -132,12 +132,12 @@
         .capture-btn-large:hover { background: linear-gradient(180deg, #06b6d4, #0891b2); color: #0a0608; box-shadow: 0 0 20px rgba(6,182,212,0.5); transform: translateY(-1px); }
         .capture-grid { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 3; }
         .capture-slot { aspect-ratio: 16/10; border: 2px solid rgba(212,175,55,0.4); border-radius: 8px; background: rgba(15,10,12,0.4); overflow: hidden; position: relative; transition: all 0.3s ease; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
-        .capture-slot.placeholder { background: transparent; box-shadow: none; }
+        .capture-slot.placeholder { background: rgba(15,10,12,0.5); box-shadow: none; border-radius: 8px; }
         .capture-slot.placeholder[data-slot="6"] { border: 2px solid rgba(255,100,150,0.5); }
         .capture-slot.placeholder[data-slot="7"] { border: 2px solid rgba(100,220,255,0.5); }
         .capture-slot.placeholder[data-slot="8"] { border: 2px solid rgba(212,175,55,0.5); }
         .capture-slot.placeholder[data-slot="9"] { border: 2px solid rgba(180,130,255,0.5); }
-        .capture-slot.placeholder::after { content: '⚜'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; color: rgba(212,175,55,0.08); text-shadow: 0 0 5px rgba(212,175,55,0.05); }
+        .capture-slot.placeholder::after { display: none; }
         .capture-slot:hover { border-color: #d4af37; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3); }
         .capture-slot-number { position: absolute; top: 4px; left: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.55rem; color: rgba(212,175,55,0.6); letter-spacing: 1px; z-index: 2; }
         .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
@@ -1561,6 +1561,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
