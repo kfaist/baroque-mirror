@@ -129,6 +129,7 @@
         .capture-slot-number { position: absolute; top: 4px; left: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.55rem; color: rgba(212,175,55,0.6); letter-spacing: 1px; z-index: 2; }
         .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
         .capture-slot.has-image img { display: block; }
+        .capture-slot.has-image::after { content: '⚜'; position: absolute; bottom: 6px; right: 6px; font-size: 1rem; color: rgba(212,175,55,0.25); z-index: 1; }
         .capture-slot.has-image .capture-btn { opacity: 0; }
         .capture-slot.has-image:hover .capture-btn { opacity: 1; }
         .capture-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 8px 12px; border: 1px solid rgba(212,175,55,0.6); background: rgba(15,10,12,0.9); color: #d4af37; font-size: 0.6rem; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; white-space: nowrap; }
@@ -365,11 +366,11 @@
                 <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
                 
                 <div class="capture-grid">
-                    <div class="capture-slot has-image" data-slot="1"><img src="/samples/sample1.png" alt="" style="display:block;"></div>
-                    <div class="capture-slot has-image" data-slot="2"><img src="/samples/sample2.png" alt="" style="display:block;"></div>
-                    <div class="capture-slot has-image" data-slot="3"><img src="/samples/sample3.png" alt="" style="display:block;"></div>
-                    <div class="capture-slot has-image" data-slot="4"><img src="/samples/sample4.png" alt="" style="display:block;"></div>
-                    <div class="capture-slot has-image" data-slot="5"><img src="/samples/sample5.png" alt="" style="display:block;"></div>
+                    <div class="capture-slot has-image" data-slot="1"><img src="samples/sample1.png" alt="" style="display:block;"></div>
+                    <div class="capture-slot has-image" data-slot="2"><img src="samples/sample2.png" alt="" style="display:block;"></div>
+                    <div class="capture-slot has-image" data-slot="3"><img src="samples/sample3.png" alt="" style="display:block;"></div>
+                    <div class="capture-slot has-image" data-slot="4"><img src="samples/sample4.png" alt="" style="display:block;"></div>
+                    <div class="capture-slot has-image" data-slot="5"><img src="samples/sample5.png" alt="" style="display:block;"></div>
                 </div>
             </div>
         </div>
