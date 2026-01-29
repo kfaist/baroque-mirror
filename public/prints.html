@@ -136,6 +136,20 @@
             cursor: grabbing;
         }
         
+        .capture-card.is-sample .image-container::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            height: 70%;
+            background: url('/wonderball-watermark.png') center/contain no-repeat;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
         .capture-card img {
             position: absolute;
             min-width: 100%;
@@ -531,18 +545,36 @@ function toggleCategory(categoryId) {
 
 function loadCaptures() {
     const container = document.getElementById('capturesContainer');
-    let captures = {};
+    let captureArray = [];
+    
+    // Sample image paths (these get watermarked)
+    const samplePaths = [
+        '/samples/sample1.png',
+        '/samples/sample2.png',
+        '/samples/sample3.png',
+        '/samples/sample4.png',
+        '/samples/sample5.png',
+        '/samples/sample6.png'
+    ];
     
     try {
-        const stored = localStorage.getItem('baroqueCaptures');
-        if (stored) captures = JSON.parse(stored);
+        // Try new format first
+        const newStored = localStorage.getItem('baroqueCaptureArray');
+        if (newStored) {
+            captureArray = JSON.parse(newStored);
+        } else {
+            // Fallback to old format
+            const oldStored = localStorage.getItem('baroqueCaptures');
+            if (oldStored) {
+                const oldCaptures = JSON.parse(oldStored);
+                captureArray = Object.values(oldCaptures);
+            }
+        }
     } catch (e) {
         console.error('Error loading captures:', e);
     }
     
-    const slots = Object.keys(captures);
-    
-    if (slots.length === 0) {
+    if (captureArray.length === 0) {
         container.innerHTML = `
             <div class="no-captures">
                 <p>No portraits captured yet.</p>
@@ -561,25 +593,31 @@ function loadCaptures() {
     `;
     const grid = container.querySelector('.captures-grid');
     
-    slots.forEach((slot, idx) => {
-        const capture = captures[slot];
+    captureArray.forEach((capture, idx) => {
         const card = document.createElement('div');
         card.className = 'capture-card';
-        card.dataset.slot = slot;
-        card.onclick = () => selectCapture(slot, capture);
+        card.dataset.slot = idx + 1;
+        
+        // Check if this is a sample image (watermark it)
+        const isSample = samplePaths.includes(capture.image);
+        if (isSample) {
+            card.classList.add('is-sample');
+        }
+        
+        card.onclick = () => selectCapture(idx + 1, capture);
         
         card.innerHTML = `
-            <div class="image-container" data-slot="${slot}">
-                <img src="${capture.image}" alt="Portrait ${slot}" draggable="false">
+            <div class="image-container" data-slot="${idx + 1}">
+                <img src="${capture.image}" alt="Portrait ${idx + 1}" draggable="false">
                 <div class="drag-hint">⇄ DRAG TO REPOSITION</div>
             </div>
-            <div class="capture-label">Portrait #${slot}</div>
+            <div class="capture-label">${isSample ? '⚜ Sample' : 'Portrait #' + (idx + 1)}</div>
         `;
         
         grid.appendChild(card);
         
         if (idx === 0) {
-            selectCapture(slot, capture);
+            selectCapture(idx + 1, capture);
             card.classList.add('selected');
         }
     });
