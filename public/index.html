@@ -645,7 +645,11 @@ function updateCountdown() {
     if (countdownValue > 0) {
         msg.textContent = `Negotiating with pixels. Please wait up to ${countdownValue} seconds...`;
         countdownValue--;
-    } else {
+    } else if (defaultSampleImages[i]) {
+            img.src = defaultSampleImages[i];
+            slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
+        } else {
         msg.textContent = 'Almost there...';
     }
 }
@@ -692,6 +696,10 @@ function renderCaptureGrid() {
         const img = slot.querySelector('img');
         if (captureArray[i] && !captureArray[i].isDefault) {
             img.src = captureArray[i].image;
+            slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
+        } else if (defaultSampleImages[i]) {
+            img.src = defaultSampleImages[i];
             slot.classList.add('has-image');
             slot.classList.remove('placeholder');
         } else {
@@ -780,7 +788,11 @@ function shufflePrompt() {
         allPrompts = promptInspirations;
     } else if (modeValue > 50) {
         allPrompts = satireCaptions;
-    } else {
+    } else if (defaultSampleImages[i]) {
+            img.src = defaultSampleImages[i];
+            slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
+        } else {
         allPrompts = Math.random() < 0.5 ? satireCaptions : promptInspirations;
     }
     const randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
@@ -1093,7 +1105,11 @@ function toggleFullscreen() {
         if (container.requestFullscreen) container.requestFullscreen();
         else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
         else if (container.msRequestFullscreen) container.msRequestFullscreen();
-    } else {
+    } else if (defaultSampleImages[i]) {
+            img.src = defaultSampleImages[i];
+            slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
+        } else {
         if (document.exitFullscreen) document.exitFullscreen();
         else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
         else if (document.msExitFullscreen) document.msExitFullscreen();
