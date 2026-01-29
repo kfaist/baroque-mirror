@@ -119,8 +119,8 @@
         .purchase-btn-large:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 25px rgba(212,175,55,0.5); transform: translateY(-2px); }
         .purchase-btn-large .purchase-line { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; }
         .purchase-btn-large .purchase-divider { font-size: 0.6rem; opacity: 0.7; line-height: 1; }
-        .capture-btn-large { display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px 10px; margin-bottom: 15px; border: 2px solid #4ade80; background: linear-gradient(180deg, rgba(74,222,128,0.2), rgba(34,197,94,0.3)); color: #4ade80; cursor: pointer; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; transition: all 0.3s ease; text-transform: uppercase; }
-        .capture-btn-large:hover { background: linear-gradient(180deg, #4ade80, #22c55e); color: #0a0608; box-shadow: 0 0 25px rgba(74,222,128,0.5); transform: translateY(-2px); }
+        .capture-btn-large { display: flex; align-items: center; justify-content: center; width: 100%; padding: 8px 10px; margin-bottom: 12px; border: 1px solid #06b6d4; background: linear-gradient(180deg, rgba(6,182,212,0.15), rgba(8,145,178,0.25)); color: #22d3ee; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; }
+        .capture-btn-large:hover { background: linear-gradient(180deg, #06b6d4, #0891b2); color: #0a0608; box-shadow: 0 0 20px rgba(6,182,212,0.5); transform: translateY(-1px); }
         .capture-grid { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 3; }
         .capture-slot { aspect-ratio: 16/10; border: 1px solid rgba(139,105,20,0.5); border-radius: 2px; background: rgba(10,8,6,0.95); overflow: hidden; position: relative; transition: all 0.3s ease; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
         .capture-slot.placeholder { background: linear-gradient(135deg, rgba(20,15,25,0.95) 0%, rgba(30,20,35,0.9) 50%, rgba(20,15,25,0.95) 100%); }
@@ -346,9 +346,9 @@
                     <h4>⚜ Live Input</h4>
                     <div class="webcam-pip"><video id="local" autoplay muted playsinline></video><canvas id="uploadedImageCanvas" style="display:none;"></canvas></div>
                     <div class="source-toggle">
-                        <button class="source-btn active" id="webcamBtn" onclick="switchToWebcam()">📷 Webcam</button>
+                        <button class="source-btn active" id="webcamBtn" onclick="switchToWebcam()">📷</button>
                         <label class="source-btn" id="uploadBtn">
-                            📁 Upload
+                            📁
                             <input type="file" id="imageUpload" accept="image/*" onchange="handleImageUpload(event)" style="display:none;">
                         </label>
                     </div>
@@ -365,11 +365,11 @@
                 <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
                 
                 <div class="capture-grid">
-                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">01</span><img src="" alt="Captured still 1"></div>
-                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">02</span><img src="" alt="Captured still 2"></div>
-                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">03</span><img src="" alt="Captured still 3"></div>
-                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">04</span><img src="" alt="Captured still 4"></div>
-                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">05</span><img src="" alt="Captured still 5"></div>
+                    <div class="capture-slot placeholder" data-slot="1"><span class="capture-slot-number">01</span><img src="" alt="Captured still 1"></div>
+                    <div class="capture-slot placeholder" data-slot="2"><span class="capture-slot-number">02</span><img src="" alt="Captured still 2"></div>
+                    <div class="capture-slot placeholder" data-slot="3"><span class="capture-slot-number">03</span><img src="" alt="Captured still 3"></div>
+                    <div class="capture-slot placeholder" data-slot="4"><span class="capture-slot-number">04</span><img src="" alt="Captured still 4"></div>
+                    <div class="capture-slot placeholder" data-slot="5"><span class="capture-slot-number">05</span><img src="" alt="Captured still 5"></div>
                 </div>
             </div>
         </div>
