@@ -265,12 +265,12 @@
                 <div class="section">
                     <h3>⚜ Master Style</h3>
                     <div class="style-grid">
-                        <button class="style-btn active" data-style="baroque">Baroque</button>
+                        <button class="style-btn" data-style="baroque">Baroque</button>
                         <button class="style-btn" data-style="rococo">Rococo</button>
                         <button class="style-btn" data-style="caravaggio">Caravaggio</button>
                         <button class="style-btn" data-style="vermeer">Vermeer</button>
                         <button class="style-btn" data-style="rembrandt">Rembrandt</button>
-                        <button class="style-btn" data-style="artemisia">Artemisia</button>
+                        <button class="style-btn active" data-style="artemisia">Artemisia</button>
                     </div>
                     <div class="mode-box">
                         <div class="mode-labels"><span>🎨 Opulent Oil Painting</span><span>French Revolution Caricatures 📜</span></div>
@@ -394,7 +394,7 @@ let countdownTimer = null;
 let countdownValue = 45;
 let statusDebugLines = [];
 let audioContext, analyser, audioDataArray, micSource;
-let currentStyle = 'baroque';
+let currentStyle = 'artemisia';
 let modeValue = 0;
 let customPrompt = '';
 let params = { strength: 50, promptWeight: 0.47, pose: 0.30, edge: 0.36, depth: 0.24, bgTrans: 0 };
@@ -1201,7 +1201,9 @@ async function start() {
             pipeline_id: PIPELINE_ID,
             pipeline_params: {
                 prompt: buildPrompt(),
-                delta: 0.8,
+                delta: 0.7,
+                width: 1024,
+                height: 1024,
                 negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
                 ip_adapter: { type: 'faceid', scale: 0.5, enabled: true },
                 ip_adapter_style_image_url: styles[currentStyle].styleImage,
@@ -1255,7 +1257,9 @@ async function setParams() {
         params: { 
             model_id: MODEL_ID, 
             prompt: prompt,
-            delta: 0.8, 
+            delta: 0.7,
+            width: 1024,
+            height: 1024,
             negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
             ip_adapter: { type: 'faceid', scale: 0.5, enabled: true },
             ip_adapter_style_image_url: styles[currentStyle].styleImage,
