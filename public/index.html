@@ -138,11 +138,11 @@
         .capture-slot[data-slot="3"] { border: 2px solid rgba(150,255,150,0.6); }
         .capture-slot[data-slot="4"] { border: 2px solid rgba(255,200,100,0.6); }
         .capture-slot[data-slot="5"] { border: 2px solid rgba(200,150,255,0.6); }
-        .capture-slot.placeholder { background: transparent; box-shadow: none; border-radius: 8px; }
-        .capture-slot.placeholder[data-slot="6"] { border: 3px solid rgba(255,150,100,0.6); }
-        .capture-slot.placeholder[data-slot="7"] { border: 3px solid rgba(255,180,120,0.6); }
-        .capture-slot.placeholder[data-slot="8"] { border: 3px solid rgba(255,210,150,0.6); }
-        .capture-slot.placeholder[data-slot="9"] { border: 3px solid rgba(255,240,180,0.6); }
+        .capture-slot.placeholder { display: none; }
+        .capture-slot.placeholder[data-slot="6"] { }
+        .capture-slot.placeholder[data-slot="7"] { }
+        .capture-slot.placeholder[data-slot="8"] { }
+        .capture-slot.placeholder[data-slot="9"] { }
         .capture-slot.placeholder::after { display: none; }
         .capture-slot:hover { border-color: #d4af37; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3); }
         .capture-slot-number { position: absolute; top: 4px; left: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.55rem; color: rgba(212,175,55,0.6); letter-spacing: 1px; z-index: 2; }
@@ -1585,6 +1585,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
