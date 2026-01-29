@@ -1,6 +1,9 @@
+<!-- deploy-1769081642 -->
+<!-- v1769081282 -->
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Baroque Mirror: Self-Portrait - CMA Wonderball 2026</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
@@ -78,7 +81,7 @@
         .output-area { position: relative; }
         .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: #000; }
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
-        .output-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .output-video { width: 100%; height: 100%; object-fit: contain; object-position: center center; display: block; }
         .video-animation-overlay { position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; pointer-events: none; z-index: 2; opacity: 0.4; mix-blend-mode: overlay; }
         .fullscreen-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.6); background: rgba(10,6,8,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.1rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(5px); }
         .fullscreen-btn:hover { background: rgba(212,175,55,0.3); border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); transform: scale(1.1); }
@@ -162,30 +165,32 @@
         }
         
         @media (max-width: 768px) {
+            body { font-size: 1.4rem; font-weight: 600; }
             .header { padding: 10px; }
-            .header-top { display: none; }
-            .header h1 { font-size: 1.4rem; letter-spacing: 2px; }
-            .header-sub, .header-credit { font-size: 0.9rem; }
+            .header-top { font-size: 0.9rem; }
+            .header h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: 2px; }
+            .header-sub, .header-credit { font-size: 1.1rem; font-weight: 500; }
             .controls { padding: 16px; }
             .section { margin-bottom: 16px; padding-bottom: 16px; }
-            .section h3 { font-size: 1.2rem; margin-bottom: 14px; }
-            .session-btn { padding: 24px 28px; font-size: 1.4rem; letter-spacing: 3px; min-height: 70px; }
+            .section h3 { font-size: 2rem; font-weight: 700; margin-bottom: 16px; }
+            .session-btn { padding: 28px 32px; font-size: 1.8rem; font-weight: 700; letter-spacing: 3px; min-height: 70px; }
             .style-btn { padding: 20px 14px !important; font-size: 1rem !important; min-height: 65px; }
             .slider-row { margin-bottom: 20px; }
-            .slider-row label { font-size: 1rem; margin-bottom: 12px; }
+            .slider-row label { font-size: 1.6rem; font-weight: 700; margin-bottom: 14px; }
             input[type="range"] { height: 12px; }
             input[type="range"]::-webkit-slider-thumb { width: 32px; height: 32px; }
             .shimmer-block { padding: 24px 20px; }
         }
         
         @media (max-width: 480px) {
+            body { font-size: 1.3rem !important; font-weight: 600 !important; }
             .header h1 { font-size: 1.2rem; }
             .header-sub, .header-credit { font-size: 0.8rem; }
             .controls { margin: 8px; padding: 14px; }
-            .section h3 { font-size: 1.1rem; }
-            .session-btn { padding: 20px 24px; font-size: 1.2rem; min-height: 60px; }
-            .style-btn { padding: 16px 10px !important; font-size: 0.9rem !important; min-height: 55px; }
-            .slider-row label { font-size: 0.9rem; }
+            .section h3 { font-size: 1.5rem !important; font-weight: 700 !important; }
+            .session-btn { padding: 22px 26px; font-size: 1.4rem !important; font-weight: 700 !important; min-height: 65px; }
+            .style-btn { padding: 18px 12px !important; font-size: 1.1rem !important; font-weight: 600 !important; min-height: 60px; }
+            .slider-row label { font-size: 1.2rem !important; font-weight: 600 !important; }
         }
         
         @media (max-height: 500px) and (orientation: landscape) {
@@ -202,7 +207,7 @@
             .session-section { order: 1; background: rgba(15,10,12,0.95); padding: 15px; margin: 10px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.4); }
             .output-area { display: contents; }
             .mobile-action-bar { display: flex !important; order: 3; justify-content: space-between; align-items: stretch; gap: 10px; padding: 12px 10px; background: rgba(10,6,8,0.95); border-bottom: 2px solid rgba(212,175,55,0.4); width: 100%; }
-            .mobile-action-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px; border: 1px solid rgba(212,175,55,0.5); border-radius: 8px; font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.3s ease; min-height: 65px; }
+            .mobile-action-btn { flex: 1; display: flex; font-size: 1.1rem; font-weight: 700; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px; border: 1px solid rgba(212,175,55,0.5); border-radius: 8px; font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.3s ease; min-height: 65px; }
             .mobile-action-btn.capture { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; font-weight: 700; }
             .mobile-action-btn.capture:active { transform: scale(0.95); }
             .mobile-recent-still { flex: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; position: relative; min-height: 65px; overflow: hidden; }
@@ -220,6 +225,8 @@
             .video-container { order: 2; width: 100vw !important; margin-left: calc(-50vw + 50%); border-radius: 0 !important; }
             .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
         }
+        .raindrop { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; animation: raindropFade ease-out forwards; }
+        @keyframes raindropFade { 0% { transform: scale(0) rotate(0deg); opacity: 0; } 20% { transform: scale(1.2) rotate(90deg); opacity: 1; } 100% { transform: scale(0.8) rotate(360deg); opacity: 0; } }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -249,10 +256,6 @@
                         <textarea class="prompt-input" id="promptInput" placeholder="Enter custom style prompt or shuffle for inspiration..." rows="2"></textarea>
                         <button class="prompt-btn apply" id="applyPromptBtn" title="Apply Prompt">Apply</button>
                     </div>
-                    <div class="slider-row" style="margin-top: 12px;">
-                        <label>Prompt Weight <span class="val" id="promptWeightVal2">1.00</span></label>
-                        <input type="range" id="promptWeightSlider2" min="0" max="100" value="100">
-                    </div>
                 </div>
                 
                 <div class="section">
@@ -267,29 +270,22 @@
                     </div>
                     <div class="mode-box">
                         <div class="mode-labels"><span>🎨 Opulent Oil Painting</span><span>French Revolution Caricatures 📜</span></div>
-                        <input type="range" id="modeSlider" min="0" max="100" value="50">
-                        <div class="mode-value" id="modeValue">Balanced</div>
+                        <input type="range" id="modeSlider" min="0" max="100" value="0">
+                        <div class="mode-value" id="modeValue">Pure Classical</div>
                     </div>
                 </div>
                 
                 <div class="section">
                     <h3>⚜ Transform Controls</h3>
                     <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">50</span></label><input type="range" id="strengthSlider" min="1" max="50" value="50"></div>
-                    <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">1.00</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="100"></div>
+                    <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">0.47</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="47"></div>
                     <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.30</span></label><input type="range" id="poseSlider" min="0" max="100" value="30"></div>
-                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.25</span></label><input type="range" id="edgeSlider" min="0" max="100" value="25"></div>
-                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.20</span></label><input type="range" id="depthSlider" min="0" max="100" value="20"></div>
+                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.36</span></label><input type="range" id="edgeSlider" min="0" max="100" value="36"></div>
+                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.24</span></label><input type="range" id="depthSlider" min="0" max="100" value="24"></div>
                     <div class="slider-row"><label>Background Transparency <span class="val" id="bgTransVal">0%</span></label><input type="range" id="bgTransSlider" min="0" max="100" value="0"></div>
                 </div>
                 
                 
-                <div class="section">
-                    <h3>⚜ Audio Reactivity</h3>
-                    <div class="slider-row"><label>Audio Intensity <span class="val" id="audioIntensityVal">75%</span></label><input type="range" id="audioIntensitySlider" min="0" max="100" value="75"></div>
-                    <div class="slider-row"><label>Pulse Speed <span class="val" id="pulseSpeedVal">50%</span></label><input type="range" id="pulseSpeedSlider" min="10" max="100" value="50"></div>
-                    <div class="slider-row"><label>Particle Density <span class="val" id="particleDensityVal">60%</span></label><input type="range" id="particleDensitySlider" min="10" max="100" value="60"></div>
-                    <div class="audio-section"><h4>🎵 Live Audio Spectrum</h4><div class="audio-meter" id="audioMeter"></div></div>
-                </div>
                 <div id="log">⚜ Baroque Mirror ready...</div>
             </div>
             
@@ -379,7 +375,8 @@
 // ============================================
 const API_KEY = 'sk_9bFt6nHdK1T6AXG6knDS3K57u1BTS6xe9FiwqwQW52KoK7UpqBBEYnmPGxFvLJmS';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
+const PIPELINE_ID = 'pip_SDXL-turbo';
+const MODEL_ID = 'stabilityai/sdxl-turbo';
 
 // ============================================
 // STATE
@@ -390,9 +387,9 @@ let countdownValue = 45;
 let statusDebugLines = [];
 let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
-let modeValue = 50;
+let modeValue = 0;
 let customPrompt = '';
-let params = { strength: 50, promptWeight: 1.00, pose: 0.30, edge: 0.25, depth: 0.20, bgTrans: 0 };
+let params = { strength: 50, promptWeight: 0.47, pose: 0.30, edge: 0.36, depth: 0.24, bgTrans: 0 };
 let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
 let capturedStills = {};
 let audioLevels = new Array(32).fill(0);
@@ -676,7 +673,7 @@ function captureStill(slotNumber) {
     updateMobileRecentStill(dataUrl, slotNumber);
 }
 
-function loadCapturedStills() { localStorage.removeItem('baroqueCaptures'); capturedStills = {}; }
+function loadCapturedStills() { capturedStills = {}; }
 
 function shufflePrompt() {
     let allPrompts;
@@ -709,7 +706,7 @@ function initAudio(stream) {
         micSource = audioContext.createMediaStreamSource(stream);
         micSource.connect(analyser);
         audioDataArray = new Uint8Array(analyser.frequencyBinCount);
-        const meter = document.getElementById('audioMeter');
+        const meter = document.getElementById('audioMeter'); if (!meter) return;
         meter.innerHTML = '';
         for (let i = 0; i < 32; i++) { const bar = document.createElement('div'); bar.className = 'audio-bar'; bar.style.height = '4px'; meter.appendChild(bar); }
         log('Audio analysis initialized', 'success');
@@ -980,16 +977,12 @@ document.getElementById('modeSlider').oninput = function() {
 };
 
 document.getElementById('strengthSlider').oninput = function() { params.strength = parseInt(this.value); document.getElementById('strengthVal').textContent = params.strength; if (streamId) setParams(); };
-document.getElementById('promptWeightSlider').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); document.getElementById('promptWeightSlider2').value = this.value; document.getElementById('promptWeightVal2').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
-document.getElementById('promptWeightSlider2').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal2').textContent = params.promptWeight.toFixed(2); document.getElementById('promptWeightSlider').value = this.value; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
+document.getElementById('promptWeightSlider').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
 document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = '✓'; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
 document.getElementById('poseSlider').oninput = function() { params.pose = parseInt(this.value) / 100; document.getElementById('poseVal').textContent = params.pose.toFixed(2); if (streamId) setParams(); };
 document.getElementById('edgeSlider').oninput = function() { params.edge = parseInt(this.value) / 100; document.getElementById('edgeVal').textContent = params.edge.toFixed(2); if (streamId) setParams(); };
 document.getElementById('depthSlider').oninput = function() { params.depth = parseInt(this.value) / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
 document.getElementById('bgTransSlider').oninput = function() { params.bgTrans = parseInt(this.value); document.getElementById('bgTransVal').textContent = params.bgTrans + '%'; if (streamId) setParams(); };
-document.getElementById('audioIntensitySlider').oninput = function() { audioParams.intensity = this.value / 100; document.getElementById('audioIntensityVal').textContent = this.value + '%'; };
-document.getElementById('pulseSpeedSlider').oninput = function() { audioParams.pulseSpeed = this.value / 100; document.getElementById('pulseSpeedVal').textContent = this.value + '%'; };
-document.getElementById('particleDensitySlider').oninput = function() { audioParams.particleDensity = this.value / 100; document.getElementById('particleDensityVal').textContent = this.value + '%'; };
 
 document.getElementById('startBtn').onclick = start;
 document.getElementById('stopBtn').onclick = stop;
@@ -1027,6 +1020,70 @@ function buildPrompt() {
     return basePrompt;
 }
 
+// ============================================
+// RAINBOW WATERMARK SYSTEM (7-10 min timeout)
+// ============================================
+const SESSION_DURATION = 600000;
+const BASE_RAIN_START = 420000;
+let sessionStartTime = null;
+let rainAnimationRunning = false;
+
+const rainColors = [
+    'rgba(255,105,180,0.9)', 'rgba(138,43,226,0.9)', 'rgba(75,0,130,0.9)',
+    'rgba(0,191,255,0.9)', 'rgba(127,255,212,0.9)', 'rgba(255,215,0,0.9)',
+    'rgba(255,140,0,0.9)', 'rgba(255,20,147,0.9)', 'rgba(147,112,219,0.9)'
+];
+
+function createRaindrop(progress) {
+    const drop = document.createElement('div');
+    drop.className = 'raindrop';
+    drop.style.left = Math.random() * window.innerWidth + 'px';
+    drop.style.top = Math.random() * window.innerHeight + 'px';
+    const color1 = rainColors[Math.floor(Math.random() * rainColors.length)];
+    const color2 = rainColors[Math.floor(Math.random() * rainColors.length)];
+    const color3 = rainColors[Math.floor(Math.random() * rainColors.length)];
+    const isTakeover = progress > 0.66;
+    let baseOpacity = isTakeover ? 0.4 + ((progress - 0.66) / 0.34 * 0.5) : 0.15 + (progress * 0.35);
+    let sizeMultiplier = isTakeover ? 1.0 + ((progress - 0.66) / 0.34 * 0.8) : 1.5 - (progress * 0.5);
+    let duration = isTakeover ? 6 - ((progress - 0.66) / 0.34 * 2) + Math.random() * 3 : 10 - (progress * 4) + Math.random() * 4;
+    let glowIntensity = isTakeover ? 30 + (Math.pow((progress - 0.66) / 0.34, 1.5) * 120) : (15 + (progress * 50)) * (2.0 - (progress * 1.2));
+    let baseSize = Math.random() < 0.3 ? 20 + Math.random() * 10 : Math.random() < 0.7 ? 40 + Math.random() * 20 : 40 + Math.random() * 50;
+    if (isTakeover) baseSize *= 1.5;
+    const finalSize = baseSize * sizeMultiplier;
+    drop.style.width = finalSize + 'px';
+    drop.style.height = finalSize + 'px';
+    drop.style.background = 'radial-gradient(circle at 40% 40%, ' + color1.replace('0.9', String(baseOpacity)) + ' 0%, ' + color2.replace('0.9', String(baseOpacity * 0.7)) + ' 30%, ' + color3.replace('0.9', String(baseOpacity * 0.4)) + ' 60%, transparent 100%)';
+    drop.style.boxShadow = '0 0 ' + glowIntensity + 'px ' + (glowIntensity * 0.4) + 'px ' + color1 + ', 0 0 ' + (glowIntensity * 2) + 'px ' + (glowIntensity * 0.8) + 'px ' + color2;
+    drop.style.animationDuration = duration + 's';
+    document.body.appendChild(drop);
+    setTimeout(function() { if (drop.parentNode) drop.parentNode.removeChild(drop); }, duration * 1000);
+}
+
+function runRainAnimation() {
+    if (!sessionStartTime || rainAnimationRunning) return;
+    rainAnimationRunning = true;
+    function animateRain() {
+        if (!sessionStartTime) { rainAnimationRunning = false; return; }
+        const elapsed = Date.now() - sessionStartTime;
+        if (elapsed >= BASE_RAIN_START && elapsed < SESSION_DURATION) {
+            const progress = Math.min((elapsed - BASE_RAIN_START) / (SESSION_DURATION - BASE_RAIN_START), 1.0);
+            const exponentialGrowth = Math.pow(progress, 2.5);
+            let dropProbability = 0.03 * (1 + exponentialGrowth * 30);
+            if (progress > 0.66) { dropProbability *= 1 + ((progress - 0.66) / 0.34 * 6); }
+            if (Math.random() < dropProbability) { createRaindrop(progress); }
+        }
+        if (elapsed < SESSION_DURATION) { requestAnimationFrame(animateRain); }
+        else { window.location.href = '/thankyou.html'; }
+    }
+    animateRain();
+}
+
+function startSessionTimer() {
+    sessionStartTime = Date.now();
+    runRainAnimation();
+    console.log('Session started - rainbow drops at 7min, redirect at 10min');
+}
+
 async function start() {
     document.getElementById('startBtn').disabled = true;
     showStatusOverlay();
@@ -1042,7 +1099,20 @@ async function start() {
         drawVideoOverlay = initVideoOverlay();
         if (!animationId) animate();
         log('Creating Daydream stream...', 'info');
-        const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ pipeline_id: PIPELINE_ID }) });
+        const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ 
+            pipeline_id: PIPELINE_ID,
+            pipeline_params: {
+                prompt: buildPrompt(),
+                delta: 0.8,
+                negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
+                ip_adapter: { type: 'faceid', scale: 0.5, enabled: true },
+                ip_adapter_style_image_url: styles[currentStyle].styleImage,
+                controlnets: [
+                    { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: 0.5, control_guidance_start: 0, control_guidance_end: 1 },
+                    { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
+                ]
+            }
+        }) });
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         const data = await createRes.json();
         streamId = data.id;
@@ -1059,6 +1129,7 @@ async function start() {
         document.getElementById('startBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
         startPolling();
+        startSessionTimer();
     } catch (e) {
         log(`ERROR: ${e.message}`, 'error');
         console.error(e);
@@ -1081,10 +1152,27 @@ async function connectWHIP(whipUrl) {
 
 async function setParams() {
     const prompt = buildPrompt();
-    const negPrompt = modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph";
-    const body = { model_id: "streamdiffusion", pipeline: "live-video-to-video", params: { model_id: "stabilityai/sd-turbo", prompt: prompt, negative_prompt: negPrompt, num_inference_steps: params.strength, seed: 42, controlnets: [{ conditioning_scale: params.pose, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" }, { conditioning_scale: params.edge, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" }, { conditioning_scale: params.depth, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }] } };
-    try { await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); }
-    catch (e) { log(`Params: ${e.message}`, 'info'); }
+    const ipScale = (100 - modeValue) / 100;  // Abstract (left) = high ip_adapter, Painting (right) = low
+    const body = { 
+        params: { 
+            model_id: MODEL_ID, 
+            prompt: prompt,
+            delta: 0.8, 
+            negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
+            ip_adapter: { type: 'faceid', scale: 0.5, enabled: true },
+            ip_adapter_style_image_url: styles[currentStyle].styleImage,
+            controlnets: [
+                { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: 0.5, control_guidance_start: 0, control_guidance_end: 1 },
+                { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
+            ]
+        } 
+    };
+    try { 
+        const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
+        if (res.ok) log('Params updated', 'success');
+        else log(`Patch failed: ${res.status}`, 'error');
+    }
+    catch (e) { log(`Params: ${e.message}`, 'error'); }
 }
 
 function startPolling() {
@@ -1162,6 +1250,7 @@ window.addEventListener('load', () => {
     }
     demoAnimate();
 });
+
 </script>
 </body>
 </html>
