@@ -9,19 +9,21 @@
         
         .container { display: flex; height: 100vh; }
         
-        .video-section { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-        video { width: 100%; height: 100%; object-fit: cover; }
+        .video-section { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; }
         #input { position: absolute; bottom: 20px; right: 20px; width: 200px; height: 150px; border: 2px solid #d4af37; border-radius: 8px; z-index: 10; }
         
         .controls { width: 320px; background: rgba(20,15,18,0.95); border-left: 2px solid #d4af37; padding: 20px; overflow-y: auto; }
         
-        h1 { color: #d4af37; font-size: 1.5rem; text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        h1 { color: #d4af37; font-size: 1.4rem; text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
         
         .section { margin-bottom: 25px; }
-        .section-title { color: #d4af37; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .section-title { color: #d4af37; font-size: 0.85rem; margin-bottom: 10px; }
         
         .btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #722f37, #4a1f24); border: 2px solid #d4af37; color: #d4af37; font-size: 1.1rem; cursor: pointer; border-radius: 8px; font-family: Georgia, serif; transition: all 0.3s; }
         .btn:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn.running { background: linear-gradient(135deg, #2a5a2a, #1a3a1a); }
         
         .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .style-btn { padding: 12px 8px; background: rgba(20,15,18,0.8); border: 1px solid rgba(212,175,55,0.5); color: #f4e4ba; cursor: pointer; border-radius: 6px; font-family: Georgia, serif; font-size: 0.85rem; transition: all 0.3s; }
@@ -38,24 +40,21 @@
         input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #722f37, #d4af37); -webkit-appearance: none; cursor: pointer; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #d4af37; cursor: pointer; }
         
-        #log { background: #000; padding: 10px; border-radius: 4px; height: 100px; overflow-y: auto; font-family: monospace; font-size: 11px; margin-top: 15px; }
+        #log { background: #000; padding: 10px; border-radius: 4px; height: 80px; overflow-y: auto; font-family: monospace; font-size: 10px; margin-top: 15px; }
         .log-success { color: #0f0; }
         .log-error { color: #f00; }
         .log-info { color: #88f; }
-        
-        #startBtn.running { background: linear-gradient(135deg, #2a5a2a, #1a3a1a); }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
     <div class="container">
         <div class="video-section">
-            <video id="output" autoplay playsinline></video>
+            <iframe id="output" allow="autoplay"></iframe>
             <video id="input" autoplay muted playsinline></video>
         </div>
         
         <div class="controls">
-            <h1>✦ Baroque Mirror ✦</h1>
+            <h1>✦ BAROQUE MIRROR ✦</h1>
             
             <div class="section">
                 <button class="btn" id="startBtn" onclick="start()">BEGIN SESSION</button>
@@ -77,19 +76,19 @@
                     <button class="style-btn" data-style="caravaggio" onclick="setStyle(this)">Caravaggio</button>
                     <button class="style-btn" data-style="vermeer" onclick="setStyle(this)">Vermeer</button>
                     <button class="style-btn" data-style="rembrandt" onclick="setStyle(this)">Rembrandt</button>
-                    <button class="style-btn" data-style="artemisia" onclick="setStyle(this)">Artemisia</button>
+                    <button class="style-btn" data-style="vangogh" onclick="setStyle(this)">Van Gogh</button>
                 </div>
             </div>
             
             <div class="section">
                 <div class="section-title">✦ TRANSFORM</div>
                 <div class="slider-box">
-                    <div class="slider-labels"><span>Abstract</span><span>Painting</span></div>
-                    <input type="range" id="styleSlider" min="0" max="100" value="70" onchange="updateParams()">
+                    <div class="slider-labels"><span>Abstract</span><span>Realistic</span></div>
+                    <input type="range" id="depthSlider" min="0" max="100" value="30" onchange="updateParams()">
                 </div>
                 <div class="slider-box">
-                    <div class="slider-labels"><span>Smooth</span><span>Depth</span></div>
-                    <input type="range" id="depthSlider" min="0" max="100" value="50" onchange="updateParams()">
+                    <div class="slider-labels"><span>Smooth</span><span>Edges</span></div>
+                    <input type="range" id="edgeSlider" min="0" max="100" value="20" onchange="updateParams()">
                 </div>
             </div>
             
@@ -100,39 +99,39 @@
 <script>
 const API_KEY = 'sk_wdNUnsKxxwH6v64BHMwHaWT39Mhwk5ZrqZzXDRmAXxxAqCgVGusff2Y8jxiBofuP';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_SDXL-turbo-faceid';
+const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
 
-const styles = {
-    baroque: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Peter_Paul_Rubens_-_Self-Portrait_-_WGA20380.jpg/440px-Peter_Paul_Rubens_-_Self-Portrait_-_WGA20380.jpg',
-    rococo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Fragonard_-_swing.jpg/400px-Fragonard_-_swing.jpg',
-    caravaggio: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Michelangelo_Caravaggio_065.jpg/440px-Michelangelo_Caravaggio_065.jpg',
-    vermeer: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/440px-1665_Girl_with_a_Pearl_Earring.jpg',
-    rembrandt: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg/440px-Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg',
-    artemisia: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Self-portrait_as_the_Allegory_of_Painting_%28La_Pittura%29_-_Artemisia_Gentileschi.jpg/440px-Self-portrait_as_the_Allegory_of_Painting_%28La_Pittura%29_-_Artemisia_Gentileschi.jpg'
+const stylePrompts = {
+    baroque: 'baroque oil painting, dramatic chiaroscuro, Rubens style, golden light, rich velvet textures',
+    rococo: 'rococo painting, pastel colors, Fragonard style, soft light, ornate gilded frame',
+    caravaggio: 'Caravaggio painting, dramatic tenebrism, deep shadows, single light source, renaissance',
+    vermeer: 'Vermeer painting, soft diffused light, Dutch golden age, pearl earring, domestic scene',
+    rembrandt: 'Rembrandt portrait, golden brown tones, impasto technique, dramatic lighting, Dutch master',
+    vangogh: 'Van Gogh painting, swirling brushstrokes, vibrant colors, post-impressionist, starry night style'
 };
 
 const prompts = [
-    "golden hour sunlight through stained glass",
-    "underwater coral reef with bioluminescence",
-    "nebula clouds in deep space",
-    "autumn leaves swirling in wind",
-    "crystal cave with rainbow reflections",
-    "northern lights over snow mountains",
-    "cherry blossoms falling like rain",
-    "fire and embers floating upward",
-    "tropical jungle with exotic birds",
-    "stormy sea with lightning"
+    "royal portrait with crown and ermine",
+    "mythological scene with angels",
+    "still life with flowers and fruit",
+    "dramatic storm clouds and lightning",
+    "golden sunlight through cathedral windows",
+    "mysterious figure in candlelight",
+    "lush garden with fountains",
+    "celestial beings in clouds",
+    "rich velvet drapes and gold",
+    "ancient ruins at sunset"
 ];
 
 let streamId = null;
 let currentStyle = 'baroque';
-let hls = null;
 
 function log(msg, type = 'info') {
     const el = document.getElementById('log');
     const time = new Date().toLocaleTimeString();
     el.innerHTML += `<div class="log-${type}">[${time}] ${msg}</div>`;
     el.scrollTop = el.scrollHeight;
+    console.log(msg);
 }
 
 function rollPrompt() {
@@ -149,6 +148,12 @@ function setStyle(btn) {
     if (streamId) updateParams();
 }
 
+function buildPrompt() {
+    const custom = document.getElementById('promptInput').value.trim();
+    const style = stylePrompts[currentStyle];
+    return custom ? `${custom}, ${style}` : style;
+}
+
 async function start() {
     const btn = document.getElementById('startBtn');
     btn.disabled = true;
@@ -160,27 +165,11 @@ async function start() {
         document.getElementById('input').srcObject = stream;
         log('Camera ready', 'success');
         
-        log('Creating AI stream...');
-        const styleStrength = document.getElementById('styleSlider').value / 100;
-        const depthScale = document.getElementById('depthSlider').value / 100;
-        const prompt = document.getElementById('promptInput').value || 'portrait';
-        
+        log('Creating stream...');
         const createRes = await fetch(`${API_BASE}/streams`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
-            body: JSON.stringify({
-                pipeline_id: PIPELINE_ID,
-                pipeline_params: {
-                    prompt: prompt,
-                    ip_adapter: { type: 'faceid', scale: styleStrength, enabled: true },
-                    ip_adapter_style_image_url: styles[currentStyle],
-                    controlnets: [
-                        { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: depthScale, control_guidance_start: 0, control_guidance_end: 1 },
-                        { enabled: true, model_id: 'xinsir/controlnet-canny-sdxl-1.0', preprocessor: 'canny', conditioning_scale: 0, control_guidance_start: 0, control_guidance_end: 1 },
-                        { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
-                    ]
-                }
-            })
+            body: JSON.stringify({ pipeline_id: PIPELINE_ID })
         });
         
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
@@ -188,37 +177,36 @@ async function start() {
         streamId = data.id;
         log(`Stream: ${streamId}`, 'success');
         
+        // Set iframe to WebRTC player
+        document.getElementById('output').src = `https://lvpr.tv/?v=${data.output_playback_id}&lowLatency=force`;
+        
         log('Connecting WebRTC...');
         const pc = new RTCPeerConnection();
         stream.getTracks().forEach(track => pc.addTrack(track, stream));
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
-        await new Promise(r => { if (pc.iceGatheringState === 'complete') r(); else pc.onicegatheringstatechange = () => { if (pc.iceGatheringState === 'complete') r(); }; setTimeout(r, 5000); });
         
-        const whipRes = await fetch(data.whip_url, { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: pc.localDescription.sdp });
+        // Wait for ICE
+        await new Promise(r => {
+            if (pc.iceGatheringState === 'complete') r();
+            else pc.onicegatheringstatechange = () => { if (pc.iceGatheringState === 'complete') r(); };
+            setTimeout(r, 3000);
+        });
+        
+        const whipRes = await fetch(data.whip_url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/sdp' },
+            body: pc.localDescription.sdp
+        });
         if (!whipRes.ok) throw new Error(`WHIP failed: ${whipRes.status}`);
         await pc.setRemoteDescription({ type: 'answer', sdp: await whipRes.text() });
-        log('Video connected', 'success');
+        log('Connected!', 'success');
         
-        btn.textContent = 'RUNNING';
+        btn.textContent = 'LIVE';
         btn.classList.add('running');
         
-        // Poll for output
-        const playbackId = data.output_playback_id;
-        let attempts = 0;
-        const poll = async () => {
-            attempts++;
-            const res = await fetch(`https://livepeer.studio/api/playback/${playbackId}`);
-            const pdata = await res.json();
-            if (pdata.meta?.live === 1) {
-                log('AI Live!', 'success');
-                const hlsUrl = pdata.meta.source.find(s => s.hrn === 'HLS (TS)')?.url;
-                if (hlsUrl) { connectHLS(hlsUrl); return; }
-            }
-            if (attempts % 10 === 0) log(`Waiting for AI... (${attempts})`);
-            if (attempts < 120) setTimeout(poll, 2000);
-        };
-        setTimeout(poll, 3000);
+        // Set initial params after short delay
+        setTimeout(updateParams, 2000);
         
     } catch (e) {
         log(`Error: ${e.message}`, 'error');
@@ -227,22 +215,14 @@ async function start() {
     }
 }
 
-function connectHLS(url) {
-    const video = document.getElementById('output');
-    if (Hls.isSupported()) {
-        hls = new Hls({ lowLatencyMode: true });
-        hls.loadSource(url);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => { video.muted = true; video.play(); }); });
-    } else { video.src = url; video.play(); }
-}
-
 async function updateParams() {
     if (!streamId) return;
     
-    const styleStrength = document.getElementById('styleSlider').value / 100;
-    const depthScale = document.getElementById('depthSlider').value / 100;
-    const prompt = document.getElementById('promptInput').value || 'portrait';
+    const depth = document.getElementById('depthSlider').value / 100;
+    const edge = document.getElementById('edgeSlider').value / 100;
+    const prompt = buildPrompt();
+    
+    log(`Updating: depth=${depth.toFixed(2)} edge=${edge.toFixed(2)}`);
     
     try {
         const res = await fetch(`${API_BASE}/streams/${streamId}`, {
@@ -250,19 +230,23 @@ async function updateParams() {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
             body: JSON.stringify({
                 params: {
+                    model_id: 'stabilityai/sd-turbo',
                     prompt: prompt,
-                    delta: 0.3,
-                    ip_adapter: { type: 'faceid', scale: styleStrength, enabled: true },
-                    ip_adapter_style_image_url: styles[currentStyle],
+                    negative_prompt: 'blurry, low quality, modern, photograph, realistic face',
+                    num_inference_steps: 50,
+                    seed: 42,
+                    t_index_list: [0, 8, 17],
                     controlnets: [
-                        { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: depthScale, control_guidance_start: 0, control_guidance_end: 1 },
-                        { enabled: true, model_id: 'xinsir/controlnet-canny-sdxl-1.0', preprocessor: 'canny', conditioning_scale: 0, control_guidance_start: 0, control_guidance_end: 1 },
-                        { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
+                        { enabled: true, model_id: 'thibaud/controlnet-sd21-openpose-diffusers', preprocessor: 'pose_tensorrt', conditioning_scale: 0, control_guidance_start: 0, control_guidance_end: 1 },
+                        { enabled: true, model_id: 'thibaud/controlnet-sd21-hed-diffusers', preprocessor: 'soft_edge', conditioning_scale: edge, control_guidance_start: 0, control_guidance_end: 1 },
+                        { enabled: true, model_id: 'thibaud/controlnet-sd21-canny-diffusers', preprocessor: 'canny', conditioning_scale: 0, control_guidance_start: 0, control_guidance_end: 1, preprocessor_params: { high_threshold: 200, low_threshold: 100 } },
+                        { enabled: true, model_id: 'thibaud/controlnet-sd21-depth-diffusers', preprocessor: 'depth_tensorrt', conditioning_scale: depth, control_guidance_start: 0, control_guidance_end: 1 },
+                        { enabled: true, model_id: 'thibaud/controlnet-sd21-color-diffusers', preprocessor: 'passthrough', conditioning_scale: 0.3, control_guidance_start: 0, control_guidance_end: 1 }
                     ]
                 }
             })
         });
-        if (res.ok) log(`Updated: style=${styleStrength.toFixed(2)} depth=${depthScale.toFixed(2)}`, 'success');
+        if (res.ok) log('Updated!', 'success');
         else log(`Update failed: ${res.status}`, 'error');
     } catch (e) { log(`Error: ${e.message}`, 'error'); }
 }
