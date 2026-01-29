@@ -37,7 +37,7 @@
         
         .section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
         .section:last-child { border-bottom: none; margin-bottom: 0; }
-        .section h3 { color: #d4af37; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; }
+        .section h3 { color: #d4af37; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; text-shadow: 0 0 10px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.5), 0 2px 4px rgba(0,0,0,0.8); }
         
         .session-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
         .session-btn { width: 100%; padding: 16px 20px; border: 2px solid #d946ef; background: linear-gradient(180deg, rgba(157,23,77,0.25), rgba(112,26,117,0.35)); color: #f0abfc; font-size: 1rem; cursor: pointer; border-radius: 8px; font-family: 'Cinzel', serif; letter-spacing: 3px; transition: all 0.3s ease; text-transform: uppercase; box-shadow: 0 0 20px rgba(217,70,239,0.2); }
@@ -47,27 +47,27 @@
         .session-btn.stop:hover { background: linear-gradient(180deg, #8b0000, #4a0000); color: #fff; box-shadow: 0 0 35px rgba(139,0,0,0.5); }
         
         .prompt-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
-        .prompt-section h3 { margin-bottom: 12px; color: #d4af37; font-size: 0.95rem; font-family: 'Cinzel', serif; letter-spacing: 2px; }
+        .prompt-section h3 { margin-bottom: 12px; color: #d4af37; font-size: 0.95rem; font-family: 'Cinzel', serif; letter-spacing: 2px; text-shadow: 0 0 10px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.5), 0 2px 4px rgba(0,0,0,0.8); }
         .prompt-container { display: flex; gap: 8px; align-items: stretch; }
         .prompt-btn { width: 44px; height: 44px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.2rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .prompt-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.3); transform: scale(1.05); }
-        .prompt-btn.apply { background: linear-gradient(135deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9)); font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 1px; }
+        .prompt-btn.apply { background: linear-gradient(135deg, rgba(114,47,55,0.8), rgba(74,31,36,0.9)); font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 1px; text-shadow: 0 0 8px rgba(212,175,55,0.6), 0 2px 3px rgba(0,0,0,0.8); }
         .prompt-btn.apply:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; }
         .prompt-input { flex: 1; padding: 12px 14px; border: 1px solid rgba(212,175,55,0.4); background: rgba(0,0,0,0.5); color: #f4e4ba; border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; resize: none; min-height: 44px; transition: all 0.3s ease; }
         .prompt-input:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.2); }
-        .prompt-input::placeholder { color: rgba(244,228,186,0.4); font-style: italic; }
+        .prompt-input::placeholder { color: rgba(244,228,186,0.6); font-style: italic; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
         
         .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .style-btn { padding: 10px 12px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #f4e4ba; cursor: pointer; border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; transition: all 0.3s ease; }
+        .style-btn { padding: 10px 12px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #f4e4ba; cursor: pointer; border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; transition: all 0.3s ease; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .style-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
         .style-btn.active { background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(4,120,87,0.35)); color: #10b981; font-weight: 700; border-color: #10b981; box-shadow: 0 0 20px rgba(16,185,129,0.4); }
         
         .mode-box { margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(212,175,55,0.15); }
-        .mode-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(244,228,186,0.7); margin-bottom: 10px; }
-        .mode-value { text-align: center; color: #d4af37; font-size: 0.9rem; margin-top: 8px; font-weight: 600; }
+        .mode-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(244,228,186,0.9); margin-bottom: 10px; text-shadow: 0 0 8px rgba(244,228,186,0.5), 0 2px 4px rgba(0,0,0,0.8); }
+        .mode-value { text-align: center; color: #d4af37; font-size: 0.9rem; margin-top: 8px; font-weight: 600; text-shadow: 0 0 10px rgba(212,175,55,0.7), 0 2px 4px rgba(0,0,0,0.8); }
         
         .slider-row { margin-bottom: 14px; }
-        .slider-row label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; color: rgba(244,228,186,0.9); }
+        .slider-row label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; color: rgba(244,228,186,1); text-shadow: 0 0 8px rgba(244,228,186,0.6), 0 2px 4px rgba(0,0,0,0.8); }
         .slider-row .val { color: #d4af37; font-weight: 700; min-width: 40px; text-align: right; }
         input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #722f37, #d4af37); -webkit-appearance: none; cursor: pointer; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37); cursor: pointer; box-shadow: 0 0 10px rgba(212,175,55,0.6); transition: transform 0.2s; }
