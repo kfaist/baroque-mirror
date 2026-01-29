@@ -136,9 +136,7 @@
             background: #0a0608;
         }
         
-        .capture-card .image-container:active {
-            cursor: grabbing;
-        }
+        .capture-card .image-container:active { cursor: grabbing; }
         
         .capture-card.is-sample .image-container::after {
             content: '';
@@ -188,15 +186,9 @@
         }
         
         .capture-card:hover .drag-hint,
-        .capture-card.selected .drag-hint {
-            opacity: 1;
-        }
+        .capture-card.selected .drag-hint { opacity: 1; }
+        .capture-card.dragging .drag-hint { opacity: 0; }
         
-        .capture-card.dragging .drag-hint {
-            opacity: 0;
-        }
-        
-        /* Size indicator badge */
         .size-badge {
             position: absolute;
             top: 8px;
@@ -215,9 +207,7 @@
             text-transform: uppercase;
         }
         
-        .capture-card.has-size .size-badge {
-            opacity: 1;
-        }
+        .capture-card.has-size .size-badge { opacity: 1; }
         
         .capture-label {
             padding: 10px;
@@ -226,34 +216,6 @@
             font-size: 0.9rem;
             border-top: 1px solid rgba(212,175,55,0.2);
         }
-</style>
-</head>
-<body>
-    <div class="content">
-        <div class="header">
-            <div class="header-top">
-                <span>Est. MMXXIV</span>
-                <span>•</span>
-                <span>Giclée Prints</span>
-            </div>
-            <h1>Shop Prints</h1>
-            <div class="header-sub">Museum-quality prints of your AI portrait</div>
-            <a href="/" class="back-link">← Back to Mirror</a>
-        </div>
-        
-        <div class="main">
-            <div id="capturesContainer"></div>
-            
-            <div id="selectionReminder" class="selection-reminder">
-                ↑ Select a portrait above to purchase
-            </div>
-            
-            <div class="products-section">
-                <h2 class="section-title">⚜ Available Print Options ⚜</h2>
-                <div id="categoriesContainer" class="categories-container"></div>
-            </div>
-        </div>
-    </div>
         
         /* Category Grid */
         .categories-container {
@@ -319,8 +281,6 @@
         .category-box[data-category="metal"] { --cat-color: #EF4444; --cat-rgb: 239,68,68; }
         .category-box[data-category="museum"] { --cat-color: #D4AF37; --cat-rgb: 212,175,55; }
         
-        .category-box .category-name { color: var(--cat-color, #d4af37); }
-        
         .category-name {
             color: var(--cat-color, #d4af37);
             font-family: 'Cinzel', serif;
@@ -363,6 +323,8 @@
             animation: slideDown 0.25s ease;
         }
         
+        .dropdown-panel.open { display: block; }
+        
         /* Panel colors matching category colors */
         .dropdown-panel[data-category="stationery"] { --panel-color: #FF6B9D; --panel-rgb: 255,107,157; }
         .dropdown-panel[data-category="prints"] { --panel-color: #4ECDC4; --panel-rgb: 78,205,196; }
@@ -372,10 +334,6 @@
         .dropdown-panel[data-category="acrylic"] { --panel-color: #06B6D4; --panel-rgb: 6,182,212; }
         .dropdown-panel[data-category="metal"] { --panel-color: #EF4444; --panel-rgb: 239,68,68; }
         .dropdown-panel[data-category="museum"] { --panel-color: #D4AF37; --panel-rgb: 212,175,55; }
-        
-        .dropdown-panel.open {
-            display: block;
-        }
         
         @keyframes slideDown {
             from { opacity: 0; max-height: 0; }
@@ -401,7 +359,7 @@
             font-family: 'Cinzel', serif;
             font-size: 1.2rem;
             letter-spacing: 3px;
-            text-shadow: 0 0 10px rgba(212,175,55,0.4);
+            text-shadow: 0 0 10px rgba(var(--panel-rgb, 212,175,55), 0.4);
         }
         
         .dropdown-desc {
@@ -474,7 +432,6 @@
             font-family: 'Cinzel', serif;
         }
         
-        /* Selection reminder */
         .selection-reminder {
             text-align: center;
             padding: 15px;
@@ -485,7 +442,6 @@
         
         .selection-reminder.show { display: block; }
         
-        /* Confirm purchase button */
         .confirm-section {
             text-align: center;
             padding: 20px;
@@ -493,9 +449,7 @@
             display: none;
         }
         
-        .confirm-section.show {
-            display: block;
-        }
+        .confirm-section.show { display: block; }
         
         .confirm-btn {
             background: linear-gradient(180deg, #d4af37 0%, #a8872a 100%);
@@ -529,7 +483,6 @@
             font-size: 0.95rem;
         }
         
-        /* Processing state */
         .processing {
             pointer-events: none;
             opacity: 0.7;
@@ -540,7 +493,32 @@
             color: #d4af37;
         }
     </style>
-
+</head>
+<body>
+    <div class="content">
+        <div class="header">
+            <div class="header-top">
+                <span>Est. MMXXIV</span>
+                <span>•</span>
+                <span>Giclée Prints</span>
+            </div>
+            <h1>Shop Prints</h1>
+            <div class="header-sub">Museum-quality prints of your AI portrait</div>
+            <a href="/" class="back-link">← Back to Mirror</a>
+        </div>
+        
+        <div class="main">
+            <div id="capturesContainer"></div>
+            
+            <div id="selectionReminder" class="selection-reminder">
+                ↑ Select a portrait above to purchase
+            </div>
+            
+            <div class="products-section">
+                <h2 class="section-title">⚜ Available Print Options ⚜</h2>
+                <div id="categoriesContainer" class="categories-container"></div>
+            </div>
+            
             <div id="confirmSection" class="confirm-section">
                 <button class="confirm-btn" onclick="confirmPurchase()">Confirm & Checkout</button>
                 <div class="confirm-details" id="confirmDetails"></div>
@@ -558,63 +536,32 @@ let activeCategory = null;
 let selectedProduct = null;
 let selectedAspectRatio = null;
 
-// Map product sizes to aspect ratios
 const SIZE_ASPECTS = {
-    // Standard print sizes
-    '4x6': 6/4,
-    '5x7': 7/5,
-    '8x10': 10/8,
-    '8x8': 1,
-    '10x8': 10/8,
-    '11x14': 14/11,
-    '12x12': 1,
-    '12x16': 16/12,
-    '16x16': 1,
-    '16x20': 20/16,
-    '18x24': 24/18,
-    '20x16': 20/16,
-    '24x24': 1,
-    '24x36': 36/24,
-    '30x40': 40/30,
-    // A-sizes
-    'a6': 148/105,
-    'a5': 210/148,
-    'a4': 297/210,
-    'a3': 420/297,
+    '4x6': 6/4, '5x7': 7/5, '8x10': 10/8, '8x8': 1, '10x8': 10/8,
+    '11x14': 14/11, '12x12': 1, '12x16': 16/12, '16x16': 1, '16x20': 20/16,
+    '18x24': 24/18, '20x16': 20/16, '24x24': 1, '24x36': 36/24, '30x40': 40/30,
+    'a6': 148/105, 'a5': 210/148, 'a4': 297/210, 'a3': 420/297,
 };
 
 function parseAspectFromProduct(product) {
-    // Try to extract dimensions from product name/subtitle
     const text = (product.subtitle || product.name || '').toLowerCase();
-    
-    // Match patterns like "8×10", "8x10", "8 x 10", etc.
     const match = text.match(/(\d+)\s*[×x]\s*(\d+)/i);
     if (match) {
         const w = parseInt(match[1]);
         const h = parseInt(match[2]);
-        return h / w; // height/width for CSS aspect-ratio
+        return h / w;
     }
-    
-    // Check for A-sizes
     const aMatch = text.match(/\ba(\d)\b/i);
     if (aMatch) {
         const key = 'a' + aMatch[1];
         if (SIZE_ASPECTS[key]) return SIZE_ASPECTS[key];
     }
-    
-    // Default landscape ratio
     return 3/2;
 }
 
 const CATEGORY_ICONS = {
-    'stationery': '✉',
-    'prints': '🖼',
-    'premium-paper': '📜',
-    'canvas': '🎨',
-    'framed': '🖽',
-    'acrylic': '💎',
-    'metal': '⚙',
-    'museum': '🏛'
+    'stationery': '✉', 'prints': '🖼', 'premium-paper': '📜', 'canvas': '🎨',
+    'framed': '🖽', 'acrylic': '💎', 'metal': '⚙', 'museum': '🏛'
 };
 
 const CATEGORY_INFO = {
@@ -670,10 +617,7 @@ function renderCategories() {
                     ${cat.products.map(p => `
                         <div class="product-option ${!selectedCapture ? 'disabled' : ''}" 
                              data-product-id="${p.id}"
-                             data-product-name="${p.subtitle || p.name}"
-                             data-product-price="${p.price}"
-                             onclick="selectSize('${p.id}', this)" 
-                             title="${p.description || ''}">
+                             onclick="selectSize('${p.id}', this)">
                             <div class="product-details">
                                 <div class="product-name">${p.subtitle || p.name}</div>
                                 <div class="product-subtitle">${p.description || ''}</div>
@@ -691,7 +635,7 @@ function renderCategories() {
 
 function toggleCategory(categoryId) {
     const boxes = document.querySelectorAll('.category-box');
-    const clickedBox = document.querySelector(`[data-category="${categoryId}"]`);
+    const clickedBox = document.querySelector(`[data-category="${categoryId}"].category-box`);
     const dropdown = document.getElementById(`dropdown-${categoryId}`);
     
     document.querySelectorAll('.dropdown-panel').forEach(d => d.classList.remove('open'));
@@ -705,21 +649,15 @@ function toggleCategory(categoryId) {
     activeCategory = categoryId;
     clickedBox.classList.add('active');
     dropdown.classList.add('open');
-    
     clickedBox.after(dropdown);
     
     const options = dropdown.querySelectorAll('.product-option');
-    options.forEach(opt => {
-        opt.classList.toggle('disabled', !selectedCapture);
-    });
+    options.forEach(opt => opt.classList.toggle('disabled', !selectedCapture));
     
     document.getElementById('selectionReminder').classList.toggle('show', !selectedCapture);
     
-    setTimeout(() => {
-        dropdown.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 100);
+    setTimeout(() => dropdown.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
 }
-
 
 function selectSize(productId, element) {
     if (!selectedCapture) {
@@ -727,31 +665,21 @@ function selectSize(productId, element) {
         return;
     }
     
-    // Find product in catalog
     let product = null;
     for (const cat of catalog) {
         const found = cat.products.find(p => p.id === productId);
-        if (found) {
-            product = found;
-            break;
-        }
+        if (found) { product = found; break; }
     }
-    
     if (!product) return;
     
     selectedProduct = product;
     
-    // Update UI - highlight selected size
-    document.querySelectorAll('.product-option').forEach(opt => {
-        opt.classList.remove('selected-size');
-    });
+    document.querySelectorAll('.product-option').forEach(opt => opt.classList.remove('selected-size'));
     element.classList.add('selected-size');
     
-    // Get aspect ratio for this product
     const aspectRatio = parseAspectFromProduct(product);
     selectedAspectRatio = aspectRatio;
     
-    // Update the selected capture card's frame
     const card = document.querySelector('.capture-card.selected');
     if (card) {
         const container = card.querySelector('.image-container');
@@ -759,34 +687,18 @@ function selectSize(productId, element) {
         const sizeBadge = card.querySelector('.size-badge');
         const dragHint = card.querySelector('.drag-hint');
         
-        // Update aspect ratio
         container.style.aspectRatio = `1 / ${aspectRatio}`;
-        
-        // Add size class
         card.classList.add('has-size');
         
-        // Update size badge
         const sizeText = (product.subtitle || product.name).match(/[\d.]+\s*[×x]\s*[\d.]+[""]?/i);
         sizeBadge.textContent = sizeText ? sizeText[0] : product.subtitle || product.name;
-        
-        // Update drag hint
         dragHint.textContent = '⇄ DRAG TO REPOSITION';
         
-        // Re-center image for new aspect ratio
-        setTimeout(() => {
-            centerImageForAspect(container, img, aspectRatio);
-        }, 50);
+        setTimeout(() => centerImageForAspect(container, img, aspectRatio), 50);
     }
     
-    // Show confirm section
     updateConfirmSection();
-    
-    // Scroll card into view
-    if (card) {
-        setTimeout(() => {
-            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
-    }
+    if (card) setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
 }
 
 function updateConfirmSection() {
@@ -817,12 +729,10 @@ async function confirmPurchase() {
     btn.textContent = 'Processing...';
     
     try {
-        // Get crop position from the selected card
         const card = document.querySelector('.capture-card.selected');
         const container = card.querySelector('.image-container');
         const img = container.querySelector('img');
         
-        // Calculate crop data from transform
         const transform = img.style.transform;
         const match = transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
         const offsetX = match ? parseFloat(match[1]) : 0;
@@ -836,8 +746,7 @@ async function confirmPurchase() {
                 imageData: selectedCapture.image,
                 returnUrl: window.location.href,
                 cropData: {
-                    offsetX,
-                    offsetY,
+                    offsetX, offsetY,
                     aspectRatio: selectedAspectRatio,
                     containerWidth: container.offsetWidth,
                     containerHeight: container.offsetHeight
@@ -865,14 +774,8 @@ function loadCaptures() {
     const container = document.getElementById('capturesContainer');
     let captureArray = [];
     
-    const samplePaths = [
-        '/samples/sample1.png',
-        '/samples/sample2.png',
-        '/samples/sample3.png',
-        '/samples/sample4.png',
-        '/samples/sample5.png',
-        '/samples/sample6.png'
-    ];
+    const samplePaths = ['/samples/sample1.png', '/samples/sample2.png', '/samples/sample3.png',
+                         '/samples/sample4.png', '/samples/sample5.png', '/samples/sample6.png'];
     
     try {
         const newStored = localStorage.getItem('baroqueCaptureArray');
@@ -880,14 +783,9 @@ function loadCaptures() {
             captureArray = JSON.parse(newStored);
         } else {
             const oldStored = localStorage.getItem('baroqueCaptures');
-            if (oldStored) {
-                const oldCaptures = JSON.parse(oldStored);
-                captureArray = Object.values(oldCaptures);
-            }
+            if (oldStored) captureArray = Object.values(JSON.parse(oldStored));
         }
-    } catch (e) {
-        console.error('Error loading captures:', e);
-    }
+    } catch (e) { console.error('Error loading captures:', e); }
     
     if (captureArray.length === 0) {
         container.innerHTML = `
@@ -914,15 +812,10 @@ function loadCaptures() {
         card.dataset.slot = idx + 1;
         
         const isSample = samplePaths.includes(capture.image);
-        if (isSample) {
-            card.classList.add('is-sample');
-        }
+        if (isSample) card.classList.add('is-sample');
         
         card.onclick = (e) => {
-            // Don't trigger if clicking on the image container (drag area)
-            if (!e.target.closest('.image-container')) {
-                selectCapture(idx + 1, capture);
-            }
+            if (!e.target.closest('.image-container')) selectCapture(idx + 1, capture);
         };
         
         card.innerHTML = `
@@ -945,20 +838,15 @@ function loadCaptures() {
     setTimeout(initDraggableImages, 100);
 }
 
-
 function selectCapture(slot, capture) {
     selectedSlot = slot;
     selectedCapture = capture;
-    
-    // Reset selected product when changing capture
     selectedProduct = null;
     selectedAspectRatio = null;
     
     document.querySelectorAll('.capture-card').forEach(c => {
         const isSelected = parseInt(c.dataset.slot) === slot;
         c.classList.toggle('selected', isSelected);
-        
-        // Reset non-selected cards to default aspect
         if (!isSelected) {
             const container = c.querySelector('.image-container');
             container.style.aspectRatio = '3 / 2';
@@ -966,7 +854,6 @@ function selectCapture(slot, capture) {
         }
     });
     
-    // Clear size selection
     document.querySelectorAll('.product-option').forEach(p => {
         p.classList.remove('disabled');
         p.classList.remove('selected-size');
@@ -989,7 +876,6 @@ function centerImageForAspect(container, img, aspectRatio) {
     let scaledWidth, scaledHeight, offsetX, offsetY;
     
     if (imgRatio > containerRatio) {
-        // Image is wider - fit height, center horizontally
         scaledHeight = containerRect.height;
         scaledWidth = (imgWidth / imgHeight) * scaledHeight;
         offsetX = -(scaledWidth - containerRect.width) / 2;
@@ -997,7 +883,6 @@ function centerImageForAspect(container, img, aspectRatio) {
         img.style.height = '100%';
         img.style.width = 'auto';
     } else {
-        // Image is taller - fit width, center vertically
         scaledWidth = containerRect.width;
         scaledHeight = (imgHeight / imgWidth) * scaledWidth;
         offsetX = 0;
@@ -1016,18 +901,11 @@ function initDraggableImages() {
         let isDragging = false;
         let startX, startY, imgStartX, imgStartY;
         
-        img.onload = function() {
-            centerImageForAspect(container, img, 3/2);
-        };
-        
-        if (img.complete) {
-            centerImageForAspect(container, img, 3/2);
-        }
+        img.onload = function() { centerImageForAspect(container, img, 3/2); };
+        if (img.complete) centerImageForAspect(container, img, 3/2);
         
         container.addEventListener('mousedown', (e) => {
             e.preventDefault();
-            
-            // Select this capture if not already selected
             const slot = parseInt(container.dataset.slot);
             if (selectedSlot !== slot) {
                 const captureArray = JSON.parse(localStorage.getItem('baroqueCaptureArray') || '[]');
@@ -1044,33 +922,19 @@ function initDraggableImages() {
             
             const transform = img.style.transform;
             const match = transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
-            if (match) {
-                imgStartX = parseFloat(match[1]);
-                imgStartY = parseFloat(match[2]);
-            } else {
-                imgStartX = 0;
-                imgStartY = 0;
-            }
+            imgStartX = match ? parseFloat(match[1]) : 0;
+            imgStartY = match ? parseFloat(match[2]) : 0;
         });
         
         document.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
             
-            const deltaX = e.clientX - startX;
-            const deltaY = e.clientY - startY;
-            
-            let newX = imgStartX + deltaX;
-            let newY = imgStartY + deltaY;
+            let newX = imgStartX + (e.clientX - startX);
+            let newY = imgStartY + (e.clientY - startY);
             
             const containerRect = container.getBoundingClientRect();
-            
-            const maxX = 0;
-            const minX = containerRect.width - img.offsetWidth;
-            const maxY = 0;
-            const minY = containerRect.height - img.offsetHeight;
-            
-            newX = Math.min(maxX, Math.max(minX, newX));
-            newY = Math.min(maxY, Math.max(minY, newY));
+            newX = Math.min(0, Math.max(containerRect.width - img.offsetWidth, newX));
+            newY = Math.min(0, Math.max(containerRect.height - img.offsetHeight, newY));
             
             img.style.transform = `translate(${newX}px, ${newY}px)`;
         });
@@ -1082,10 +946,8 @@ function initDraggableImages() {
             }
         });
         
-        // Touch support
         container.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
-            
             const slot = parseInt(container.dataset.slot);
             if (selectedSlot !== slot) {
                 const captureArray = JSON.parse(localStorage.getItem('baroqueCaptureArray') || '[]');
@@ -1102,34 +964,20 @@ function initDraggableImages() {
             
             const transform = img.style.transform;
             const match = transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/);
-            if (match) {
-                imgStartX = parseFloat(match[1]);
-                imgStartY = parseFloat(match[2]);
-            } else {
-                imgStartX = 0;
-                imgStartY = 0;
-            }
+            imgStartX = match ? parseFloat(match[1]) : 0;
+            imgStartY = match ? parseFloat(match[2]) : 0;
         }, { passive: true });
         
         container.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            
             const touch = e.touches[0];
-            const deltaX = touch.clientX - startX;
-            const deltaY = touch.clientY - startY;
             
-            let newX = imgStartX + deltaX;
-            let newY = imgStartY + deltaY;
+            let newX = imgStartX + (touch.clientX - startX);
+            let newY = imgStartY + (touch.clientY - startY);
             
             const containerRect = container.getBoundingClientRect();
-            
-            const maxX = 0;
-            const minX = containerRect.width - img.offsetWidth;
-            const maxY = 0;
-            const minY = containerRect.height - img.offsetHeight;
-            
-            newX = Math.min(maxX, Math.max(minX, newX));
-            newY = Math.min(maxY, Math.max(minY, newY));
+            newX = Math.min(0, Math.max(containerRect.width - img.offsetWidth, newX));
+            newY = Math.min(0, Math.max(containerRect.height - img.offsetHeight, newY));
             
             img.style.transform = `translate(${newX}px, ${newY}px)`;
         }, { passive: true });
@@ -1140,7 +988,6 @@ function initDraggableImages() {
         });
     });
 }
-
 
 function renderFallbackCategories() {
     catalog = [
