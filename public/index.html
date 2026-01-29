@@ -37,7 +37,7 @@
         
         .section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
         .section:last-child { border-bottom: none; margin-bottom: 0; }
-        .section h3 { color: #b388ff; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; font-weight: 700; text-shadow: 0 0 10px rgba(179,136,255,0.9), 0 0 20px rgba(179,136,255,0.7), 0 0 40px rgba(179,136,255,0.5), 0 2px 4px rgba(0,0,0,0.8); }
+        .section h3 { color: #d4af37; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; font-weight: 700; text-shadow: 0 0 10px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.5), 0 2px 4px rgba(0,0,0,0.8); }
         
         .session-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
         .session-btn { width: 100%; padding: 16px 20px; border: 3px solid #d946ef; background: linear-gradient(180deg, rgba(217,70,239,0.35), rgba(162,28,175,0.45)); color: #f0abfc; font-size: 1rem; cursor: pointer; border-radius: 8px; font-family: 'Cinzel', serif; letter-spacing: 3px; transition: all 0.3s ease; text-transform: uppercase; box-shadow: 0 0 20px rgba(217,70,239,0.2); }
@@ -314,11 +314,6 @@
                         <button class="style-btn" data-style="rembrandt">Rembrandt</button>
                         <button class="style-btn active" data-style="artemisia">Artemisia</button>
                     </div>
-                    <div class="mode-box">
-                        <div class="mode-labels"><span>🎨 Opulent Oil Painting</span><span>French Revolution Caricatures 📜</span></div>
-                        <input type="range" id="modeSlider" min="0" max="100" value="0">
-                        <div class="mode-value" id="modeValue">Pure Classical</div>
-                    </div>
                 </div>
                 
                 
@@ -343,6 +338,11 @@
                     <div class="slider-row">
                         <label>Depth <span class="val" id="depthVal">0.24</span></label>
                         <input type="range" id="depthSlider" min="0" max="100" value="24">
+                    </div>
+                    <div class="mode-box">
+                        <div class="mode-labels"><span>🎨 Opulent Oil Painting</span><span>French Revolution Caricatures 📜</span></div>
+                        <input type="range" id="modeSlider" min="0" max="100" value="0">
+                        <div class="mode-value" id="modeValue">Pure Classical</div>
                     </div>
                 </div>
 
@@ -1555,6 +1555,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
