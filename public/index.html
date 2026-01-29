@@ -250,6 +250,19 @@
             .header-flourish { height: 30px; }
             .header-title-row { gap: 10px; }
         }
+        /* Source Choice Modal */
+        .source-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .source-modal.active { display: flex; }
+        .source-modal-content { background: rgba(15,10,12,0.95); border: 2px solid rgba(212,175,55,0.6); border-radius: 16px; padding: 40px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 0 60px rgba(212,175,55,0.3); }
+        .source-modal h2 { color: #d4af37; font-family: "Cinzel", serif; font-size: 1.5rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(212,175,55,0.5); }
+        .source-modal p { color: #f4e4ba; font-family: "Cormorant Garamond", serif; font-size: 1rem; margin-bottom: 30px; opacity: 0.8; }
+        .source-modal-btns { display: flex; flex-direction: column; gap: 15px; }
+        .source-modal-btn { padding: 18px 24px; border: 2px solid; border-radius: 10px; font-family: "Cinzel", serif; font-size: 1rem; font-weight: 700; letter-spacing: 2px; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; }
+        .source-modal-btn.webcam { border-color: #d946ef; background: linear-gradient(180deg, rgba(157,23,77,0.25), rgba(112,26,117,0.35)); color: #f0abfc; }
+        .source-modal-btn.webcam:hover { background: linear-gradient(180deg, #d946ef, #a21caf); color: #0a0608; box-shadow: 0 0 30px rgba(217,70,239,0.5); }
+        .source-modal-btn.upload { border-color: #06b6d4; background: linear-gradient(180deg, rgba(6,182,212,0.15), rgba(8,145,178,0.25)); color: #22d3ee; }
+        .source-modal-btn.upload:hover { background: linear-gradient(180deg, #06b6d4, #0891b2); color: #0a0608; box-shadow: 0 0 30px rgba(6,182,212,0.5); }
+        .source-modal-btn .btn-icon { font-size: 1.5rem; display: block; margin-bottom: 5px; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -1187,7 +1200,7 @@ document.getElementById('edgeSlider').oninput = function() { params.edge = parse
 document.getElementById('depthSlider').oninput = function() { params.depth = parseInt(this.value) / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
 document.getElementById('bgTransSlider').oninput = function() { params.bgTrans = parseInt(this.value); document.getElementById('bgTransVal').textContent = params.bgTrans + '%'; if (streamId) setParams(); };
 
-document.getElementById('startBtn').onclick = start;
+document.getElementById('startBtn').onclick = showSourceModal;
 document.getElementById('stopBtn').onclick = stop;
 document.getElementById('fullscreenBtn').onclick = toggleFullscreen;
 
@@ -1291,6 +1304,48 @@ function startSessionTimer() {
     console.log('Session started - rainbow drops at 7min, redirect at 10min');
 }
 
+
+// Source choice modal functions
+function showSourceModal() {
+    document.getElementById("sourceModal").classList.add("active");
+}
+
+function hideSourceModal() {
+    document.getElementById("sourceModal").classList.remove("active");
+}
+
+async function startWithWebcam() {
+    hideSourceModal();
+    useWebcamSource = true;
+    await start();
+}
+
+async function startWithPhotos(event) {
+    hideSourceModal();
+    useWebcamSource = false;
+    const files = event.target.files;
+    if (files.length > 0) {
+        // Load first image to canvas
+        const file = files[0];
+        const img = new Image();
+        img.onload = async function() {
+            const canvas = document.getElementById("uploadedImageCanvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            canvas.style.display = "block";
+            document.getElementById("local").style.display = "none";
+            document.getElementById("webcamBtn").classList.remove("active");
+            document.getElementById("uploadBtn").classList.add("active");
+            await start();
+        };
+        img.src = URL.createObjectURL(file);
+    }
+}
+
+let useWebcamSource = true;
+
 async function start() {
     document.getElementById('startBtn').disabled = true;
     // Set random sample background during loading
@@ -1300,10 +1355,10 @@ async function start() {
 
     showStatusOverlay();
     try {
-        log('Getting camera...', 'info');
+        log('Setting up input source...', 'info'); if (useWebcamSource) {
         localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } }, audio: true });
         document.getElementById('local').srcObject = localStream;
-        log('Camera ready', 'success');
+        log('Camera ready', 'success'); } else { log('Using uploaded photo', 'success'); const canvas = document.getElementById('uploadedImageCanvas'); localStream = canvas.captureStream(30); }
         initAudio(localStream);
         initMotionDetection();
         drawBackground = initBackground();
@@ -1468,5 +1523,23 @@ window.addEventListener('load', () => {
 });
 
 </script>
+    <!-- Source Choice Modal -->
+    <div class="source-modal" id="sourceModal">
+        <div class="source-modal-content">
+            <h2>⚜ Choose Your Source ⚜</h2>
+            <p>How would you like to create your portrait?</p>
+            <div class="source-modal-btns">
+                <button class="source-modal-btn webcam" onclick="startWithWebcam()">
+                    <span class="btn-icon">📷</span>
+                    Live Webcam
+                </button>
+                <label class="source-modal-btn upload">
+                    <span class="btn-icon">📁</span>
+                    Upload Photo(s)
+                    <input type="file" id="modalImageUpload" accept="image/*" multiple onchange="startWithPhotos(event)" style="display:none;">
+                </label>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
