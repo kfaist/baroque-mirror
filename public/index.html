@@ -1103,12 +1103,13 @@ async function start() {
             pipeline_id: PIPELINE_ID,
             pipeline_params: {
                 prompt: buildPrompt(),
-                delta: 0.7,
+                delta: 0.8,
                 negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
                 ip_adapter: { type: 'faceid', scale: 0.5, enabled: true },
                 ip_adapter_style_image_url: styles[currentStyle].styleImage,
                 controlnets: [
-                    { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: params.depth, control_guidance_start: 0, control_guidance_end: 1 }
+                    { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: 0.5, control_guidance_start: 0, control_guidance_end: 1 },
+                    { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
                 ]
             }
         }) });
@@ -1156,12 +1157,13 @@ async function setParams() {
         params: { 
             model_id: MODEL_ID, 
             prompt: prompt,
-            delta: 0.7, 
+            delta: 0.8, 
             negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
-            ip_adapter: { type: 'faceid', scale: ipScale, enabled: true },
+            ip_adapter: { type: 'faceid', scale: 0.5, enabled: true },
             ip_adapter_style_image_url: styles[currentStyle].styleImage,
             controlnets: [
-                { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: params.depth, control_guidance_start: 0, control_guidance_end: 1 }
+                { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: 0.5, control_guidance_start: 0, control_guidance_end: 1 },
+                { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
             ]
         } 
     };
