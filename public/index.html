@@ -211,33 +211,48 @@
         
         @media (max-width: 768px) {
             body { font-size: 1.4rem; font-weight: 600; }
-            .header { padding: 10px; }
-            .header-top { font-size: 0.9rem; }
-            .header h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: 2px; }
-            .header-sub, .header-credit { font-size: 1.1rem; font-weight: 500; }
+            .header { padding: 12px 10px; }
+            .header-top { font-size: 0.6rem; letter-spacing: 2px; gap: 15px; flex-wrap: wrap; }
+            .header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: 2px; }
+            .header-sub, .header-credit { font-size: 0.85rem; font-weight: 500; }
+            .header-flourish { height: 25px; }
+            .header-title-row { gap: 8px; }
             .controls { padding: 16px; }
             .section { margin-bottom: 16px; padding-bottom: 16px; }
-            .section h3 { font-size: 2rem; font-weight: 700; margin-bottom: 16px; }
-            .session-btn { padding: 20px 24px; font-size: 1.5rem; font-weight: 700; letter-spacing: 3px; min-height: 60px; }
-            .style-btn { padding: 20px 14px !important; font-size: 1rem !important; min-height: 65px; }
-            .slider-row { margin-bottom: 20px; }
-            .slider-row label { font-size: 1.6rem; font-weight: 700; margin-bottom: 14px; }
-            input[type="range"] { height: 12px; }
-            input[type="range"]::-webkit-slider-thumb { width: 32px; height: 32px; }
-            .shimmer-block { padding: 24px 20px; }
+            .section h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+            .session-btn { padding: 16px 20px; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; min-height: 50px; }
+            .style-btn { padding: 14px 10px !important; font-size: 0.85rem !important; min-height: 50px; }
+            .slider-row { margin-bottom: 16px; }
+            .slider-row label { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; }
+            input[type="range"] { height: 10px; }
+            input[type="range"]::-webkit-slider-thumb { width: 28px; height: 28px; }
+            .shimmer-block { padding: 20px 16px; }
+            .shimmer-block h2 { font-size: 0.95rem; letter-spacing: 3px; }
+            .shimmer-block p { font-size: 0.9rem; line-height: 1.6; }
             .video-wrapper { display: flex; align-items: center; justify-content: center; }
             .output-video { max-width: 100%; max-height: 100%; width: auto; height: auto; margin: auto; }
+            .source-hint { font-size: 0.65rem; }
+            .source-btn { padding: 8px 14px; font-size: 0.85rem; }
         }
         
         @media (max-width: 480px) {
-            body { font-size: 1.3rem !important; font-weight: 600 !important; }
-            .header h1 { font-size: 1.2rem; }
-            .header-sub, .header-credit { font-size: 0.8rem; }
-            .controls { margin: 8px; padding: 14px; }
-            .section h3 { font-size: 1.5rem !important; font-weight: 700 !important; }
-            .session-btn { padding: 16px 20px; font-size: 1.1rem !important; font-weight: 700 !important; min-height: 55px; }
-            .style-btn { padding: 18px 12px !important; font-size: 1.1rem !important; font-weight: 600 !important; min-height: 60px; }
-            .slider-row label { font-size: 1.2rem !important; font-weight: 600 !important; }
+            body { font-size: 1rem !important; font-weight: 600 !important; }
+            .header { padding: 10px 8px; }
+            .header-top { font-size: 0.5rem; letter-spacing: 1px; gap: 10px; }
+            .header h1 { font-size: 1.1rem; letter-spacing: 1px; }
+            .header-sub, .header-credit { font-size: 0.75rem; }
+            .header-flourish { height: 20px; }
+            .header-title-row { gap: 6px; }
+            .controls { margin: 6px; padding: 12px; }
+            .section h3 { font-size: 0.95rem !important; font-weight: 700 !important; }
+            .session-btn { padding: 14px 16px; font-size: 0.95rem !important; font-weight: 700 !important; min-height: 45px; }
+            .style-btn { padding: 12px 8px !important; font-size: 0.8rem !important; font-weight: 600 !important; min-height: 45px; }
+            .slider-row label { font-size: 0.85rem !important; font-weight: 600 !important; }
+            .shimmer-block { padding: 16px 14px; }
+            .shimmer-block h2 { font-size: 0.85rem; letter-spacing: 2px; }
+            .shimmer-block p { font-size: 0.85rem; }
+            .source-btn { padding: 6px 12px; font-size: 0.8rem; }
+            .mobile-action-btn { font-size: 0.7rem; min-height: 55px; padding: 10px 6px; }
         }
         
         @media (max-height: 500px) and (orientation: landscape) {
@@ -1594,6 +1609,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
