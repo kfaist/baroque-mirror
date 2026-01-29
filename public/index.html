@@ -154,7 +154,20 @@
         .capture-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 8px 12px; border: 1px solid rgba(212,175,55,0.6); background: rgba(15,10,12,0.9); color: #d4af37; font-size: 0.6rem; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; white-space: nowrap; }
         .capture-btn:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
         
-        .statement-section { margin-top: 12px; position: relative; width: 100%; box-sizing: border-box; background: rgba(10,6,8,0.7); padding: 20px 25px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.3); }
+        .statement-section { margin-top: 12px; position: relative; width: 100%; box-sizing: border-box; background: rgba(10,6,8,0.7); padding: 0; border-radius: 12px; border: 1px solid rgba(212,175,55,0.3); }
+        .statement-content { padding: 36px 44px; }
+        .statement-content h2 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 4px; margin: 0 0 15px 0; text-transform: uppercase; }
+        .statement-content h2:not(:first-of-type) { margin-top: 25px; }
+        .statement-content p { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin-bottom: 12px; color: #f4e4ba; }
+        .statement-content p:last-of-type { margin-bottom: 0; }
+        .statement-content a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.4); transition: all 0.3s ease; }
+        .statement-content a:hover { border-bottom-color: #fff; }
+        .statement-content .section-divider { text-align: center; color: #fff; font-size: 1rem; margin: 28px 0; opacity: 0.5; letter-spacing: 0.3em; }
+        .statement-content .contact-info { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(212,175,55,0.3); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.95rem; color: rgba(244,228,186,0.7); }
+        .statement-content .contact-info p { margin-bottom: 6px; font-size: 0.95rem; }
+        .statement-content .contact-info strong { color: rgba(212,175,55,0.8); letter-spacing: 2px; font-weight: normal; }
+        .statement-content .license-note { font-style: italic; opacity: 0.85; }
+
         .shimmer-bg { position: relative; padding: 20px; background: linear-gradient(135deg, rgba(255,100,150,0.18), rgba(255,200,100,0.14), rgba(100,255,200,0.18), rgba(150,100,255,0.18), rgba(255,100,150,0.14)); background-size: 400% 400%; animation: oilSlick 8s ease infinite; overflow: hidden; border-radius: 16px; }
         .shimmer-bg::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,150,200,0.25), rgba(200,255,220,0.2), rgba(180,200,255,0.25), transparent); animation: shimmer 4s infinite; pointer-events: none; }
         .shimmer-block { position: relative; background: transparent; padding: 36px 44px; overflow: hidden; border-radius: 12px; backdrop-filter: blur(10px); }
@@ -377,8 +390,7 @@
                     <div class="frame-overlay"></div>
                 </div>
                 <div class="statement-section">
-                    <div class="shimmer-bg">
-                        <div class="shimmer-block">
+                        <div class="statement-content">
                             <h2>Statement</h2>
                             <p>This portrait system is built on an artist-crafted dataset drawn exclusively from public-domain sources. By using only open archives, the model absorbs visual languages rather than personal likenesses. It learns motifs from Baroque and Rococo ornament, the humor and distortion of early caricature, and the confrontational spirit of French Revolutionary satire.</p>
                             <p>French Revolutionary caricature was uniquely ferocious, more violent, more confrontational, and more visually ruthless than anything produced before it. It emerged during years when grotesque mockery and extravagant displays of wealth existed in the same rooms, and for a time no one blinked.</p>
@@ -1573,6 +1585,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
