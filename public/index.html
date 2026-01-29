@@ -322,6 +322,30 @@
                 </div>
                 
                 
+                <div class="section">
+                    <h3>⚜ Transform Controls</h3>
+                    <div class="slider-row">
+                        <label>AI Strength <span class="val" id="strengthVal">50</span></label>
+                        <input type="range" id="strengthSlider" min="0" max="100" value="50">
+                    </div>
+                    <div class="slider-row">
+                        <label>Prompt Weight <span class="val" id="promptWeightVal">0.47</span></label>
+                        <input type="range" id="promptWeightSlider" min="0" max="100" value="47">
+                    </div>
+                    <div class="slider-row">
+                        <label>Pose <span class="val" id="poseVal">0.30</span></label>
+                        <input type="range" id="poseSlider" min="0" max="100" value="30">
+                    </div>
+                    <div class="slider-row">
+                        <label>Edge <span class="val" id="edgeVal">0.36</span></label>
+                        <input type="range" id="edgeSlider" min="0" max="100" value="36">
+                    </div>
+                    <div class="slider-row">
+                        <label>Depth <span class="val" id="depthVal">0.24</span></label>
+                        <input type="range" id="depthSlider" min="0" max="100" value="24">
+                    </div>
+                </div>
+
                 <div id="log">⚜ Baroque Mirror ready...</div>
             </div>
             
@@ -1183,6 +1207,12 @@ document.getElementById('modeSlider').oninput = function() {
     if (streamId) setParams();
 };
 
+document.getElementById('strengthSlider').oninput = function() { params.strength = parseInt(this.value); document.getElementById('strengthVal').textContent = params.strength; if (streamId) setParams(); };
+document.getElementById('promptWeightSlider').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
+document.getElementById('poseSlider').oninput = function() { params.pose = parseInt(this.value) / 100; document.getElementById('poseVal').textContent = params.pose.toFixed(2); if (streamId) setParams(); };
+document.getElementById('edgeSlider').oninput = function() { params.edge = parseInt(this.value) / 100; document.getElementById('edgeVal').textContent = params.edge.toFixed(2); if (streamId) setParams(); };
+document.getElementById('depthSlider').oninput = function() { params.depth = parseInt(this.value) / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
+
 document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = '✓'; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
 
 document.getElementById('startBtn').onclick = showSourceModal;
@@ -1525,6 +1555,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
