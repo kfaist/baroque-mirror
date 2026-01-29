@@ -232,6 +232,14 @@
         }
         .raindrop { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; animation: raindropFade ease-out forwards; }
         @keyframes raindropFade { 0% { transform: scale(0) rotate(0deg); opacity: 0; } 20% { transform: scale(1.2) rotate(90deg); opacity: 1; } 100% { transform: scale(0.8) rotate(360deg); opacity: 0; } }
+        .header-title-row { display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .header-flourish { height: 60px; opacity: 0.7; }
+        .header-flourish.flip { transform: scaleX(-1); }
+        .header-info { display: flex; flex-direction: column; align-items: center; }
+        @media (max-width: 768px) {
+            .header-flourish { height: 30px; }
+            .header-title-row { gap: 10px; }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -243,8 +251,14 @@
         <div class="header">
             <div class="header-top"><span>COLUMBUS MUSEUM OF ART</span><span>⚜</span><span>WONDERBALL 2026</span></div>
             <h1>⚜ BAROQUE MIRROR: SELF-PORTRAIT ⚜</h1>
-            <div class="header-sub">Live AI Art Transformation</div>
-            <div class="header-credit">by Krista Faist</div>
+            <div class="header-title-row">
+                <img src="baroque-sticker.png" class="header-flourish" alt="">
+                <div class="header-info">
+                    <div class="header-sub">Live AI Art Transformation</div>
+                    <div class="header-credit">by Krista Faist</div>
+                </div>
+                <img src="baroque-sticker.png" class="header-flourish flip" alt="">
+            </div>
         </div>
         
         <div class="main">
