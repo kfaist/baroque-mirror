@@ -133,10 +133,10 @@
         .capture-grid { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 3; }
         .capture-slot { aspect-ratio: 16/10; border: 2px solid rgba(212,175,55,0.4); border-radius: 8px; background: rgba(15,10,12,0.4); overflow: hidden; position: relative; transition: all 0.3s ease; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
         .capture-slot.placeholder { background: rgba(15,10,12,0.5); box-shadow: none; border-radius: 8px; }
-        .capture-slot.placeholder[data-slot="6"] { border: 2px solid rgba(255,100,150,0.5); }
-        .capture-slot.placeholder[data-slot="7"] { border: 2px solid rgba(100,220,255,0.5); }
-        .capture-slot.placeholder[data-slot="8"] { border: 2px solid rgba(212,175,55,0.5); }
-        .capture-slot.placeholder[data-slot="9"] { border: 2px solid rgba(180,130,255,0.5); }
+        .capture-slot.placeholder[data-slot="6"] { border: 3px solid rgba(255,150,100,0.6); }
+        .capture-slot.placeholder[data-slot="7"] { border: 3px solid rgba(255,180,120,0.6); }
+        .capture-slot.placeholder[data-slot="8"] { border: 3px solid rgba(255,210,150,0.6); }
+        .capture-slot.placeholder[data-slot="9"] { border: 3px solid rgba(255,240,180,0.6); }
         .capture-slot.placeholder::after { display: none; }
         .capture-slot:hover { border-color: #d4af37; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3); }
         .capture-slot-number { position: absolute; top: 4px; left: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.55rem; color: rgba(212,175,55,0.6); letter-spacing: 1px; z-index: 2; }
@@ -304,7 +304,7 @@
                     <div class="prompt-container">
                         <button class="prompt-btn shuffle" id="shuffleBtn" title="Random Prompt">🎲</button>
                         <textarea class="prompt-input" id="promptInput" placeholder="Enter custom style prompt or shuffle for inspiration..." rows="3"></textarea>
-                        
+                        <button class="prompt-btn apply" id="applyPromptBtn" title="Apply Prompt">Apply</button>
                     </div>
                 </div>
                 
@@ -1561,6 +1561,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
