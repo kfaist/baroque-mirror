@@ -211,12 +211,13 @@
         
         @media (max-width: 768px) {
             body { font-size: 1.4rem; font-weight: 600; }
-            .header { padding: 12px 10px; }
-            .header-top { font-size: 0.6rem; letter-spacing: 2px; gap: 15px; flex-wrap: wrap; }
-            .header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: 2px; }
-            .header-sub, .header-credit { font-size: 0.85rem; font-weight: 500; }
-            .header-flourish { height: 25px; }
-            .header-title-row { gap: 8px; }
+            .header { padding: 8px 10px; }
+            .header-top { display: none; }
+            .header h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; margin: 0; }
+            .header-sub, .header-credit { display: none; }
+            .header-flourish { display: none; }
+            .header-title-row { gap: 6px; }
+            .header-info { gap: 0; }
             .controls { padding: 16px; }
             .section { margin-bottom: 16px; padding-bottom: 16px; }
             .section h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
@@ -237,12 +238,12 @@
         
         @media (max-width: 480px) {
             body { font-size: 1rem !important; font-weight: 600 !important; }
-            .header { padding: 10px 8px; }
-            .header-top { font-size: 0.5rem; letter-spacing: 1px; gap: 10px; }
-            .header h1 { font-size: 1.1rem; letter-spacing: 1px; }
-            .header-sub, .header-credit { font-size: 0.75rem; }
-            .header-flourish { height: 20px; }
-            .header-title-row { gap: 6px; }
+            .header { padding: 6px 8px; }
+            .header-top { display: none; }
+            .header h1 { font-size: 0.95rem; letter-spacing: 1px; margin: 0; }
+            .header-sub, .header-credit { display: none; }
+            .header-flourish { display: none; }
+            .header-title-row { gap: 4px; }
             .controls { margin: 6px; padding: 12px; }
             .section h3 { font-size: 0.95rem !important; font-weight: 700 !important; }
             .session-btn { padding: 18px 20px; font-size: 1.1rem !important; font-weight: 800 !important; min-height: 55px; letter-spacing: 3px; }
@@ -264,7 +265,7 @@
         .mobile-action-bar { display: none; position: absolute; }
         
         @media (max-width: 1200px) {
-            .header { position: sticky; top: 0; z-index: 100; background: linear-gradient(180deg, rgba(114,47,55,0.95) 0%, rgba(10,6,8,0.98) 100%); padding: 8px 10px !important; }
+            .header { position: sticky; top: 0; z-index: 100; background: linear-gradient(180deg, rgba(114,47,55,0.95) 0%, rgba(10,6,8,0.98) 100%); padding: 6px 10px !important; }
             .controls { display: contents; }
             .session-section { order: 0; background: linear-gradient(180deg, rgba(217,70,239,0.15), rgba(114,47,55,0.3)); padding: 16px; margin: 10px; border-radius: 12px; border: 2px solid rgba(217,70,239,0.5); box-shadow: 0 0 25px rgba(217,70,239,0.2); }
             .output-area { display: contents; }
@@ -1609,6 +1610,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
