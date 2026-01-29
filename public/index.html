@@ -1185,9 +1185,34 @@ async function start() {
                 pipeline_params: {
                     prompt: initialPrompt,
                     ip_adapter: { type: "faceid", scale: ipScale, enabled: true },
-                    controlnet: { type: "depth", scale: depthScale, enabled: depthScale > 0 }
+                    ip_adapter_style_image_url: styles[currentStyle].styleImage,
+                    controlnets: [
+                        {
+                            enabled: true,
+                            model_id: "xinsir/controlnet-depth-sdxl-1.0",
+                            preprocessor: "depth_tensorrt",
+                            conditioning_scale: depthScale,
+                            control_guidance_start: 0,
+                            control_guidance_end: 1
+                        },
+                        {
+                            enabled: true,
+                            model_id: "xinsir/controlnet-canny-sdxl-1.0",
+                            preprocessor: "canny",
+                            conditioning_scale: 0,
+                            control_guidance_start: 0,
+                            control_guidance_end: 1
+                        },
+                        {
+                            enabled: true,
+                            model_id: "xinsir/controlnet-tile-sdxl-1.0",
+                            preprocessor: "feedback",
+                            conditioning_scale: 0.1,
+                            control_guidance_start: 0,
+                            control_guidance_end: 1
+                        }
+                    ]
                 }
-            }) 
         });
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         const data = await createRes.json();
