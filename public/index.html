@@ -1177,6 +1177,9 @@ async function start() {
         const initialPrompt = buildPrompt();
         const ipScale = (100 - abstractValue) / 100 * 0.8 + 0.1;  // 0.1-0.9 based on slider
         const depthScale = depthValue / 100;
+        console.log('DEBUG: currentStyle =', currentStyle);
+        console.log('DEBUG: styles[currentStyle] =', styles[currentStyle]);
+        console.log('DEBUG: styleImage =', styles[currentStyle].styleImage);
         const createRes = await fetch(`${API_BASE}/streams`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, 
