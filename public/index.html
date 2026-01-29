@@ -119,6 +119,8 @@
         .purchase-btn-large:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 25px rgba(212,175,55,0.5); transform: translateY(-2px); }
         .purchase-btn-large .purchase-line { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; }
         .purchase-btn-large .purchase-divider { font-size: 0.6rem; opacity: 0.7; line-height: 1; }
+        .capture-btn-large { display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px 10px; margin-bottom: 15px; border: 2px solid #4ade80; background: linear-gradient(180deg, rgba(74,222,128,0.2), rgba(34,197,94,0.3)); color: #4ade80; cursor: pointer; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; transition: all 0.3s ease; text-transform: uppercase; }
+        .capture-btn-large:hover { background: linear-gradient(180deg, #4ade80, #22c55e); color: #0a0608; box-shadow: 0 0 25px rgba(74,222,128,0.5); transform: translateY(-2px); }
         .capture-grid { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 3; }
         .capture-slot { aspect-ratio: 16/10; border: 1px solid rgba(139,105,20,0.5); border-radius: 2px; background: rgba(10,8,6,0.95); overflow: hidden; position: relative; transition: all 0.3s ease; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
         .capture-slot:hover { border-color: #d4af37; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3); }
@@ -349,19 +351,16 @@
                     <span class="purchase-line">Mint NFTs</span>
                 </a>
                 
+                <button class="capture-btn-large" onclick="captureAndPush()">📸 Capture Still</button>
+                
                 <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
                 
                 <div class="capture-grid">
-                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">EXP_01</span><img src="" alt="Captured still 1"><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">EXP_02</span><img src="" alt="Captured still 2"><button class="capture-btn" onclick="captureStill(2)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">EXP_03</span><img src="" alt="Captured still 3"><button class="capture-btn" onclick="captureStill(3)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">EXP_04</span><img src="" alt="Captured still 4"><button class="capture-btn" onclick="captureStill(4)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">EXP_05</span><img src="" alt="Captured still 5"><button class="capture-btn" onclick="captureStill(5)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="6"><span class="capture-slot-number">EXP_06</span><img src="" alt="Captured still 6"><button class="capture-btn" onclick="captureStill(6)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="7"><span class="capture-slot-number">EXP_07</span><img src="" alt="Captured still 7"><button class="capture-btn" onclick="captureStill(7)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="8"><span class="capture-slot-number">EXP_08</span><img src="" alt="Captured still 8"><button class="capture-btn" onclick="captureStill(8)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="9"><span class="capture-slot-number">EXP_09</span><img src="" alt="Captured still 9"><button class="capture-btn" onclick="captureStill(9)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="10"><span class="capture-slot-number">EXP_10</span><img src="" alt="Captured still 10"><button class="capture-btn" onclick="captureStill(10)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">01</span><img src="" alt="Captured still 1"></div>
+                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">02</span><img src="" alt="Captured still 2"></div>
+                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">03</span><img src="" alt="Captured still 3"></div>
+                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">04</span><img src="" alt="Captured still 4"></div>
+                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">05</span><img src="" alt="Captured still 5"></div>
                 </div>
             </div>
         </div>
@@ -651,11 +650,104 @@ function hideStatusOverlay() {
     statusDebugLines = [];
 }
 
+// Default sample images (will be replaced as users capture)
+const defaultSampleImages = [
+    'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&q=80', // baroque art 1
+    'https://images.unsplash.com/photo-1578926288207-a90a5366759d?w=400&q=80', // baroque art 2
+    'https://images.unsplash.com/photo-1541367777708-7905fe3296c0?w=400&q=80', // baroque art 3
+    'https://images.unsplash.com/photo-1549887534-1541e9326642?w=400&q=80', // baroque art 4
+    'https://images.unsplash.com/photo-1580136579312-94651dfd596d?w=400&q=80'  // baroque art 5
+];
+
+// Initialize capture array (newest first)
+let captureArray = [];
+const MAX_CAPTURES = 5;
+
+function initializeCaptureGrid() {
+    // Load from localStorage or use defaults
+    const saved = localStorage.getItem('baroqueCaptureArray');
+    if (saved) {
+        captureArray = JSON.parse(saved);
+    } else {
+        // Pre-populate with default images
+        captureArray = defaultSampleImages.map((url, i) => ({
+            image: url,
+            isDefault: true,
+            timestamp: new Date().toISOString()
+        }));
+    }
+    renderCaptureGrid();
+}
+
+function renderCaptureGrid() {
+    for (let i = 0; i < MAX_CAPTURES; i++) {
+        const slot = document.querySelector(`.capture-slot[data-slot="${i + 1}"]`);
+        if (!slot) continue;
+        const img = slot.querySelector('img');
+        if (captureArray[i]) {
+            img.src = captureArray[i].image;
+            slot.classList.add('has-image');
+        } else {
+            img.src = '';
+            slot.classList.remove('has-image');
+        }
+    }
+    // Update mobile counter
+    const counter = document.getElementById('stillCounter');
+    if (counter) {
+        const userCaptures = captureArray.filter(c => !c.isDefault).length;
+        counter.textContent = userCaptures + '/5';
+    }
+}
+
+function captureAndPush() {
+    const outputVideo = document.getElementById('output');
+    const canvas = document.getElementById('captureCanvas');
+    const ctx = canvas.getContext('2d');
+    if (!outputVideo.videoWidth) { log('No video to capture yet', 'error'); return; }
+    
+    const maxWidth = 800;
+    const scale = Math.min(1, maxWidth / outputVideo.videoWidth);
+    canvas.width = outputVideo.videoWidth * scale;
+    canvas.height = outputVideo.videoHeight * scale;
+    ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+    
+    // Add new capture to front, push others down
+    const newCapture = {
+        image: dataUrl,
+        isDefault: false,
+        timestamp: new Date().toISOString(),
+        style: currentStyle,
+        prompt: customPrompt || styles[currentStyle].base
+    };
+    
+    captureArray.unshift(newCapture);
+    if (captureArray.length > MAX_CAPTURES) {
+        captureArray = captureArray.slice(0, MAX_CAPTURES);
+    }
+    
+    // Save to localStorage
+    try {
+        localStorage.setItem('baroqueCaptureArray', JSON.stringify(captureArray));
+    } catch (e) {
+        localStorage.removeItem('baroqueCaptureArray');
+        log('Storage full - only keeping current session', 'info');
+    }
+    
+    renderCaptureGrid();
+    log('📸 Captured! Others bumped down', 'success');
+    
+    // Update mobile recent still
+    const recentStill = document.getElementById('mobileRecentStill');
+    if (recentStill) {
+        const img = recentStill.querySelector('img');
+        if (img) { img.src = dataUrl; recentStill.classList.add('has-image'); }
+    }
+}
+
 function captureNextSlot() {
-    let targetSlot = null;
-    for (let i = 1; i <= 10; i++) { if (!capturedStills[i]) { targetSlot = i; break; } }
-    if (!targetSlot) targetSlot = 1;
-    captureStill(targetSlot);
+    captureAndPush();
 }
 
 function updateMobileRecentStill(dataUrl, slotNumber) {
@@ -664,33 +756,16 @@ function updateMobileRecentStill(dataUrl, slotNumber) {
     if (recentStill && counter) {
         const img = recentStill.querySelector('img');
         if (img) { img.src = dataUrl; recentStill.classList.add('has-image'); }
-        counter.textContent = Object.keys(capturedStills).length + '/10';
+        const userCaptures = captureArray.filter(c => !c.isDefault).length;
+        counter.textContent = userCaptures + '/5';
     }
 }
 
 function captureStill(slotNumber) {
-    const outputVideo = document.getElementById('output');
-    const canvas = document.getElementById('captureCanvas');
-    const ctx = canvas.getContext('2d');
-    if (!outputVideo.videoWidth) { log('No video to capture yet', 'error'); return; }
-    const maxWidth = 800;
-    const scale = Math.min(1, maxWidth / outputVideo.videoWidth);
-    canvas.width = outputVideo.videoWidth * scale;
-    canvas.height = outputVideo.videoHeight * scale;
-    ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-    capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle, prompt: customPrompt || styles[currentStyle].base };
-    try { localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills)); }
-    catch (e) { localStorage.removeItem('baroqueCaptures'); capturedStills = {}; capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle, prompt: customPrompt || styles[currentStyle].base }; localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills)); log('Storage was full - cleared old captures', 'info'); }
-    const slot = document.querySelector(`.capture-slot[data-slot="${slotNumber}"]`);
-    const img = slot.querySelector('img');
-    img.src = dataUrl;
-    slot.classList.add('has-image');
-    log(`Still captured to slot ${slotNumber}`, 'success');
-    updateMobileRecentStill(dataUrl, slotNumber);
+    captureAndPush();
 }
 
-function loadCapturedStills() { capturedStills = {}; }
+function loadCapturedStills() { initializeCaptureGrid(); }
 
 function shufflePrompt() {
     let allPrompts;
@@ -1251,7 +1326,7 @@ function stop() {
 }
 
 window.addEventListener('load', () => {
-    loadCapturedStills();
+    initializeCaptureGrid();
     drawBackground = initBackground();
     drawParticles = initParticles();
     drawVideoOverlay = initVideoOverlay();
