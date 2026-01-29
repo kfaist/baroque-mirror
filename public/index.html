@@ -118,9 +118,12 @@
         
         .source-hint { text-align: center; font-size: 0.7rem; color: rgba(212,175,55,0.7); font-family: "Cormorant Garamond", serif; margin-top: 8px; font-style: italic; }
         .source-toggle { display: flex; gap: 10px; justify-content: center; margin-top: 6px; }
-        .source-btn { padding: 10px 18px; border: 2px solid rgba(212,175,55,0.6); background: rgba(20,15,18,0.9); color: #d4af37; cursor: pointer; border-radius: 8px; font-size: 1rem; font-family: "Cinzel", serif; font-weight: 600; letter-spacing: 1px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .source-btn { padding: 10px 18px; border: 2px solid rgba(212,175,55,0.6); background: rgba(20,15,18,0.5); color: #d4af37; cursor: pointer; border-radius: 8px; font-size: 1rem; font-family: "Cinzel", serif; font-weight: 600; letter-spacing: 1px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
         .source-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; }
-        .source-btn.active { background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(4,120,87,0.35)); border-color: #10b981; }
+        .source-btn.active { background: linear-gradient(135deg, rgba(16,185,129,0.5), rgba(4,120,87,0.65)); border-color: #10b981; color: #34d399; }
+        #uploadBtn { border: 2px solid rgba(147,112,219,0.6); background: rgba(75,0,130,0.3); color: #b794f4; }
+        #uploadBtn:hover { background: rgba(147,112,219,0.25); border-color: #9370db; }
+        #uploadBtn.active { background: linear-gradient(135deg, rgba(147,112,219,0.5), rgba(75,0,130,0.65)); border-color: #9370db; color: #d6bcfa; }
         #log { display: none; background: rgba(0,0,0,0.6); padding: 12px; height: 100px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.7rem; border: 1px solid rgba(212,175,55,0.2); border-radius: 6px; margin-top: 15px; }
         .success { color: #4ade80; }
         .error { color: #f87171; }
@@ -1591,6 +1594,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
