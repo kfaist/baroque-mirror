@@ -763,10 +763,13 @@ function renderCaptureGrid() {
         const img = slot.querySelector('img');
         if (captureArray[i] && !captureArray[i].isDefault) {
             img.src = captureArray[i].image;
-
-
+            img.style.display = 'block';
+            slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
+        } else {
             // Show styled placeholder - no image loaded
             img.src = '';
+            img.style.display = 'none';
             slot.classList.remove('has-image');
             slot.classList.add('placeholder');
         }
@@ -776,7 +779,6 @@ function renderCaptureGrid() {
     if (counter) {
         counter.textContent = captureArray.length + '/5';
     }
-    
 }
 
 function captureAndPush() {
@@ -1559,6 +1561,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
