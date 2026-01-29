@@ -79,7 +79,7 @@
         .audio-bar { flex: 1; background: linear-gradient(180deg, #d4af37, #722f37, #2a1015); border-radius: 2px; transition: height 0.05s ease-out; }
         
         .output-area { position: relative; }
-        .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: rgba(0,0,0,0.33); }
+        .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: transparent; }
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 4/3; overflow: hidden; background-size: cover; background-position: center; }
         .output-video { width: 100%; height: 100%; object-fit: cover; object-position: center center; display: block; background: transparent; opacity: 0; transition: opacity 0.5s ease; }
         .output-video.playing { opacity: 1; }
@@ -94,11 +94,11 @@
         .video-container:fullscreen .video-animation-overlay { display: none; }
         .frame-overlay { display: none; }
         
-                .status-overlay { position: absolute; top: 15px; left: 15px; z-index: 50; display: none; font-family: "Courier New", monospace; font-size: 0.7rem; max-width: 350px; background: linear-gradient(180deg, rgba(114,47,55,0.6) 0%, rgba(10,6,8,0.85) 100%); padding: 15px 20px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.4); backdrop-filter: blur(8px); box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+                .status-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 50; display: none; font-family: "Cinzel", serif; font-size: 1.1rem; text-align: center; max-width: 80%; }
         .status-overlay.active { display: block; }
-        .status-message { color: #ff1493; animation: pinkFlash 1s ease-in-out infinite; margin-bottom: 8px; text-shadow: 0 0 10px rgba(255,20,147,0.5); }
-        @keyframes pinkFlash { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .status-debug { color: #88ffaa; font-size: 0.65rem; line-height: 1.4; }
+        .status-message { color: #d4af37; animation: goldPulse 2s ease-in-out infinite; margin-bottom: 12px; text-shadow: 0 0 10px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.4), 0 0 60px rgba(212,175,55,0.3); font-weight: 600; letter-spacing: 2px; }
+        @keyframes goldPulse { 0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.4); } 50% { opacity: 0.85; text-shadow: 0 0 20px rgba(212,175,55,1), 0 0 40px rgba(212,175,55,0.8), 0 0 60px rgba(212,175,55,0.5); } }
+        .status-debug { color: #f4e4ba; font-size: 0.75rem; line-height: 1.6; font-family: "Cormorant Garamond", serif; text-shadow: 0 0 8px rgba(244,228,186,0.5); }
         .status-debug-line { margin-bottom: 2px; }
         .status-debug-line.info { color: #88ccff; }
         .status-debug-line.success { color: #88ffaa; }
