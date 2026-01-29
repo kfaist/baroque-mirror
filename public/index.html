@@ -37,7 +37,7 @@
         
         .section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
         .section:last-child { border-bottom: none; margin-bottom: 0; }
-        .section h3 { color: #d4af37; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; text-shadow: 0 0 10px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.5), 0 2px 4px rgba(0,0,0,0.8); }
+        .section h3 { color: #b388ff; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; font-weight: 700; text-shadow: 0 0 10px rgba(179,136,255,0.9), 0 0 20px rgba(179,136,255,0.7), 0 0 40px rgba(179,136,255,0.5), 0 2px 4px rgba(0,0,0,0.8); }
         
         .session-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
         .session-btn { width: 100%; padding: 16px 20px; border: 3px solid #d946ef; background: linear-gradient(180deg, rgba(217,70,239,0.35), rgba(162,28,175,0.45)); color: #f0abfc; font-size: 1rem; cursor: pointer; border-radius: 8px; font-family: 'Cinzel', serif; letter-spacing: 3px; transition: all 0.3s ease; text-transform: uppercase; box-shadow: 0 0 20px rgba(217,70,239,0.2); }
@@ -132,8 +132,8 @@
         .capture-btn-large:hover { background: linear-gradient(180deg, #06b6d4, #0891b2); color: #0a0608; box-shadow: 0 0 20px rgba(6,182,212,0.5); transform: translateY(-1px); }
         .capture-grid { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 3; }
         .capture-slot { aspect-ratio: 16/10; border: 2px solid rgba(212,175,55,0.4); border-radius: 8px; background: rgba(15,10,12,0.4); overflow: hidden; position: relative; transition: all 0.3s ease; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
-        .capture-slot.placeholder { background: rgba(15,10,12,0.1); box-shadow: inset 0 0 8px rgba(0,0,0,0.3); }
-        .capture-slot.placeholder::after { content: '⚜'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; color: rgba(212,175,55,0.3); text-shadow: 0 0 10px rgba(212,175,55,0.2); }
+        .capture-slot.placeholder { background: rgba(15,10,12,0.03); border-color: rgba(212,175,55,0.15); box-shadow: inset 0 0 5px rgba(0,0,0,0.15); }
+        .capture-slot.placeholder::after { content: '⚜'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; color: rgba(212,175,55,0.12); text-shadow: 0 0 8px rgba(212,175,55,0.1); }
         .capture-slot:hover { border-color: #d4af37; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3); }
         .capture-slot-number { position: absolute; top: 4px; left: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.55rem; color: rgba(212,175,55,0.6); letter-spacing: 1px; z-index: 2; }
         .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
@@ -319,15 +319,6 @@
                         <input type="range" id="modeSlider" min="0" max="100" value="0">
                         <div class="mode-value" id="modeValue">Pure Classical</div>
                     </div>
-                </div>
-                
-                <div class="section">
-                    <h3>⚜ Transform Controls</h3>
-                    <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">50</span></label><input type="range" id="strengthSlider" min="1" max="50" value="50"></div>
-                    <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">0.08</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="8"></div>
-                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.47</span></label><input type="range" id="poseSlider" min="0" max="100" value="47"></div>
-                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.31</span></label><input type="range" id="edgeSlider" min="0" max="100" value="31"></div>
-                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.71</span></label><input type="range" id="depthSlider" min="0" max="100" value="71"></div>
                 </div>
                 
                 
@@ -1553,4 +1544,5 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
