@@ -345,7 +345,14 @@
             <div class="capture-panel">
                 <div class="input-preview-section">
                     <h4>⚜ Live Input</h4>
-                    <div class="webcam-pip"><video id="local" autoplay muted playsinline></video></div>
+                    <div class="webcam-pip"><video id="local" autoplay muted playsinline></video><canvas id="uploadedImageCanvas" style="display:none;"></canvas></div>
+                    <div class="source-toggle">
+                        <button class="source-btn active" id="webcamBtn" onclick="switchToWebcam()">📷 Webcam</button>
+                        <label class="source-btn" id="uploadBtn">
+                            📁 Upload
+                            <input type="file" id="imageUpload" accept="image/*" onchange="handleImageUpload(event)" style="display:none;">
+                        </label>
+                    </div>
                 </div>
                 
                 <a href="/prints" class="purchase-btn-large" id="purchaseBtn">
@@ -354,7 +361,7 @@
                     <span class="purchase-line">Mint NFTs</span>
                 </a>
                 
-                <button class="capture-btn-large" onclick="captureAndPush()">📸 Capture Still</button>
+                <button class="capture-btn-large" onclick="captureAndPush()">📸 Capture / Add Source Images</button>
                 
                 <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
                 
