@@ -123,6 +123,8 @@
         .capture-btn-large:hover { background: linear-gradient(180deg, #4ade80, #22c55e); color: #0a0608; box-shadow: 0 0 25px rgba(74,222,128,0.5); transform: translateY(-2px); }
         .capture-grid { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 3; }
         .capture-slot { aspect-ratio: 16/10; border: 1px solid rgba(139,105,20,0.5); border-radius: 2px; background: rgba(10,8,6,0.95); overflow: hidden; position: relative; transition: all 0.3s ease; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
+        .capture-slot.placeholder { background: linear-gradient(135deg, rgba(20,15,25,0.95) 0%, rgba(30,20,35,0.9) 50%, rgba(20,15,25,0.95) 100%); }
+        .capture-slot.placeholder::after { content: '⚜'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: rgba(212,175,55,0.15); }
         .capture-slot:hover { border-color: #d4af37; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3); }
         .capture-slot-number { position: absolute; top: 4px; left: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.55rem; color: rgba(212,175,55,0.6); letter-spacing: 1px; z-index: 2; }
         .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
@@ -650,31 +652,27 @@ function hideStatusOverlay() {
     statusDebugLines = [];
 }
 
-// Default sample images (will be replaced as users capture)
+// Default sample images (lazy loaded - won't load until user interacts)
 const defaultSampleImages = [
-    'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&q=80', // baroque art 1
-    'https://images.unsplash.com/photo-1578926288207-a90a5366759d?w=400&q=80', // baroque art 2
-    'https://images.unsplash.com/photo-1541367777708-7905fe3296c0?w=400&q=80', // baroque art 3
-    'https://images.unsplash.com/photo-1549887534-1541e9326642?w=400&q=80', // baroque art 4
-    'https://images.unsplash.com/photo-1580136579312-94651dfd596d?w=400&q=80'  // baroque art 5
+    '/samples/sample1.png',
+    '/samples/sample2.png', 
+    '/samples/sample3.png',
+    '/samples/sample4.png',
+    '/samples/sample5.png'
 ];
 
 // Initialize capture array (newest first)
 let captureArray = [];
 const MAX_CAPTURES = 5;
+let samplesLoaded = false;
 
 function initializeCaptureGrid() {
-    // Load from localStorage or use defaults
+    // Load from localStorage or show empty placeholders
     const saved = localStorage.getItem('baroqueCaptureArray');
     if (saved) {
         captureArray = JSON.parse(saved);
-    } else {
-        // Pre-populate with default images
-        captureArray = defaultSampleImages.map((url, i) => ({
-            image: url,
-            isDefault: true,
-            timestamp: new Date().toISOString()
-        }));
+        // Filter out any old defaults
+        captureArray = captureArray.filter(c => !c.isDefault);
     }
     renderCaptureGrid();
 }
@@ -684,19 +682,21 @@ function renderCaptureGrid() {
         const slot = document.querySelector(`.capture-slot[data-slot="${i + 1}"]`);
         if (!slot) continue;
         const img = slot.querySelector('img');
-        if (captureArray[i]) {
+        if (captureArray[i] && !captureArray[i].isDefault) {
             img.src = captureArray[i].image;
             slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
         } else {
+            // Show styled placeholder - no image loaded
             img.src = '';
             slot.classList.remove('has-image');
+            slot.classList.add('placeholder');
         }
     }
     // Update mobile counter
     const counter = document.getElementById('stillCounter');
     if (counter) {
-        const userCaptures = captureArray.filter(c => !c.isDefault).length;
-        counter.textContent = userCaptures + '/5';
+        counter.textContent = captureArray.length + '/5';
     }
 }
 
@@ -756,8 +756,7 @@ function updateMobileRecentStill(dataUrl, slotNumber) {
     if (recentStill && counter) {
         const img = recentStill.querySelector('img');
         if (img) { img.src = dataUrl; recentStill.classList.add('has-image'); }
-        const userCaptures = captureArray.filter(c => !c.isDefault).length;
-        counter.textContent = userCaptures + '/5';
+        counter.textContent = captureArray.length + '/5';
     }
 }
 
