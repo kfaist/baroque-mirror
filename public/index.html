@@ -33,6 +33,9 @@
         .main { display: grid; grid-template-columns: 400px 1fr 200px; gap: 25px; padding: 25px; max-width: 1900px; margin: 0 auto; }
         
         .controls, .capture-panel { background: linear-gradient(180deg, rgba(114,47,55,0.2) 0%, rgba(10,6,8,0.4) 100%); border: 3px solid rgba(212,175,55,0.5); border-radius: 12px; padding: 20px; backdrop-filter: blur(8px); box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.3); height: fit-content; align-self: start; }
+        .controls { grid-column: 1; }
+        .output-area { grid-column: 2; }
+        .capture-panel { grid-column: 3; }
         .capture-panel { padding: 15px; }
         
         .section { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid rgba(212,175,55,0.2); }
@@ -1582,6 +1585,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
