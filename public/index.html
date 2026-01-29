@@ -95,14 +95,14 @@
         .frame-overlay { display: none; }
         
                 .status-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 50; display: none; font-family: "Cinzel", serif; font-size: 1.1rem; text-align: center; width: 90%; max-width: 500px; }
-        .status-shimmer-bg { position: relative; padding: 12px; background: linear-gradient(135deg, rgba(255,100,150,0.08), rgba(255,200,100,0.06), rgba(100,255,200,0.08), rgba(150,100,255,0.08), rgba(255,100,150,0.06)); background-size: 400% 400%; animation: oilSlick 12s ease infinite; overflow: hidden; border-radius: 16px; }
+        .status-shimmer-bg { position: relative; padding: 14px; background: linear-gradient(135deg, rgba(255,100,150,0.18), rgba(255,200,100,0.14), rgba(100,255,200,0.18), rgba(150,100,255,0.18), rgba(255,100,150,0.14)); background-size: 400% 400%; animation: oilSlick 8s ease infinite; overflow: hidden; border-radius: 16px; }
         .status-shimmer-bg::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,150,200,0.15), rgba(200,255,220,0.12), rgba(180,200,255,0.15), transparent); animation: shimmer 6s infinite; pointer-events: none; }
-        .status-shimmer-block { position: relative; background: rgba(15,10,12,0.75); padding: 28px 24px; overflow: hidden; border-radius: 12px; backdrop-filter: blur(12px); }
+        .status-shimmer-block { position: relative; background: rgba(15,10,12,0.55); padding: 28px 24px; overflow: hidden; border-radius: 12px; backdrop-filter: blur(8px); }
         .status-shimmer-block::before { content: ""; position: absolute; top: 0; left: -150%; width: 200%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,180,220,0.1), rgba(180,255,220,0.08), rgba(200,180,255,0.1), transparent); animation: shimmer 5s infinite; pointer-events: none; }
         .status-overlay.active { display: block; }
-        .status-message { color: #d4af37; animation: goldPulse 2s ease-in-out infinite; margin-bottom: 12px; text-shadow: 0 0 10px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.4), 0 0 60px rgba(212,175,55,0.3); font-weight: 600; letter-spacing: 2px; }
+        .status-message { color: #d4af37; animation: goldPulse 2s ease-in-out infinite; margin-bottom: 12px; text-shadow: 0 0 10px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.4), 0 0 60px rgba(212,175,55,0.3); font-weight: 800; letter-spacing: 2px; }
         @keyframes goldPulse { 0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.4); } 50% { opacity: 0.85; text-shadow: 0 0 20px rgba(212,175,55,1), 0 0 40px rgba(212,175,55,0.8), 0 0 60px rgba(212,175,55,0.5); } }
-        .status-debug { color: #f4e4ba; font-size: 0.75rem; line-height: 1.6; font-family: "Cormorant Garamond", serif; text-shadow: 0 0 8px rgba(244,228,186,0.5); }
+        .status-debug { color: #f4e4ba; font-size: 0.8rem; line-height: 1.6; font-family: "Cormorant Garamond", serif; text-shadow: 0 0 8px rgba(244,228,186,0.5); font-weight: 600; }
         .status-debug-line { margin-bottom: 2px; }
         .status-debug-line.info { color: #88ccff; }
         .status-debug-line.success { color: #88ffaa; }
@@ -1194,12 +1194,7 @@ document.getElementById('modeSlider').oninput = function() {
     if (streamId) setParams();
 };
 
-document.getElementById('strengthSlider').oninput = function() { params.strength = parseInt(this.value); document.getElementById('strengthVal').textContent = params.strength; if (streamId) setParams(); };
-document.getElementById('promptWeightSlider').oninput = function() { params.promptWeight = parseInt(this.value) / 100; document.getElementById('promptWeightVal').textContent = params.promptWeight.toFixed(2); if (streamId) setParams(); };
 document.getElementById('applyPromptBtn').onclick = function() { customPrompt = document.getElementById('promptInput').value.trim(); if (streamId) setParams(); this.textContent = '✓'; this.style.background = 'linear-gradient(135deg, #d4af37, #8b6914)'; this.style.color = '#0a0608'; setTimeout(() => { this.textContent = 'Apply'; this.style.background = ''; this.style.color = ''; }, 1000); };
-document.getElementById('poseSlider').oninput = function() { params.pose = parseInt(this.value) / 100; document.getElementById('poseVal').textContent = params.pose.toFixed(2); if (streamId) setParams(); };
-document.getElementById('edgeSlider').oninput = function() { params.edge = parseInt(this.value) / 100; document.getElementById('edgeVal').textContent = params.edge.toFixed(2); if (streamId) setParams(); };
-document.getElementById('depthSlider').oninput = function() { params.depth = parseInt(this.value) / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
 
 document.getElementById('startBtn').onclick = showSourceModal;
 document.getElementById('stopBtn').onclick = stop;
@@ -1544,5 +1539,6 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
