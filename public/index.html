@@ -116,8 +116,9 @@
         .webcam-pip { position: relative; width: 100%; border: 2px solid rgba(212,175,55,0.6); border-radius: 6px; overflow: hidden; background: transparent; box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3); aspect-ratio: 4/3; }
         .webcam-pip video { width: 100%; height: 100%; object-fit: cover; display: block; }
         
-        .source-toggle { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
-        .source-btn { padding: 8px 16px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.2rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .source-hint { text-align: center; font-size: 0.7rem; color: rgba(212,175,55,0.7); font-family: "Cormorant Garamond", serif; margin-top: 8px; font-style: italic; }
+        .source-toggle { display: flex; gap: 10px; justify-content: center; margin-top: 6px; }
+        .source-btn { padding: 10px 18px; border: 2px solid rgba(212,175,55,0.6); background: rgba(20,15,18,0.9); color: #d4af37; cursor: pointer; border-radius: 8px; font-size: 1rem; font-family: "Cinzel", serif; font-weight: 600; letter-spacing: 1px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
         .source-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; }
         .source-btn.active { background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(4,120,87,0.35)); border-color: #10b981; }
         #log { display: none; background: rgba(0,0,0,0.6); padding: 12px; height: 100px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.7rem; border: 1px solid rgba(212,175,55,0.2); border-radius: 6px; margin-top: 15px; }
@@ -433,10 +434,11 @@
                 <div class="input-preview-section">
                     <h4>⚜ Live Input</h4>
                     <div class="webcam-pip"><video id="local" autoplay muted playsinline></video><canvas id="uploadedImageCanvas" style="display:none;"></canvas></div>
+                    <div class="source-hint">Switch source anytime:</div>
                     <div class="source-toggle">
-                        <button class="source-btn active" id="webcamBtn" onclick="switchToWebcam()">📷</button>
+                        <button class="source-btn active" id="webcamBtn" onclick="switchToWebcam()">📷 Live</button>
                         <label class="source-btn" id="uploadBtn">
-                            📁
+                            📁 Image
                             <input type="file" id="imageUpload" accept="image/*" onchange="handleImageUpload(event)" style="display:none;">
                         </label>
                     </div>
@@ -1587,6 +1589,7 @@ window.addEventListener('load', () => {
     </div>
 </body>
 </html>
+
 
 
 
