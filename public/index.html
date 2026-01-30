@@ -383,7 +383,7 @@
 // ============================================
 const API_KEY = 'sk_9bFt6nHdK1T6AXG6knDS3K57u1BTS6xe9FiwqwQW52KoK7UpqBBEYnmPGxFvLJmS';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_SD-turbo';
+const PIPELINE_ID = 'pip_SDXL-turbo';
 const MODEL_ID = 'stabilityai/sdxl-turbo';
 
 // ============================================
@@ -1236,7 +1236,9 @@ async function start() {
 }
 
 async function connectWHIP(whipUrl) {
-    inputPC = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }] });
+    // Use Livepeer's STUN/TURN servers derived from WHIP URL for reliable ICE
+    const host = new URL(whipUrl).host;
+    inputPC = new RTCPeerConnection({ iceServers: [{ urls: `stun:${host}` }, { urls: `turn:${host}`, username: 'livepeer', credential: 'livepeer' }] });
     inputPC.oniceconnectionstatechange = () => { log(`ICE: ${inputPC.iceConnectionState}`, inputPC.iceConnectionState === 'connected' ? 'success' : 'info'); };
     localStream.getTracks().forEach(track => { inputPC.addTrack(track, localStream); });
     const offer = await inputPC.createOffer();
