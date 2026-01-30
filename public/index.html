@@ -1243,13 +1243,16 @@ async function connectWHIP(whipUrl) {
     currentWhipUrl = whipUrl;
     iceRestartAttempts = 0;
     
-    // Use Google STUN + public OpenRelay TURN servers (Livepeer doesn't provide TURN)
+    // Use Google STUN + Metered.ca TURN servers (Livepeer doesn't provide TURN)
+    // Free tier from metered.ca - standard relay servers
     inputPC = new RTCPeerConnection({ 
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
-            { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
-            { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
+            { urls: 'stun:stun.relay.metered.ca:80' },
+            { urls: 'turn:global.relay.metered.ca:80', username: 'e8dd65c92de9c620de45c805', credential: 'KxEPTBbfvIfNYpuH' },
+            { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username: 'e8dd65c92de9c620de45c805', credential: 'KxEPTBbfvIfNYpuH' },
+            { urls: 'turn:global.relay.metered.ca:443', username: 'e8dd65c92de9c620de45c805', credential: 'KxEPTBbfvIfNYpuH' },
+            { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: 'e8dd65c92de9c620de45c805', credential: 'KxEPTBbfvIfNYpuH' }
         ],
         iceCandidatePoolSize: 10
     });
