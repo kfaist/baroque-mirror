@@ -1243,14 +1243,13 @@ async function connectWHIP(whipUrl) {
     currentWhipUrl = whipUrl;
     iceRestartAttempts = 0;
     
-    // Use Livepeer's STUN/TURN servers with multiple transport options for reliability
-    const host = new URL(whipUrl).host;
+    // Use Google STUN + public OpenRelay TURN servers (Livepeer doesn't provide TURN)
     inputPC = new RTCPeerConnection({ 
         iceServers: [
-            { urls: `stun:${host}` },
-            { urls: `turn:${host}:3478?transport=udp`, username: 'livepeer', credential: 'livepeer' },
-            { urls: `turn:${host}:3478?transport=tcp`, username: 'livepeer', credential: 'livepeer' },
-            { urls: `turns:${host}:443`, username: 'livepeer', credential: 'livepeer' }
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+            { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+            { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
         ],
         iceCandidatePoolSize: 10
     });
