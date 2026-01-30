@@ -1235,11 +1235,49 @@ async function start() {
     }
 }
 
+let currentWhipUrl = null;
+let iceRestartAttempts = 0;
+const MAX_ICE_RESTART_ATTEMPTS = 3;
+
 async function connectWHIP(whipUrl) {
-    // Use Livepeer's STUN/TURN servers derived from WHIP URL for reliable ICE
+    currentWhipUrl = whipUrl;
+    iceRestartAttempts = 0;
+    
+    // Use Livepeer's STUN/TURN servers with multiple transport options for reliability
     const host = new URL(whipUrl).host;
-    inputPC = new RTCPeerConnection({ iceServers: [{ urls: `stun:${host}` }, { urls: `turn:${host}`, username: 'livepeer', credential: 'livepeer' }] });
-    inputPC.oniceconnectionstatechange = () => { log(`ICE: ${inputPC.iceConnectionState}`, inputPC.iceConnectionState === 'connected' ? 'success' : 'info'); };
+    inputPC = new RTCPeerConnection({ 
+        iceServers: [
+            { urls: `stun:${host}` },
+            { urls: `turn:${host}:3478?transport=udp`, username: 'livepeer', credential: 'livepeer' },
+            { urls: `turn:${host}:3478?transport=tcp`, username: 'livepeer', credential: 'livepeer' },
+            { urls: `turns:${host}:443`, username: 'livepeer', credential: 'livepeer' }
+        ],
+        iceCandidatePoolSize: 10
+    });
+    
+    // Handle ICE state changes with automatic reconnection
+    inputPC.oniceconnectionstatechange = async () => {
+        const state = inputPC.iceConnectionState;
+        log(`ICE: ${state}`, state === 'connected' ? 'success' : 'info');
+        
+        if (state === 'disconnected' || state === 'failed') {
+            if (iceRestartAttempts < MAX_ICE_RESTART_ATTEMPTS) {
+                iceRestartAttempts++;
+                log(`ICE restart attempt ${iceRestartAttempts}/${MAX_ICE_RESTART_ATTEMPTS}...`, 'info');
+                try {
+                    await performIceRestart();
+                } catch (e) {
+                    log(`ICE restart failed: ${e.message}`, 'error');
+                }
+            } else {
+                log('Max ICE restarts reached, full reconnect...', 'info');
+                await fullReconnect();
+            }
+        } else if (state === 'connected') {
+            iceRestartAttempts = 0; // Reset on successful connection
+        }
+    };
+    
     localStream.getTracks().forEach(track => { inputPC.addTrack(track, localStream); });
     const offer = await inputPC.createOffer();
     await inputPC.setLocalDescription(offer);
@@ -1248,6 +1286,33 @@ async function connectWHIP(whipUrl) {
     if (!res.ok) throw new Error(`WHIP failed: ${res.status}`);
     const answer = await res.text();
     await inputPC.setRemoteDescription({ type: 'answer', sdp: answer });
+}
+
+async function performIceRestart() {
+    if (!inputPC || !currentWhipUrl) return;
+    inputPC.restartIce();
+    const offer = await inputPC.createOffer({ iceRestart: true });
+    await inputPC.setLocalDescription(offer);
+    await new Promise(resolve => { 
+        if (inputPC.iceGatheringState === 'complete') resolve(); 
+        else { 
+            inputPC.onicegatheringstatechange = () => { if (inputPC.iceGatheringState === 'complete') resolve(); }; 
+            setTimeout(resolve, 3000); 
+        } 
+    });
+    const res = await fetch(currentWhipUrl, { method: 'PATCH', headers: { 'Content-Type': 'application/sdp' }, body: inputPC.localDescription.sdp });
+    if (res.ok) {
+        const answer = await res.text();
+        await inputPC.setRemoteDescription({ type: 'answer', sdp: answer });
+        log('ICE restarted successfully', 'success');
+    }
+}
+
+async function fullReconnect() {
+    iceRestartAttempts = 0;
+    if (inputPC) { inputPC.close(); inputPC = null; }
+    log('Full reconnect...', 'info');
+    await connectWHIP(currentWhipUrl);
 }
 
 async function setParams() {
