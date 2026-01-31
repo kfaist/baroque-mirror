@@ -1,5 +1,5 @@
-<!-- deploy-1769831800 -->
-<!-- v-baroque-debug2 -->
+<!-- deploy-1769831900 -->
+<!-- v-baroque-debug3 -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -1259,26 +1259,32 @@ async function connectWHIP(whipUrl) {
         iceCandidatePoolSize: 10
     });
     
-    // Handle ICE state changes with automatic reconnection
+    // Handle ICE state changes with tolerance for brief disconnects
+    let iceDisconnectTimer = null;
     inputPC.oniceconnectionstatechange = async () => {
         const state = inputPC.iceConnectionState;
         log(`ICE: ${state}`, state === 'connected' ? 'success' : 'info');
         
-        if (state === 'disconnected' || state === 'failed') {
-            if (iceRestartAttempts < MAX_ICE_RESTART_ATTEMPTS) {
-                iceRestartAttempts++;
-                log(`ICE restart attempt ${iceRestartAttempts}/${MAX_ICE_RESTART_ATTEMPTS}...`, 'info');
-                try {
-                    await performIceRestart();
-                } catch (e) {
-                    log(`ICE restart failed: ${e.message}`, 'error');
+        // Clear any pending disconnect timer
+        if (iceDisconnectTimer) {
+            clearTimeout(iceDisconnectTimer);
+            iceDisconnectTimer = null;
+        }
+        
+        if (state === 'disconnected') {
+            // Wait 30 seconds before considering reconnect - Daydream can have brief disconnects
+            log('ICE disconnected - waiting 30s before reconnect...', 'info');
+            iceDisconnectTimer = setTimeout(async () => {
+                if (inputPC && inputPC.iceConnectionState === 'disconnected') {
+                    log('Still disconnected after 30s, reconnecting...', 'info');
+                    await fullReconnect();
                 }
-            } else {
-                log('Max ICE restarts reached, full reconnect...', 'info');
-                await fullReconnect();
-            }
+            }, 30000);
+        } else if (state === 'failed') {
+            log('ICE failed, reconnecting...', 'info');
+            await fullReconnect();
         } else if (state === 'connected') {
-            iceRestartAttempts = 0; // Reset on successful connection
+            iceRestartAttempts = 0;
         }
     };
     
@@ -1342,9 +1348,23 @@ function startPolling() {
             const data = await res.json();
             if (attempts % 5 === 0) log(`Waiting for AI output (${attempts})...`, 'info');
             
-            // Debug: log stream state
-            if (attempts <= 3 || attempts % 10 === 0) {
-                console.log('Stream state:', { live: data.meta?.live, sources: data.meta?.source?.length || 0 });
+            // Debug: log full stream state for first few attempts
+            if (attempts <= 5) {
+                console.log('Full stream response:', JSON.stringify(data, null, 2));
+            } else if (attempts % 10 === 0) {
+                console.log('Stream state:', { 
+                    live: data.meta?.live, 
+                    sources: data.meta?.source?.length || 0,
+                    status: data.status,
+                    error: data.error,
+                    meta: data.meta
+                });
+            }
+            
+            // Check for error state
+            if (data.error || data.status === 'error') {
+                log(`Stream error: ${data.error || data.status}`, 'error');
+                console.error('Stream in error state:', data);
             }
             
             if (data.meta?.live === 1 && !hlsConnected) {
@@ -1352,14 +1372,12 @@ function startPolling() {
                 const hlsSource = data.meta?.source?.find(s => s.hrn === 'HLS (TS)');
                 const hlsUrl = hlsSource?.url;
                 
-                // Validate HLS URL before connecting
                 if (hlsUrl && hlsUrl.includes('.m3u8')) {
                     console.log('HLS URL:', hlsUrl);
                     hlsConnected = true;
                     setTimeout(() => connectHLS(hlsUrl), 2000);
                 } else if (hlsUrl) {
                     log(`Invalid HLS URL format: ${hlsUrl.substring(0, 50)}...`, 'error');
-                    console.error('Full HLS URL:', hlsUrl);
                 } else {
                     log('Waiting for valid HLS URL...', 'info');
                     console.log('Available sources:', data.meta?.source);
