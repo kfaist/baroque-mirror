@@ -1,0 +1,1 @@
+{"query":"{ me { projects { edges { node { id name } } } } }"}
