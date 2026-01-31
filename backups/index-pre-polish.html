@@ -1,5 +1,5 @@
 <!-- deploy-1769832300 -->
-<!-- v-polished -->
+<!-- v-wait-for-video -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -229,23 +229,6 @@
             .video-container { order: 2; width: 100vw !important; margin-left: calc(-50vw + 50%); border-radius: 0 !important; }
             .statement-section { order: 101; width: calc(100vw - 20px); margin: 10px auto; }
         }
-        /* FALLBACK OVERLAY */
-        .fallback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(10,6,8,0.85); backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
-        .fallback-overlay.active { opacity: 1; pointer-events: auto; }
-        .fallback-webcam { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: sepia(0.8) contrast(1.2) brightness(0.7) saturate(1.4); opacity: 0.35; z-index: 0; }
-        .fallback-content { position: relative; z-index: 1; text-align: center; padding: 40px; max-width: 500px; }
-        .fallback-icon { font-size: 3rem; margin-bottom: 16px; animation: fallbackPulse 3s ease-in-out infinite; }
-        @keyframes fallbackPulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
-        .fallback-title { font-family: 'Cinzel', serif; color: #d4af37; font-size: 1.4rem; letter-spacing: 4px; margin-bottom: 12px; text-transform: uppercase; }
-        .fallback-message { font-family: 'Cormorant Garamond', serif; color: #f4e4ba; font-size: 1.1rem; line-height: 1.6; opacity: 0.85; margin-bottom: 24px; }
-        .fallback-retry { padding: 14px 32px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(114,47,55,0.85), rgba(74,31,36,0.95)); color: #d4af37; font-size: 0.9rem; cursor: pointer; border-radius: 8px; font-family: 'Cinzel', serif; letter-spacing: 3px; transition: all 0.3s ease; text-transform: uppercase; }
-        .fallback-retry:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 35px rgba(212,175,55,0.5); transform: translateY(-2px); }
-        .fallback-subtext { font-size: 0.75rem; color: rgba(244,228,186,0.5); margin-top: 16px; font-style: italic; }
-
-        /* VIDEO FADE-IN */
-        .output-video { opacity: 0; transition: opacity 1.2s ease; }
-        .output-video.playing { opacity: 1; }
-
         .raindrop { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; animation: raindropFade ease-out forwards; }
         @keyframes raindropFade { 0% { transform: scale(0) rotate(0deg); opacity: 0; } 20% { transform: scale(1.2) rotate(90deg); opacity: 1; } 100% { transform: scale(0.8) rotate(360deg); opacity: 0; } }
     </style>
@@ -319,16 +302,6 @@
                     <div class="status-overlay" id="statusOverlay">
                         <div class="status-message" id="statusMessage">Negotiating with pixels. Please wait up to 45 seconds...</div>
                         <div class="status-debug" id="statusDebug"></div>
-                    </div>
-                    <div class="fallback-overlay" id="fallbackOverlay">
-                        <video class="fallback-webcam" id="fallbackWebcam" autoplay muted playsinline></video>
-                        <div class="fallback-content">
-                            <div class="fallback-icon">⚜</div>
-                            <div class="fallback-title" id="fallbackTitle">Summoning the Muse</div>
-                            <div class="fallback-message" id="fallbackMessage">The mirror is warming up. Your portrait session will begin momentarily.</div>
-                            <button class="fallback-retry" id="fallbackRetry" style="display:none;" onclick="retrySession()">Try Again ⚜</button>
-                            <div class="fallback-subtext" id="fallbackSubtext"></div>
-                        </div>
                     </div>
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
@@ -1206,6 +1179,7 @@ function runRainAnimation() {
 function startSessionTimer() {
     sessionStartTime = Date.now();
     runRainAnimation();
+    console.log('Session started - rainbow drops at 7min, redirect at 10min');
 }
 
 async function start() {
@@ -1239,9 +1213,11 @@ async function start() {
         }) });
         if (!createRes.ok) {
             const errText = await createRes.text();
+            console.error('Stream creation failed:', createRes.status, errText);
             throw new Error(`Create failed: ${createRes.status} - ${errText}`);
         }
         const data = await createRes.json();
+        console.log('Stream created - full response:', data);
         streamId = data.id;
         playbackId = data.output_playback_id;
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
@@ -1259,7 +1235,7 @@ async function start() {
         startSessionTimer();
     } catch (e) {
         log(`ERROR: ${e.message}`, 'error');
-        showFallback('error');
+        console.error(e);
         document.getElementById('startBtn').disabled = false;
     }
 }
@@ -1297,21 +1273,18 @@ async function connectWHIP(whipUrl) {
         
         if (state === 'disconnected') {
             // Wait 30 seconds before considering reconnect - Daydream can have brief disconnects
-            log('ICE disconnected - waiting 30s...', 'info');
+            log('ICE disconnected - waiting 30s before reconnect...', 'info');
             iceDisconnectTimer = setTimeout(async () => {
                 if (inputPC && inputPC.iceConnectionState === 'disconnected') {
                     log('Still disconnected after 30s, reconnecting...', 'info');
-                    showFallback('disconnect');
                     await fullReconnect();
                 }
             }, 30000);
         } else if (state === 'failed') {
             log('ICE failed, reconnecting...', 'info');
-            showFallback('disconnect');
             await fullReconnect();
         } else if (state === 'connected') {
             iceRestartAttempts = 0;
-            hideFallback();
         }
     };
     
@@ -1369,41 +1342,53 @@ function startPolling() {
     
     // Poll Livepeer directly instead of Daydream (avoids CORS/502 issues)
     const livepeerPollUrl = `https://livepeer.studio/api/playback/${playbackId}`;
+    console.log('Polling Livepeer directly:', livepeerPollUrl);
     
     const poll = async () => {
         attempts++;
         try {
+            // Use Livepeer's public playback API (no auth needed, no CORS issues)
             const res = await fetch(livepeerPollUrl);
             
             if (!res.ok) {
                 if (attempts % 5 === 0) log(`Waiting for AI output (${attempts})...`, 'info');
+                console.log(`Livepeer poll ${attempts}: ${res.status}`);
                 if (attempts < maxAttempts) pollTimer = setTimeout(poll, 2000);
-                else showFallback('timeout');
                 return;
             }
             
             const data = await res.json();
+            
+            // Debug: log response structure
+            if (attempts <= 5 || attempts % 10 === 0) {
+                console.log('Livepeer playback response:', data);
+                console.log('Sources available:', data.meta?.source);
+            }
             if (attempts % 5 === 0) log(`Waiting for AI output (${attempts})...`, 'info');
             
             // Livepeer: type='live' means stream exists, meta.live=1 means video is flowing
             const hasVideo = data.meta?.live === 1 || data.meta?.live === true;
+            console.log('Stream status:', { type: data.type, metaLive: data.meta?.live, hasVideo, hlsConnected });
             
             if (hasVideo && !hlsConnected) {
                 log('STREAM LIVE!', 'success');
                 const hlsSource = data.meta?.source?.find(s => s.hrn === 'HLS (TS)');
+                console.log('HLS source found:', hlsSource);
                 const hlsUrl = hlsSource?.url;
                 
                 if (hlsUrl && hlsUrl.includes('.m3u8')) {
+                    console.log('HLS URL:', hlsUrl);
                     hlsConnected = true;
                     setTimeout(() => connectHLS(hlsUrl), 2000);
                 } else {
                     log('Waiting for valid HLS URL...', 'info');
+                    console.log('Available sources:', data.meta?.source);
                 }
             }
             if (attempts < maxAttempts) pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
         } catch (e) { 
-            if (attempts < maxAttempts) pollTimer = setTimeout(poll, 3000);
-            else showFallback('timeout');
+            console.log(`Poll error: ${e.message}`);
+            if (attempts < maxAttempts) pollTimer = setTimeout(poll, 3000); 
         }
     };
     pollTimer = setTimeout(poll, 3000);
@@ -1411,10 +1396,12 @@ function startPolling() {
 
 function connectHLS(url) {
     log(`Connecting HLS...`, 'info');
+    console.log('connectHLS called with URL:', url);
     
     // Validate URL
     if (!url || typeof url !== 'string' || !url.startsWith('http')) {
-        log(`Invalid HLS URL`, 'error');
+        log(`Invalid HLS URL: ${url}`, 'error');
+        console.error('Invalid HLS URL received:', url);
         return;
     }
     
@@ -1424,67 +1411,14 @@ function connectHLS(url) {
         hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 0.2, liveMaxLatencyDuration: 1, liveBackBufferLength: 0, maxBufferLength: 1, liveDurationInfinity: true, highBufferWatchdogPeriod: 2, manifestLoadingTimeOut: 20000, manifestLoadingMaxRetry: 6, manifestLoadingRetryDelay: 1000, levelLoadingTimeOut: 20000, levelLoadingMaxRetry: 6, levelLoadingRetryDelay: 1000, fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 6, fragLoadingRetryDelay: 1000, enableWorker: true, startLevel: -1 });
         hls.loadSource(url);
         hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); video.classList.add('playing'); hideFallback(); hideStatusOverlay(); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); video.classList.add('playing'); hideFallback(); hideStatusOverlay(); video.muted = true; video.play().catch(() => {}); }); });
-        hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal) { switch (data.type) { case Hls.ErrorTypes.NETWORK_ERROR: log('Network error - retrying...', 'info'); setTimeout(() => { hls.startLoad(); }, 2000); break; case Hls.ErrorTypes.MEDIA_ERROR: log('Media error - recovering...', 'info'); hls.recoverMediaError(); break; default: log('Fatal error', 'error'); showFallback('error'); break; } } });
+        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); hideStatusOverlay(); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); hideStatusOverlay(); video.muted = true; video.play().catch(() => {}); }); });
+        hls.on(Hls.Events.ERROR, (e, data) => { log(`HLS: ${data.type} - ${data.details}`, 'info'); if (data.fatal) { switch (data.type) { case Hls.ErrorTypes.NETWORK_ERROR: log('Network error - retrying...', 'info'); setTimeout(() => { hls.startLoad(); }, 2000); break; case Hls.ErrorTypes.MEDIA_ERROR: log('Media error - recovering...', 'info'); hls.recoverMediaError(); break; default: log('Fatal error - please restart', 'error'); break; } } });
         hls.on(Hls.Events.FRAG_LOADED, () => { if (!video.playing) video.play().catch(() => {}); });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; video.addEventListener('loadedmetadata', () => { video.play().catch(() => { video.muted = true; video.play(); }); }); log('Native HLS playing', 'success'); }
 }
 
-// ============================================
-// FALLBACK SYSTEM
-// ============================================
-function showFallback(reason) {
-    const overlay = document.getElementById('fallbackOverlay');
-    const title = document.getElementById('fallbackTitle');
-    const message = document.getElementById('fallbackMessage');
-    const retry = document.getElementById('fallbackRetry');
-    const subtext = document.getElementById('fallbackSubtext');
-    const fallbackCam = document.getElementById('fallbackWebcam');
-    
-    // Mirror the webcam into the fallback overlay as a baroque-filtered background
-    if (localStream) {
-        fallbackCam.srcObject = localStream;
-    }
-    
-    if (reason === 'timeout') {
-        title.textContent = 'The Muse is Resting';
-        message.textContent = 'Our AI canvas is taking longer than usual. The mirror will activate as soon as it\'s ready — or you can try again.';
-        retry.style.display = 'inline-block';
-        subtext.textContent = 'Your camera is still active. The portrait will appear when the AI reconnects.';
-    } else if (reason === 'error') {
-        title.textContent = 'A Momentary Pause';
-        message.textContent = 'The mirror has encountered a brief interruption. Like any great artist, it needs a moment to gather its thoughts.';
-        retry.style.display = 'inline-block';
-        subtext.textContent = 'Tap below to begin a new session.';
-    } else if (reason === 'disconnect') {
-        title.textContent = 'Connection Lost';
-        message.textContent = 'The mirror\'s connection has been interrupted. Attempting to reconnect...';
-        retry.style.display = 'none';
-        subtext.textContent = 'Please wait a moment.';
-    }
-    
-    overlay.classList.add('active');
-    hideStatusOverlay();
-}
-
-function hideFallback() {
-    const overlay = document.getElementById('fallbackOverlay');
-    overlay.classList.remove('active');
-    const fallbackCam = document.getElementById('fallbackWebcam');
-    fallbackCam.srcObject = null;
-}
-
-function retrySession() {
-    hideFallback();
-    stop();
-    setTimeout(() => {
-        document.getElementById('startBtn').click();
-    }, 500);
-}
-
 function stop() {
     if (pollTimer) clearTimeout(pollTimer);
-    hideFallback();
     hideStatusOverlay();
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
     if (inputPC) { inputPC.close(); inputPC = null; }
@@ -1494,7 +1428,6 @@ function stop() {
     document.getElementById('local').srcObject = null;
     document.getElementById('output').srcObject = null;
     document.getElementById('output').src = '';
-    document.getElementById('output').classList.remove('playing');
     document.getElementById('startBtn').disabled = false;
     document.getElementById('startBtn').style.display = 'block';
     document.getElementById('stopBtn').style.display = 'none';
