@@ -1,5 +1,5 @@
-<!-- deploy-1769832200 -->
-<!-- v-livepeer-poll3 -->
+<!-- deploy-1769832300 -->
+<!-- v-wait-for-video -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -1366,11 +1366,11 @@ function startPolling() {
             }
             if (attempts % 5 === 0) log(`Waiting for AI output (${attempts})...`, 'info');
             
-            // Livepeer returns type: 'live' when stream is active
-            const isLive = data.type === 'live' || data.meta?.live === true;
-            console.log('Live check:', { isLive, type: data.type, hlsConnected });
+            // Livepeer: type='live' means stream exists, meta.live=1 means video is flowing
+            const hasVideo = data.meta?.live === 1 || data.meta?.live === true;
+            console.log('Stream status:', { type: data.type, metaLive: data.meta?.live, hasVideo, hlsConnected });
             
-            if (isLive && !hlsConnected) {
+            if (hasVideo && !hlsConnected) {
                 log('STREAM LIVE!', 'success');
                 const hlsSource = data.meta?.source?.find(s => s.hrn === 'HLS (TS)');
                 console.log('HLS source found:', hlsSource);
