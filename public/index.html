@@ -411,8 +411,8 @@ let localStream, inputPC, streamId, playbackId, hls, pollTimer;
 let iceDisconnectTimer = null;
 let reconnectAttempts = 0;
 const MAX_RECONNECT_ATTEMPTS = 3;
-const ICE_DISCONNECT_WAIT = 30000;  // Wait 30 seconds before considering disconnected
-const AI_WARMUP_TIME = 45000;       // AI takes up to 45 seconds to warm up
+const ICE_DISCONNECT_WAIT = 30000;
+const AI_WARMUP_TIME = 45000;
 let countdownTimer = null;
 let countdownValue = 45;
 let statusDebugLines = [];
@@ -1260,15 +1260,16 @@ async function connectWHIP(whipUrl) {
     inputPC.oniceconnectionstatechange = () => {
         const state = inputPC.iceConnectionState;
         log(`ICE: ${state}`, state === 'connected' ? 'success' : 'info');
-        if (state === 'connected' || state === 'completed') {
-            if (iceDisconnectTimer) { clearTimeout(iceDisconnectTimer); iceDisconnectTimer = null; }
+        if (iceDisconnectTimer) { clearTimeout(iceDisconnectTimer); iceDisconnectTimer = null; }
+        if (state === 'connected') {
             reconnectAttempts = 0;
+            setTimeout(async () => { if (!inputPC) return; try { const stats = await inputPC.getStats(); stats.forEach(s => { if (s.type === 'outbound-rtp' && s.kind === 'video') { log(`Video: ${s.bytesSent} bytes, ${s.framesSent} frames`, 'info'); } }); } catch(e) {} }, 3000);
         }
-        if (state === 'disconnected') {
+        else if (state === 'disconnected') {
             log(`Connection paused - waiting ${ICE_DISCONNECT_WAIT/1000}s before reconnect...`, 'info');
             iceDisconnectTimer = setTimeout(() => { if (inputPC && inputPC.iceConnectionState === 'disconnected') { log('Connection timeout - recovering', 'error'); if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) { reconnectAttempts++; log(`Reconnect ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}...`, 'info'); stop(); setTimeout(() => { document.getElementById('startBtn').click(); }, 1000); } } }, ICE_DISCONNECT_WAIT);
         }
-        if (state === 'failed') {
+        else if (state === 'failed') {
             log('Connection failed - recovering...', 'error');
             if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) { reconnectAttempts++; setTimeout(() => { stop(); setTimeout(() => { document.getElementById('startBtn').click(); }, 1000); }, 2000); }
         }
@@ -1346,6 +1347,7 @@ function connectHLS(url) {
 
 function stop() {
     if (pollTimer) clearTimeout(pollTimer);
+    if (iceDisconnectTimer) clearTimeout(iceDisconnectTimer);
     hideStatusOverlay();
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
     if (inputPC) { inputPC.close(); inputPC = null; }
