@@ -80,8 +80,8 @@
         
         .output-area { position: relative; }
         .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: #000; }
-        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
-        .output-video { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 4/3; overflow: hidden; }
+        .output-video { width: 100%; height: 100%; object-fit: cover; object-position: center center; display: block; background: #000; }
         .video-animation-overlay { position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; pointer-events: none; z-index: 2; opacity: 0.4; mix-blend-mode: overlay; }
         .fullscreen-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.6); background: rgba(10,6,8,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.1rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(5px); }
         .fullscreen-btn:hover { background: rgba(212,175,55,0.3); border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); transform: scale(1.1); }
@@ -91,7 +91,7 @@
         .video-container:fullscreen .fullscreen-btn { top: 25px; right: 25px; }
         .video-container:fullscreen .frame-overlay { display: none; }
         .video-container:fullscreen .video-animation-overlay { display: none; }
-        .frame-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; border: 8px solid transparent; border-image: linear-gradient(135deg, #d4af37 0%, #8b6914 25%, #d4af37 50%, #8b6914 75%, #d4af37 100%) 1; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
+        .frame-overlay { display: none; }
         
         .status-overlay { position: absolute; top: 15px; left: 15px; z-index: 50; display: none; font-family: 'Courier New', monospace; font-size: 0.7rem; max-width: 350px; }
         .status-overlay.active { display: block; }
@@ -119,12 +119,17 @@
         .purchase-btn-large:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 25px rgba(212,175,55,0.5); transform: translateY(-2px); }
         .purchase-btn-large .purchase-line { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; }
         .purchase-btn-large .purchase-divider { font-size: 0.6rem; opacity: 0.7; line-height: 1; }
+        .capture-btn-large { display: flex; align-items: center; justify-content: center; width: 100%; padding: 8px 10px; margin-bottom: 12px; border: 1px solid #06b6d4; background: linear-gradient(180deg, rgba(6,182,212,0.15), rgba(8,145,178,0.25)); color: #22d3ee; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; }
+        .capture-btn-large:hover { background: linear-gradient(180deg, #06b6d4, #0891b2); color: #0a0608; box-shadow: 0 0 20px rgba(6,182,212,0.5); transform: translateY(-1px); }
         .capture-grid { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 3; }
         .capture-slot { aspect-ratio: 16/10; border: 1px solid rgba(139,105,20,0.5); border-radius: 2px; background: rgba(10,8,6,0.95); overflow: hidden; position: relative; transition: all 0.3s ease; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
+        .capture-slot.placeholder { background: linear-gradient(135deg, rgba(20,15,25,0.95) 0%, rgba(30,20,35,0.9) 50%, rgba(20,15,25,0.95) 100%); }
+        .capture-slot.placeholder::after { content: '⚜'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: rgba(212,175,55,0.15); }
         .capture-slot:hover { border-color: #d4af37; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3); }
         .capture-slot-number { position: absolute; top: 4px; left: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.55rem; color: rgba(212,175,55,0.6); letter-spacing: 1px; z-index: 2; }
         .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
         .capture-slot.has-image img { display: block; }
+        .capture-slot.has-image::after { content: '⚜'; position: absolute; bottom: 6px; right: 6px; font-size: 1rem; color: rgba(212,175,55,0.25); z-index: 1; }
         .capture-slot.has-image .capture-btn { opacity: 0; }
         .capture-slot.has-image:hover .capture-btn { opacity: 1; }
         .capture-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 8px 12px; border: 1px solid rgba(212,175,55,0.6); background: rgba(15,10,12,0.9); color: #d4af37; font-size: 0.6rem; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; white-space: nowrap; }
@@ -227,6 +232,17 @@
         }
         .raindrop { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; animation: raindropFade ease-out forwards; }
         @keyframes raindropFade { 0% { transform: scale(0) rotate(0deg); opacity: 0; } 20% { transform: scale(1.2) rotate(90deg); opacity: 1; } 100% { transform: scale(0.8) rotate(360deg); opacity: 0; } }
+        .header-title-row { display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .header-flourish { height: 60px; opacity: 0.7; }
+        .header-flourish.flip { transform: scaleX(-1); }
+        .header-info { display: flex; flex-direction: column; align-items: center; }
+        @media (max-width: 768px) {
+            .header-flourish { height: 30px; }
+            .header-title-row { gap: 10px; }
+        }
+        .baroque-flourish { position: fixed; width: 120px; opacity: 0.6; pointer-events: none; z-index: 1000; }
+        .flourish-left { bottom: 20px; left: 20px; }
+        .flourish-right { bottom: 20px; right: 20px; transform: scaleX(-1); }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -238,8 +254,14 @@
         <div class="header">
             <div class="header-top"><span>COLUMBUS MUSEUM OF ART</span><span>⚜</span><span>WONDERBALL 2026</span></div>
             <h1>⚜ BAROQUE MIRROR: SELF-PORTRAIT ⚜</h1>
-            <div class="header-sub">Live AI Art Transformation</div>
-            <div class="header-credit">by Krista Faist</div>
+            <div class="header-title-row">
+                <img src="baroque-sticker.png" class="header-flourish" alt="">
+                <div class="header-info">
+                    <div class="header-sub">Live AI Art Transformation</div>
+                    <div class="header-credit">by Krista Faist</div>
+                </div>
+                <img src="baroque-sticker.png" class="header-flourish flip" alt="">
+            </div>
         </div>
         
         <div class="main">
@@ -261,12 +283,12 @@
                 <div class="section">
                     <h3>⚜ Master Style</h3>
                     <div class="style-grid">
-                        <button class="style-btn active" data-style="baroque">Baroque</button>
+                        <button class="style-btn" data-style="baroque">Baroque</button>
                         <button class="style-btn" data-style="rococo">Rococo</button>
                         <button class="style-btn" data-style="caravaggio">Caravaggio</button>
                         <button class="style-btn" data-style="vermeer">Vermeer</button>
                         <button class="style-btn" data-style="rembrandt">Rembrandt</button>
-                        <button class="style-btn" data-style="artemisia">Artemisia</button>
+                        <button class="style-btn active" data-style="artemisia">Artemisia</button>
                     </div>
                     <div class="mode-box">
                         <div class="mode-labels"><span>🎨 Opulent Oil Painting</span><span>French Revolution Caricatures 📜</span></div>
@@ -278,10 +300,10 @@
                 <div class="section">
                     <h3>⚜ Transform Controls</h3>
                     <div class="slider-row"><label>AI Strength <span class="val" id="strengthVal">50</span></label><input type="range" id="strengthSlider" min="1" max="50" value="50"></div>
-                    <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">0.47</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="47"></div>
-                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.30</span></label><input type="range" id="poseSlider" min="0" max="100" value="30"></div>
-                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.36</span></label><input type="range" id="edgeSlider" min="0" max="100" value="36"></div>
-                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.24</span></label><input type="range" id="depthSlider" min="0" max="100" value="24"></div>
+                    <div class="slider-row"><label>Prompt Weight <span class="val" id="promptWeightVal">0.08</span></label><input type="range" id="promptWeightSlider" min="0" max="100" value="8"></div>
+                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.47</span></label><input type="range" id="poseSlider" min="0" max="100" value="47"></div>
+                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.31</span></label><input type="range" id="edgeSlider" min="0" max="100" value="31"></div>
+                    <div class="slider-row"><label>Depth <span class="val" id="depthVal">0.71</span></label><input type="range" id="depthSlider" min="0" max="100" value="71"></div>
                     <div class="slider-row"><label>Background Transparency <span class="val" id="bgTransVal">0%</span></label><input type="range" id="bgTransSlider" min="0" max="100" value="0"></div>
                 </div>
                 
@@ -340,7 +362,14 @@
             <div class="capture-panel">
                 <div class="input-preview-section">
                     <h4>⚜ Live Input</h4>
-                    <div class="webcam-pip"><video id="local" autoplay muted playsinline></video></div>
+                    <div class="webcam-pip"><video id="local" autoplay muted playsinline></video><canvas id="uploadedImageCanvas" style="display:none;"></canvas></div>
+                    <div class="source-toggle">
+                        <button class="source-btn active" id="webcamBtn" onclick="switchToWebcam()">📷</button>
+                        <label class="source-btn" id="uploadBtn">
+                            📁
+                            <input type="file" id="imageUpload" accept="image/*" onchange="handleImageUpload(event)" style="display:none;">
+                        </label>
+                    </div>
                 </div>
                 
                 <a href="/prints" class="purchase-btn-large" id="purchaseBtn">
@@ -349,19 +378,16 @@
                     <span class="purchase-line">Mint NFTs</span>
                 </a>
                 
+                <button class="capture-btn-large" onclick="captureAndPush()">📸 Capture / Add Source Images</button>
+                
                 <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
                 
                 <div class="capture-grid">
-                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">EXP_01</span><img src="" alt="Captured still 1"><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">EXP_02</span><img src="" alt="Captured still 2"><button class="capture-btn" onclick="captureStill(2)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">EXP_03</span><img src="" alt="Captured still 3"><button class="capture-btn" onclick="captureStill(3)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">EXP_04</span><img src="" alt="Captured still 4"><button class="capture-btn" onclick="captureStill(4)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">EXP_05</span><img src="" alt="Captured still 5"><button class="capture-btn" onclick="captureStill(5)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="6"><span class="capture-slot-number">EXP_06</span><img src="" alt="Captured still 6"><button class="capture-btn" onclick="captureStill(6)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="7"><span class="capture-slot-number">EXP_07</span><img src="" alt="Captured still 7"><button class="capture-btn" onclick="captureStill(7)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="8"><span class="capture-slot-number">EXP_08</span><img src="" alt="Captured still 8"><button class="capture-btn" onclick="captureStill(8)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="9"><span class="capture-slot-number">EXP_09</span><img src="" alt="Captured still 9"><button class="capture-btn" onclick="captureStill(9)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="10"><span class="capture-slot-number">EXP_10</span><img src="" alt="Captured still 10"><button class="capture-btn" onclick="captureStill(10)">Capture Still</button></div>
+                    <div class="capture-slot has-image" data-slot="1"><img src="samples/sample1.png" alt="" style="display:block;"></div>
+                    <div class="capture-slot has-image" data-slot="2"><img src="samples/sample2.png" alt="" style="display:block;"></div>
+                    <div class="capture-slot has-image" data-slot="3"><img src="samples/sample3.png" alt="" style="display:block;"></div>
+                    <div class="capture-slot has-image" data-slot="4"><img src="samples/sample4.png" alt="" style="display:block;"></div>
+                    <div class="capture-slot has-image" data-slot="5"><img src="samples/sample5.png" alt="" style="display:block;"></div>
                 </div>
             </div>
         </div>
@@ -373,32 +399,25 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-const API_KEY = 'sk_wdNUnsKxxwH6v64BHMwHaWT39Mhwk5ZrqZzXDRmAXxxAqCgVGusff2Y8jxiBofuP';
+const API_KEY = 'sk_9bFt6nHdK1T6AXG6knDS3K57u1BTS6xe9FiwqwQW52KoK7UpqBBEYnmPGxFvLJmS';
 const API_BASE = 'https://api.daydream.live/v1';
-const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
-
-// ============================================
-// CONNECTION TIMING - INCREASED TOLERANCE
-// ============================================
-const ICE_DISCONNECT_WAIT = 30000;  // Wait 30 seconds before considering disconnected
-const AI_WARMUP_TIME = 45000;       // AI takes up to 45 seconds to warm up
-const STATUS_CHECK_INTERVAL = 3000; // Check stream status every 3 seconds
-const MAX_RECONNECT_ATTEMPTS = 3;
+const PIPELINE_ID = 'pip_SDXL-turbo';
+const MODEL_ID = 'stabilityai/sdxl-turbo';
 
 // ============================================
 // STATE
 // ============================================
-let localStream, inputPC, outputPC, streamId, playbackId, hls, pollTimer, statusTimer;
+let localStream, inputPC, streamId, playbackId, hls, pollTimer;
 let iceDisconnectTimer = null;
 let reconnectAttempts = 0;
-let whepUrl = null;
-let outputConnected = false;
-let aiProcessing = false;
+const MAX_RECONNECT_ATTEMPTS = 3;
+const ICE_DISCONNECT_WAIT = 30000;  // Wait 30 seconds before considering disconnected
+const AI_WARMUP_TIME = 45000;       // AI takes up to 45 seconds to warm up
 let countdownTimer = null;
 let countdownValue = 45;
 let statusDebugLines = [];
 let audioContext, analyser, audioDataArray, micSource;
-let currentStyle = 'baroque';
+let currentStyle = 'artemisia';
 let modeValue = 0;
 let customPrompt = '';
 let params = { strength: 50, promptWeight: 0.47, pose: 0.30, edge: 0.36, depth: 0.24, bgTrans: 0 };
@@ -416,67 +435,40 @@ let time = 0;
 let particles = [];
 const MAX_PARTICLES = 300;
 
-const promptInspirations = [
-    "Venetian carnival masquerade, golden masks, mysterious candlelight atmosphere",
-    "Dutch still life with tulips and silver vessels, morning light through window",
-    "Spanish court portrait, velvet fabrics, pearl jewelry, dignified pose",
-    "Italian Renaissance fresco, angelic figures, celestial clouds, divine light",
-    "Flemish tavern scene, warm firelight, rustic wooden textures, jovial mood",
-    "French salon portrait, powdered wigs, silk ribbons, ornate gilt frame",
-    "Northern Renaissance landscape, misty valleys, ancient castles, mysterious atmosphere",
-    "Mannerist elongated figures, swirling drapery, jewel-toned palette",
-    "Tenebroso night scene, single candle illumination, dramatic shadows",
-    "Arcadian pastoral, shepherds and nymphs, classical ruins, golden hour",
-    "Memento mori symbolism, vanitas objects, hourglasses and skulls, philosophical mood",
-    "Byzantine icon style, gold leaf halos, frontal gaze, sacred geometry",
-    "Pre-Raphaelite romanticism, flowing hair, medieval legends, vivid colors",
-    "Venetian veduta cityscape, grand canals, gondolas, atmospheric perspective",
-    "Allegorical mythology, gods and goddesses, dramatic gestures, symbolic objects",
-    "dramatic chiaroscuro lighting with ornate fabrics and powdered wig detail",
-    "opulent rococo ornament in swirling pastel tones",
-    "baroque portrait with gold filigree and deep velvet textures",
-    "elaborate lace cuffs flowing in soft candlelight",
-    "powdered wig architecture with intricate curls and ribbons",
-    "ornate brocade clothing rendered in rich painterly detail",
-    "dynamic baroque pose illuminated by golden side-light",
-    "delicate rococo pastel palette with decorative motifs",
-    "carved gilded frame aesthetic with theatrical shadowing",
-    "flowing silk fabric reflecting warm candlelight",
-    "dramatic baroque composition with sweeping gesture",
-    "ornate jewelry and pearls catching soft highlights",
-    "richly textured fabrics with elaborate embroidery",
-    "rococo frivolity expressed through airy pastel tones",
-    "dramatic drapery falling in heavy folds",
-    "French Revolutionary political cartoon, Honoré Daumier grotesque satire",
-    "James Gillray caricature, bulging eyes, elongated nose",
-    "Thomas Rowlandson satirical print, rotund figures",
-    "Sans-culottes propaganda broadsheet",
-    "whipped cream kaleidoscope made of spun glass, soft white spirals with rainbow refractions",
-    "gumball machine filled with glass marbles, each containing tiny universe",
-    "birthday candles with glass flames, frozen fire in amber and gold",
-    "soap bubbles that became glass, cluster of spheres in iridescent rainbow",
-    "cotton candy tornado captured in glass cylinder, pink and blue sugar strands frozen mid-swirl",
-    "fireworks explosion in glass dome, bursting colors frozen at peak brilliance",
-    "rainbow waterfall in glass sculpture, cascading colors from red through violet",
-    "glass terrarium containing miniature galaxy, stars and nebulae swirling, cosmic snow globe",
-    "stained glass disco ball, faceted surface projecting rainbow patterns",
-    "lava lamp reimagined in hand-blown glass, permanent wax blobs suspended in crystal",
-    "morpho butterfly wing extreme macro, structural color, electric blue shifting to purple",
-    "peacock feather eye detail, interference patterns, emerald to cobalt gradient",
-    "abalone shell interior, nacre layers creating rainbow oil slick patterns",
-    "hummingbird wing frozen mid-flight, iridescent feathers shifting green to purple",
-    "dragonfly wing membrane, dewdrops acting as tiny lenses",
-    "ice crystal forming in real-time, fractal branching patterns",
-    "aurora borealis captured in glass sphere, swirling green and purple",
-    "bioluminescent plankton bloom, millions of tiny light points",
-    "butterfly wing scales under electron microscope, metallic sheen",
-    "cuttlefish skin changing color, chromatophores expanding",
-    "Neon rope flowing through gilded baroque frames, luminous cord glowing",
-    "Neon tubes winding through baroque picture frames, hot pink and electric blue",
-    "Single neon tube bent into baroque scroll shape, glowing amber",
-    "Baroque mirror frame wrapped entirely in neon tubes",
-    "Neon sign spelling baroque flourishes, cursive light writing"
+// 🌈 WHIPPED CREAM KALEIDOSCOPE RAINBOW
+const candyPrompts = [
+    "whipped cream kaleidoscope rainbow",
+    "marshmallow gumball",
+    "soda pop and candy kaleidoscope",
+    "tumbling inside of a rainbow kaleidoscope full of dichroic glass confetti and iridescent sequins",
+    "dichroic glass confetti and iridescent sequins",
+    "holographic soda pop fizz and candy wrapper kaleidoscope",
+    "glitter bomb explosion inside a snow globe",
+    "neon electric cotton candy clouds",
+    "bubble wrap popping in slow motion with rainbow light",
+    "gummy avalanche in crystal cave",
+    "disco ball fragments floating in honey",
+    "sprinkles tornado inside a cupcake",
+    "jelly bean waterfall over chrome sculpture",
+    "soap bubble cathedral with stained glass reflections"
 ];
+
+// 🎨 BAROQUE ABSTRACT
+const baroquePrompts = [
+    "baroque acanthus scroll, luminous mechanical cells pulsing with bioluminescence",
+    "rococo seashell motif, fibonacci spiral in mother of pearl and gold leaf",
+    "baroque cartouche, living cells dividing within ornate gilded frame",
+    "gilded baroque frame containing swirling galaxy of tiny stars",
+    "ornate rococo mirror reflecting infinite recursive golden frames",
+    "baroque ceiling fresco, trompe l'oeil clouds with bioluminescent edges",
+    "gilded acanthus leaves unfurling in time-lapse, gold and green",
+    "baroque pearl drop earring, lustrous sphere in golden filigree",
+    "ornate snuff box enamel, miniature painting in jeweled frame",
+    "gilded book spine details, leather and gold tooling patterns"
+];
+
+// Combined for shuffle
+const promptInspirations = [...candyPrompts, ...baroquePrompts];
 
 
 const satireCaptions = [
@@ -675,7 +667,11 @@ function updateCountdown() {
     if (countdownValue > 0) {
         msg.textContent = `Negotiating with pixels. Please wait up to ${countdownValue} seconds...`;
         countdownValue--;
-    } else {
+    } else if (defaultSampleImages[i]) {
+            img.src = defaultSampleImages[i];
+            slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
+        } else {
         msg.textContent = 'Almost there...';
     }
 }
@@ -690,11 +686,106 @@ function hideStatusOverlay() {
     statusDebugLines = [];
 }
 
+// Default sample images (lazy loaded - won't load until user interacts)
+const defaultSampleImages = [
+    '/samples/sample1.png',
+    '/samples/sample2.png', 
+    '/samples/sample3.png',
+    '/samples/sample4.png',
+    '/samples/sample5.png'
+];
+
+// Initialize capture array (newest first)
+let captureArray = [];
+const MAX_CAPTURES = 5;
+let samplesLoaded = false;
+
+function initializeCaptureGrid() {
+    // Load from localStorage or show empty placeholders
+    const saved = localStorage.getItem('baroqueCaptureArray');
+    if (saved) {
+        captureArray = JSON.parse(saved);
+        // Filter out any old defaults
+        captureArray = captureArray.filter(c => !c.isDefault);
+    }
+    renderCaptureGrid();
+}
+
+function renderCaptureGrid() {
+    for (let i = 0; i < MAX_CAPTURES; i++) {
+        const slot = document.querySelector(`.capture-slot[data-slot="${i + 1}"]`);
+        if (!slot) continue;
+        const img = slot.querySelector('img');
+        if (captureArray[i] && !captureArray[i].isDefault) {
+            img.src = captureArray[i].image;
+            slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
+        } else if (defaultSampleImages[i]) {
+            img.src = defaultSampleImages[i];
+            slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
+        } else {
+            // Show styled placeholder - no image loaded
+            img.src = '';
+            slot.classList.remove('has-image');
+            slot.classList.add('placeholder');
+        }
+    }
+    // Update mobile counter
+    const counter = document.getElementById('stillCounter');
+    if (counter) {
+        counter.textContent = captureArray.length + '/5';
+    }
+}
+
+function captureAndPush() {
+    const outputVideo = document.getElementById('output');
+    const canvas = document.getElementById('captureCanvas');
+    const ctx = canvas.getContext('2d');
+    if (!outputVideo.videoWidth) { log('No video to capture yet', 'error'); return; }
+    
+    const maxWidth = 800;
+    const scale = Math.min(1, maxWidth / outputVideo.videoWidth);
+    canvas.width = outputVideo.videoWidth * scale;
+    canvas.height = outputVideo.videoHeight * scale;
+    ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+    
+    // Add new capture to front, push others down
+    const newCapture = {
+        image: dataUrl,
+        isDefault: false,
+        timestamp: new Date().toISOString(),
+        style: currentStyle,
+        prompt: customPrompt || styles[currentStyle].base
+    };
+    
+    captureArray.unshift(newCapture);
+    if (captureArray.length > MAX_CAPTURES) {
+        captureArray = captureArray.slice(0, MAX_CAPTURES);
+    }
+    
+    // Save to localStorage
+    try {
+        localStorage.setItem('baroqueCaptureArray', JSON.stringify(captureArray));
+    } catch (e) {
+        localStorage.removeItem('baroqueCaptureArray');
+        log('Storage full - only keeping current session', 'info');
+    }
+    
+    renderCaptureGrid();
+    log('📸 Captured! Others bumped down', 'success');
+    
+    // Update mobile recent still
+    const recentStill = document.getElementById('mobileRecentStill');
+    if (recentStill) {
+        const img = recentStill.querySelector('img');
+        if (img) { img.src = dataUrl; recentStill.classList.add('has-image'); }
+    }
+}
+
 function captureNextSlot() {
-    let targetSlot = null;
-    for (let i = 1; i <= 10; i++) { if (!capturedStills[i]) { targetSlot = i; break; } }
-    if (!targetSlot) targetSlot = 1;
-    captureStill(targetSlot);
+    captureAndPush();
 }
 
 function updateMobileRecentStill(dataUrl, slotNumber) {
@@ -703,33 +794,15 @@ function updateMobileRecentStill(dataUrl, slotNumber) {
     if (recentStill && counter) {
         const img = recentStill.querySelector('img');
         if (img) { img.src = dataUrl; recentStill.classList.add('has-image'); }
-        counter.textContent = Object.keys(capturedStills).length + '/10';
+        counter.textContent = captureArray.length + '/5';
     }
 }
 
 function captureStill(slotNumber) {
-    const outputVideo = document.getElementById('output');
-    const canvas = document.getElementById('captureCanvas');
-    const ctx = canvas.getContext('2d');
-    if (!outputVideo.videoWidth) { log('No video to capture yet', 'error'); return; }
-    const maxWidth = 800;
-    const scale = Math.min(1, maxWidth / outputVideo.videoWidth);
-    canvas.width = outputVideo.videoWidth * scale;
-    canvas.height = outputVideo.videoHeight * scale;
-    ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-    capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle, prompt: customPrompt || styles[currentStyle].base };
-    try { localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills)); }
-    catch (e) { localStorage.removeItem('baroqueCaptures'); capturedStills = {}; capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle, prompt: customPrompt || styles[currentStyle].base }; localStorage.setItem('baroqueCaptures', JSON.stringify(capturedStills)); log('Storage was full - cleared old captures', 'info'); }
-    const slot = document.querySelector(`.capture-slot[data-slot="${slotNumber}"]`);
-    const img = slot.querySelector('img');
-    img.src = dataUrl;
-    slot.classList.add('has-image');
-    log(`Still captured to slot ${slotNumber}`, 'success');
-    updateMobileRecentStill(dataUrl, slotNumber);
+    captureAndPush();
 }
 
-function loadCapturedStills() { capturedStills = {}; }
+function loadCapturedStills() { initializeCaptureGrid(); }
 
 function shufflePrompt() {
     let allPrompts;
@@ -737,7 +810,11 @@ function shufflePrompt() {
         allPrompts = promptInspirations;
     } else if (modeValue > 50) {
         allPrompts = satireCaptions;
-    } else {
+    } else if (defaultSampleImages[i]) {
+            img.src = defaultSampleImages[i];
+            slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
+        } else {
         allPrompts = Math.random() < 0.5 ? satireCaptions : promptInspirations;
     }
     const randomPrompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
@@ -1050,7 +1127,11 @@ function toggleFullscreen() {
         if (container.requestFullscreen) container.requestFullscreen();
         else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
         else if (container.msRequestFullscreen) container.msRequestFullscreen();
-    } else {
+    } else if (defaultSampleImages[i]) {
+            img.src = defaultSampleImages[i];
+            slot.classList.add('has-image');
+            slot.classList.remove('placeholder');
+        } else {
         if (document.exitFullscreen) document.exitFullscreen();
         else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
         else if (document.msExitFullscreen) document.msExitFullscreen();
@@ -1145,11 +1226,32 @@ async function start() {
     showStatusOverlay();
     try {
         log('Getting camera...', 'info');
-        const isMobile = window.innerWidth <= 768; localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: isMobile ? 640 : 1280 }, height: { ideal: isMobile ? 480 : 720 }, frameRate: { ideal: isMobile ? 24 : 30 } }, audio: true });
-        const localVideo = document.getElementById('local'); localVideo.srcObject = localStream; localVideo.play().catch(e => log('Local video play error: ' + e.message, 'error')); log(`Tracks: ${localStream.getTracks().map(t => t.kind + ':' + t.readyState).join(', ')}`, 'info');
+        localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } }, audio: true });
+        document.getElementById('local').srcObject = localStream;
         log('Camera ready', 'success');
+        initAudio(localStream);
+        initMotionDetection();
+        drawBackground = initBackground();
+        drawParticles = initParticles();
+        drawVideoOverlay = initVideoOverlay();
+        if (!animationId) animate();
         log('Creating Daydream stream...', 'info');
-        const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ pipeline_id: PIPELINE_ID }) });
+        const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ 
+            pipeline_id: PIPELINE_ID,
+            pipeline_params: {
+                prompt: buildPrompt(),
+                delta: 0.7,
+                width: 1024,
+                height: 1024,
+                negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
+                ip_adapter: { type: 'faceid', scale: 0.5, enabled: true },
+                ip_adapter_style_image_url: styles[currentStyle].styleImage,
+                controlnets: [
+                    { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: 0.5, control_guidance_start: 0, control_guidance_end: 1 },
+                    { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
+                ]
+            }
+        }) });
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         const data = await createRes.json();
         streamId = data.id;
@@ -1157,7 +1259,7 @@ async function start() {
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
         log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
-        log('Video streaming to AI', 'success'); initAudio(localStream); initMotionDetection(); drawBackground = initBackground(); if (window.innerWidth > 768) { drawParticles = initParticles(); } else { drawParticles = () => {}; } drawVideoOverlay = initVideoOverlay(); if (!animationId) animate();
+        log('Video streaming to AI', 'success');
         log('AI initializing...', 'info');
         await new Promise(r => setTimeout(r, 3000));
         await setParams();
@@ -1179,16 +1281,15 @@ async function connectWHIP(whipUrl) {
     inputPC.oniceconnectionstatechange = () => {
         const state = inputPC.iceConnectionState;
         log(`ICE: ${state}`, state === 'connected' ? 'success' : 'info');
-        if (iceDisconnectTimer) { clearTimeout(iceDisconnectTimer); iceDisconnectTimer = null; }
-        if (state === 'connected') {
+        if (state === 'connected' || state === 'completed') {
+            if (iceDisconnectTimer) { clearTimeout(iceDisconnectTimer); iceDisconnectTimer = null; }
             reconnectAttempts = 0;
-            setTimeout(async () => { if (!inputPC) return; try { const stats = await inputPC.getStats(); stats.forEach(s => { if (s.type === 'outbound-rtp' && s.kind === 'video') { log(`Video: ${s.bytesSent} bytes, ${s.framesSent} frames`, 'info'); } }); } catch(e) {} }, 3000);
         }
-        else if (state === 'disconnected') {
+        if (state === 'disconnected') {
             log(`Connection paused - waiting ${ICE_DISCONNECT_WAIT/1000}s before reconnect...`, 'info');
             iceDisconnectTimer = setTimeout(() => { if (inputPC && inputPC.iceConnectionState === 'disconnected') { log('Connection timeout - recovering', 'error'); if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) { reconnectAttempts++; log(`Reconnect ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}...`, 'info'); stop(); setTimeout(() => { document.getElementById('startBtn').click(); }, 1000); } } }, ICE_DISCONNECT_WAIT);
         }
-        else if (state === 'failed') {
+        if (state === 'failed') {
             log('Connection failed - recovering...', 'error');
             if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) { reconnectAttempts++; setTimeout(() => { stop(); setTimeout(() => { document.getElementById('startBtn').click(); }, 1000); }, 2000); }
         }
@@ -1205,10 +1306,29 @@ async function connectWHIP(whipUrl) {
 
 async function setParams() {
     const prompt = buildPrompt();
-    const negPrompt = modeValue > 50 ? "photorealistic, smooth, beautiful, flattering, digital" : "modern, digital, flat, cartoon, anime, low quality, blurry, photograph";
-    const body = { model_id: "streamdiffusion", pipeline: "live-video-to-video", params: { model_id: "stabilityai/sd-turbo", prompt: prompt, negative_prompt: negPrompt, num_inference_steps: params.strength, seed: 42, controlnets: [{ conditioning_scale: params.pose, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" }, { conditioning_scale: params.edge, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" }, { conditioning_scale: params.depth, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }] } };
-    try { await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); }
-    catch (e) { log(`Params: ${e.message}`, 'info'); }
+    const ipScale = (100 - modeValue) / 100;  // Abstract (left) = high ip_adapter, Painting (right) = low
+    const body = { 
+        params: { 
+            model_id: MODEL_ID, 
+            prompt: prompt,
+            delta: 0.7,
+            width: 1024,
+            height: 1024,
+            negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
+            ip_adapter: { type: 'faceid', scale: 0.5, enabled: true },
+            ip_adapter_style_image_url: styles[currentStyle].styleImage,
+            controlnets: [
+                { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: 0.5, control_guidance_start: 0, control_guidance_end: 1 },
+                { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
+            ]
+        } 
+    };
+    try { 
+        const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); 
+        if (res.ok) log('Params updated', 'success');
+        else log(`Patch failed: ${res.status}`, 'error');
+    }
+    catch (e) { log(`Params: ${e.message}`, 'error'); }
 }
 
 function startPolling() {
@@ -1239,7 +1359,7 @@ function connectHLS(url) {
         hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 0.2, liveMaxLatencyDuration: 1, liveBackBufferLength: 0, maxBufferLength: 1, liveDurationInfinity: true, highBufferWatchdogPeriod: 2, manifestLoadingTimeOut: 20000, manifestLoadingMaxRetry: 6, manifestLoadingRetryDelay: 1000, levelLoadingTimeOut: 20000, levelLoadingMaxRetry: 6, levelLoadingRetryDelay: 1000, fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 6, fragLoadingRetryDelay: 1000, enableWorker: true, startLevel: -1 });
         hls.loadSource(url);
         hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); hideStatusOverlay(); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); hideStatusOverlay(); video.muted = true; video.play().catch(() => {}); }); });
+        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); if (navigator.vibrate) navigator.vibrate([50, 30, 50]); hideStatusOverlay(); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); hideStatusOverlay(); video.muted = true; video.play().catch(() => {}); }); });
         hls.on(Hls.Events.ERROR, (e, data) => { log(`HLS: ${data.type} - ${data.details}`, 'info'); if (data.fatal) { switch (data.type) { case Hls.ErrorTypes.NETWORK_ERROR: log('Network error - retrying...', 'info'); setTimeout(() => { hls.startLoad(); }, 2000); break; case Hls.ErrorTypes.MEDIA_ERROR: log('Media error - recovering...', 'info'); hls.recoverMediaError(); break; default: log('Fatal error - please restart', 'error'); break; } } });
         hls.on(Hls.Events.FRAG_LOADED, () => { if (!video.playing) video.play().catch(() => {}); });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; video.addEventListener('loadedmetadata', () => { video.play().catch(() => { video.muted = true; video.play(); }); }); log('Native HLS playing', 'success'); }
@@ -1247,7 +1367,6 @@ function connectHLS(url) {
 
 function stop() {
     if (pollTimer) clearTimeout(pollTimer);
-    if (iceDisconnectTimer) clearTimeout(iceDisconnectTimer);
     hideStatusOverlay();
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
     if (inputPC) { inputPC.close(); inputPC = null; }
@@ -1271,9 +1390,9 @@ function stop() {
 }
 
 window.addEventListener('load', () => {
-    loadCapturedStills();
+    initializeCaptureGrid();
     drawBackground = initBackground();
-    if (window.innerWidth > 768) { drawParticles = initParticles(); } else { drawParticles = () => {}; }
+    drawParticles = initParticles();
     drawVideoOverlay = initVideoOverlay();
     function demoAnimate() {
         time++;
@@ -1289,5 +1408,7 @@ window.addEventListener('load', () => {
 });
 
 </script>
+<img src="baroque-sticker.png" class="baroque-flourish flourish-left" alt="">
+<img src="baroque-sticker.png" class="baroque-flourish flourish-right" alt="">
 </body>
 </html>
