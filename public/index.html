@@ -1,5 +1,5 @@
-<!-- deploy-1769832000 -->
-<!-- v-livepeer-poll -->
+<!-- deploy-1769832100 -->
+<!-- v-livepeer-poll2 -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -1359,13 +1359,16 @@ function startPolling() {
             
             const data = await res.json();
             
+            // Debug: log response structure
             if (attempts <= 5 || attempts % 10 === 0) {
                 console.log('Livepeer playback response:', data);
+                console.log('Sources available:', data.meta?.source);
             }
             if (attempts % 5 === 0) log(`Waiting for AI output (${attempts})...`, 'info');
             
-            // Livepeer returns meta.live and meta.source array
-            if (data.meta?.live === true && !hlsConnected) {
+            // Livepeer returns type: 'live' when stream is active
+            const isLive = data.type === 'live' || data.meta?.live === true;
+            if (isLive && !hlsConnected) {
                 log('STREAM LIVE!', 'success');
                 const hlsSource = data.meta?.source?.find(s => s.hrn === 'HLS (TS)');
                 const hlsUrl = hlsSource?.url;
