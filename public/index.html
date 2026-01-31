@@ -1,5 +1,5 @@
-<!-- deploy-1769081642 -->
-<!-- v1769081282 -->
+<!-- deploy-1769831200 -->
+<!-- v-baroque-debug -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -1243,16 +1243,13 @@ async function connectWHIP(whipUrl) {
     currentWhipUrl = whipUrl;
     iceRestartAttempts = 0;
     
-    // Use Google STUN + Metered.ca TURN servers (Livepeer doesn't provide TURN)
-    // Free tier from metered.ca - standard relay servers
+    // Use Google STUN + OpenRelay free public TURN servers
     inputPC = new RTCPeerConnection({ 
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun.relay.metered.ca:80' },
-            { urls: 'turn:global.relay.metered.ca:80', username: 'e8dd65c92de9c620de45c805', credential: 'KxEPTBbfvIfNYpuH' },
-            { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username: 'e8dd65c92de9c620de45c805', credential: 'KxEPTBbfvIfNYpuH' },
-            { urls: 'turn:global.relay.metered.ca:443', username: 'e8dd65c92de9c620de45c805', credential: 'KxEPTBbfvIfNYpuH' },
-            { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: 'e8dd65c92de9c620de45c805', credential: 'KxEPTBbfvIfNYpuH' }
+            { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+            { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+            { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
         ],
         iceCandidatePoolSize: 10
     });
@@ -1347,14 +1344,34 @@ function startPolling() {
     const poll = async () => {
         attempts++;
         try {
-            const res = await fetch(`https://livepeer.studio/api/playback/${playbackId}`);
+            const res = await fetch(`${API_BASE}/streams/${streamId}`, {
+                headers: { 'Authorization': `Bearer ${API_KEY}` }
+            });
             const data = await res.json();
             if (attempts % 5 === 0) log(`Waiting for AI output (${attempts})...`, 'info');
+            
+            // Debug: log stream state
+            if (attempts <= 3 || attempts % 10 === 0) {
+                console.log('Stream state:', { live: data.meta?.live, sources: data.meta?.source?.length || 0 });
+            }
+            
             if (data.meta?.live === 1 && !hlsConnected) {
                 log('STREAM LIVE!', 'success');
-                const hlsUrl = data.meta?.source?.find(s => s.hrn === 'HLS (TS)')?.url;
-                if (hlsUrl) { hlsConnected = true; setTimeout(() => connectHLS(hlsUrl), 1500); }
-                else log('Waiting for HLS URL...', 'info');
+                const hlsSource = data.meta?.source?.find(s => s.hrn === 'HLS (TS)');
+                const hlsUrl = hlsSource?.url;
+                
+                // Validate HLS URL before connecting
+                if (hlsUrl && hlsUrl.includes('.m3u8')) {
+                    console.log('HLS URL:', hlsUrl);
+                    hlsConnected = true;
+                    setTimeout(() => connectHLS(hlsUrl), 2000);
+                } else if (hlsUrl) {
+                    log(`Invalid HLS URL format: ${hlsUrl.substring(0, 50)}...`, 'error');
+                    console.error('Full HLS URL:', hlsUrl);
+                } else {
+                    log('Waiting for valid HLS URL...', 'info');
+                    console.log('Available sources:', data.meta?.source);
+                }
             }
             if (attempts < maxAttempts) pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
         } catch (e) { log(`Poll: ${e.message}`, 'info'); if (attempts < maxAttempts) pollTimer = setTimeout(poll, 3000); }
@@ -1364,6 +1381,15 @@ function startPolling() {
 
 function connectHLS(url) {
     log(`Connecting HLS...`, 'info');
+    console.log('connectHLS called with URL:', url);
+    
+    // Validate URL
+    if (!url || typeof url !== 'string' || !url.startsWith('http')) {
+        log(`Invalid HLS URL: ${url}`, 'error');
+        console.error('Invalid HLS URL received:', url);
+        return;
+    }
+    
     const video = document.getElementById('output');
     if (Hls.isSupported()) {
         if (hls) hls.destroy();
