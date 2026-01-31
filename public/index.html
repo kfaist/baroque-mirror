@@ -1,5 +1,5 @@
-<!-- deploy-1769831900 -->
-<!-- v-baroque-debug3 -->
+<!-- deploy-1769832000 -->
+<!-- v-livepeer-poll -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -1339,35 +1339,33 @@ async function setParams() {
 
 function startPolling() {
     let attempts = 0, maxAttempts = 120, hlsConnected = false;
+    
+    // Poll Livepeer directly instead of Daydream (avoids CORS/502 issues)
+    const livepeerPollUrl = `https://livepeer.studio/api/playback/${playbackId}`;
+    console.log('Polling Livepeer directly:', livepeerPollUrl);
+    
     const poll = async () => {
         attempts++;
         try {
-            const res = await fetch(`${API_BASE}/streams/${streamId}`, {
-                headers: { 'Authorization': `Bearer ${API_KEY}` }
-            });
+            // Use Livepeer's public playback API (no auth needed, no CORS issues)
+            const res = await fetch(livepeerPollUrl);
+            
+            if (!res.ok) {
+                if (attempts % 5 === 0) log(`Waiting for AI output (${attempts})...`, 'info');
+                console.log(`Livepeer poll ${attempts}: ${res.status}`);
+                if (attempts < maxAttempts) pollTimer = setTimeout(poll, 2000);
+                return;
+            }
+            
             const data = await res.json();
+            
+            if (attempts <= 5 || attempts % 10 === 0) {
+                console.log('Livepeer playback response:', data);
+            }
             if (attempts % 5 === 0) log(`Waiting for AI output (${attempts})...`, 'info');
             
-            // Debug: log full stream state for first few attempts
-            if (attempts <= 5) {
-                console.log('Full stream response:', JSON.stringify(data, null, 2));
-            } else if (attempts % 10 === 0) {
-                console.log('Stream state:', { 
-                    live: data.meta?.live, 
-                    sources: data.meta?.source?.length || 0,
-                    status: data.status,
-                    error: data.error,
-                    meta: data.meta
-                });
-            }
-            
-            // Check for error state
-            if (data.error || data.status === 'error') {
-                log(`Stream error: ${data.error || data.status}`, 'error');
-                console.error('Stream in error state:', data);
-            }
-            
-            if (data.meta?.live === 1 && !hlsConnected) {
+            // Livepeer returns meta.live and meta.source array
+            if (data.meta?.live === true && !hlsConnected) {
                 log('STREAM LIVE!', 'success');
                 const hlsSource = data.meta?.source?.find(s => s.hrn === 'HLS (TS)');
                 const hlsUrl = hlsSource?.url;
@@ -1376,15 +1374,16 @@ function startPolling() {
                     console.log('HLS URL:', hlsUrl);
                     hlsConnected = true;
                     setTimeout(() => connectHLS(hlsUrl), 2000);
-                } else if (hlsUrl) {
-                    log(`Invalid HLS URL format: ${hlsUrl.substring(0, 50)}...`, 'error');
                 } else {
                     log('Waiting for valid HLS URL...', 'info');
                     console.log('Available sources:', data.meta?.source);
                 }
             }
             if (attempts < maxAttempts) pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
-        } catch (e) { log(`Poll: ${e.message}`, 'info'); if (attempts < maxAttempts) pollTimer = setTimeout(poll, 3000); }
+        } catch (e) { 
+            console.log(`Poll error: ${e.message}`);
+            if (attempts < maxAttempts) pollTimer = setTimeout(poll, 3000); 
+        }
     };
     pollTimer = setTimeout(poll, 3000);
 }
