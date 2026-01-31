@@ -1,5 +1,5 @@
-<!-- deploy-1769831200 -->
-<!-- v-baroque-debug -->
+<!-- deploy-1769831800 -->
+<!-- v-baroque-debug2 -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -1211,8 +1211,13 @@ async function start() {
                 ]
             }
         }) });
-        if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
+        if (!createRes.ok) {
+            const errText = await createRes.text();
+            console.error('Stream creation failed:', createRes.status, errText);
+            throw new Error(`Create failed: ${createRes.status} - ${errText}`);
+        }
         const data = await createRes.json();
+        console.log('Stream created - full response:', data);
         streamId = data.id;
         playbackId = data.output_playback_id;
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
@@ -1288,23 +1293,10 @@ async function connectWHIP(whipUrl) {
 }
 
 async function performIceRestart() {
-    if (!inputPC || !currentWhipUrl) return;
-    inputPC.restartIce();
-    const offer = await inputPC.createOffer({ iceRestart: true });
-    await inputPC.setLocalDescription(offer);
-    await new Promise(resolve => { 
-        if (inputPC.iceGatheringState === 'complete') resolve(); 
-        else { 
-            inputPC.onicegatheringstatechange = () => { if (inputPC.iceGatheringState === 'complete') resolve(); }; 
-            setTimeout(resolve, 3000); 
-        } 
-    });
-    const res = await fetch(currentWhipUrl, { method: 'PATCH', headers: { 'Content-Type': 'application/sdp' }, body: inputPC.localDescription.sdp });
-    if (res.ok) {
-        const answer = await res.text();
-        await inputPC.setRemoteDescription({ type: 'answer', sdp: answer });
-        log('ICE restarted successfully', 'success');
-    }
+    // ICE restart via WHIP PATCH doesn't work due to CORS on Livepeer
+    // Skip to full reconnect instead
+    log('ICE needs reconnect (CORS prevents PATCH)', 'info');
+    throw new Error('CORS_BLOCKED');
 }
 
 async function fullReconnect() {
