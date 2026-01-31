@@ -1226,32 +1226,11 @@ async function start() {
     showStatusOverlay();
     try {
         log('Getting camera...', 'info');
-        localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } }, audio: true });
-        document.getElementById('local').srcObject = localStream;
+        const isMobile = window.innerWidth <= 768; localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: isMobile ? 640 : 1280 }, height: { ideal: isMobile ? 480 : 720 }, frameRate: { ideal: isMobile ? 24 : 30 } }, audio: true });
+        const localVideo = document.getElementById('local'); localVideo.srcObject = localStream; localVideo.play().catch(e => log('Local video play error: ' + e.message, 'error')); log(`Tracks: ${localStream.getTracks().map(t => t.kind + ':' + t.readyState).join(', ')}`, 'info');
         log('Camera ready', 'success');
-        initAudio(localStream);
-        initMotionDetection();
-        drawBackground = initBackground();
-        drawParticles = initParticles();
-        drawVideoOverlay = initVideoOverlay();
-        if (!animationId) animate();
         log('Creating Daydream stream...', 'info');
-        const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ 
-            pipeline_id: PIPELINE_ID,
-            pipeline_params: {
-                prompt: buildPrompt(),
-                delta: 0.7,
-                width: 1024,
-                height: 1024,
-                negative_prompt: 'cgi, 3d render, digital art, video game, plastic, blurry',
-                ip_adapter: { type: 'faceid', scale: 0.5, enabled: true },
-                ip_adapter_style_image_url: styles[currentStyle].styleImage,
-                controlnets: [
-                    { enabled: true, model_id: 'xinsir/controlnet-depth-sdxl-1.0', preprocessor: 'depth_tensorrt', conditioning_scale: 0.5, control_guidance_start: 0, control_guidance_end: 1 },
-                    { enabled: true, model_id: 'xinsir/controlnet-tile-sdxl-1.0', preprocessor: 'feedback', conditioning_scale: 0.1, control_guidance_start: 0, control_guidance_end: 1 }
-                ]
-            }
-        }) });
+        const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ pipeline_id: PIPELINE_ID }) });
         if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
         const data = await createRes.json();
         streamId = data.id;
@@ -1259,7 +1238,7 @@ async function start() {
         log(`Stream created: ${streamId.slice(-8)}`, 'success');
         log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
-        log('Video streaming to AI', 'success');
+        log('Video streaming to AI', 'success'); initAudio(localStream); initMotionDetection(); drawBackground = initBackground(); if (window.innerWidth > 768) { drawParticles = initParticles(); } else { drawParticles = () => {}; } drawVideoOverlay = initVideoOverlay(); if (!animationId) animate();
         log('AI initializing...', 'info');
         await new Promise(r => setTimeout(r, 3000));
         await setParams();
