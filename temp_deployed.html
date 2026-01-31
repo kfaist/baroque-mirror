@@ -81,7 +81,7 @@
         .output-area { position: relative; }
         .video-container { position: relative; border: none; border-radius: 0; overflow: hidden; box-shadow: none; background: #000; }
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 4/3; overflow: hidden; }
-        .output-video { width: 100%; height: 100%; object-fit: contain; object-position: center center; display: block; background: #000; }
+        .output-video { width: 100%; height: 100%; object-fit: cover; object-position: center center; display: block; background: #000; }
         .video-animation-overlay { position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; pointer-events: none; z-index: 2; opacity: 0.4; mix-blend-mode: overlay; }
         .fullscreen-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.6); background: rgba(10,6,8,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.1rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(5px); }
         .fullscreen-btn:hover { background: rgba(212,175,55,0.3); border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); transform: scale(1.1); }
@@ -478,94 +478,7 @@ const baroquePrompts = [
 ];
 
 // Combined for shuffle
-const whimsicalGlass = [
-    "whipped cream kaleidoscope made of spun glass, soft white spirals with rainbow refractions",
-    "gumball machine filled with glass marbles, each containing tiny universe",
-    "birthday candles with glass flames, frozen fire in amber and gold",
-    "soap bubbles that became glass, cluster of spheres in iridescent rainbow",
-    "cotton candy tornado captured in glass cylinder, pink and blue sugar strands frozen mid-swirl",
-    "fireworks explosion in glass dome, bursting colors frozen at peak brilliance",
-    "rainbow waterfall in glass sculpture, cascading colors from red through violet",
-    "glass terrarium containing miniature galaxy, stars and nebulae swirling, cosmic snow globe",
-    "stained glass disco ball, faceted surface projecting rainbow patterns",
-    "lava lamp reimagined in hand-blown glass, permanent wax blobs suspended in crystal"
-];
-
-const natureIridescence = [
-    "morpho butterfly wing extreme macro, structural color, electric blue shifting to purple",
-    "peacock feather eye detail, interference patterns, emerald to cobalt gradient",
-    "abalone shell interior, nacre layers creating rainbow oil slick patterns",
-    "hummingbird wing frozen mid-flight, iridescent feathers shifting green to purple",
-    "dragonfly wing membrane, dewdrops acting as tiny lenses",
-    "ice crystal forming in real-time, fractal branching patterns",
-    "aurora borealis captured in glass sphere, swirling green and purple",
-    "bioluminescent plankton bloom, millions of tiny light points",
-    "butterfly wing scales under electron microscope, metallic sheen",
-    "cuttlefish skin changing color, chromatophores expanding"
-];
-
-const neonBaroque = [
-    "Neon rope flowing through gilded baroque frames, luminous cord glowing",
-    "Neon tubes winding through baroque picture frames, hot pink and electric blue",
-    "Single neon tube bent into baroque scroll shape, glowing amber",
-    "Baroque mirror frame wrapped entirely in neon tubes",
-    "Neon sign spelling baroque flourishes, cursive light writing"
-];
-
-const baroqueRococoCaptions = [
-    "dramatic chiaroscuro lighting with ornate fabrics and powdered wig detail",
-    "opulent rococo ornament in swirling pastel tones",
-    "baroque portrait with gold filigree and deep velvet textures",
-    "elaborate lace cuffs flowing in soft candlelight",
-    "powdered wig architecture with intricate curls and ribbons",
-    "ornate brocade clothing rendered in rich painterly detail",
-    "dynamic baroque pose illuminated by golden side-light",
-    "delicate rococo pastel palette with decorative motifs",
-    "carved gilded frame aesthetic with theatrical shadowing",
-    "flowing silk fabric reflecting warm candlelight",
-    "dramatic baroque composition with sweeping gesture",
-    "ornate jewelry and pearls catching soft highlights",
-    "richly textured fabrics with elaborate embroidery",
-    "rococo frivolity expressed through airy pastel tones",
-    "dramatic drapery falling in heavy folds of crimson and gold",
-    "porcelain skin tones with delicate rouge highlights",
-    "theatrical stage lighting casting dramatic shadows on silk",
-    "venetian mask detail with gold leaf and feathers",
-    "baroque vanitas still life elements surrounding figure",
-    "billowing cloud-like fabric in ethereal pale tones",
-    "jewel-encrusted brooch catching single beam of light",
-    "ornamental hair piece with flowers and precious stones",
-    "deep burgundy and gold color palette with luminous skin",
-    "trompe l'oeil architectural elements framing portrait",
-    "soft sfumato technique with warm undertones",
-    "elaborate ruff collar in crisp white against dark background",
-    "rococo chinoiserie patterns on flowing garments",
-    "candlelit interior with rich mahogany and gilt accents",
-    "dramatic gesture frozen mid-movement with flowing sleeves",
-    "pearl earring catching light against shadowed neck",
-    "ornate tapestry background with mythological scenes",
-    "delicate fan held with graceful hand positioning",
-    "golden hour light streaming through baroque window",
-    "rich impasto brushwork visible in fabric folds",
-    "classical column and drapery framing noble pose",
-    "venetian glass and silver reflecting ambient glow",
-    "elaborate corsage with ribbon and lace details",
-    "dramatic upward gaze with divine light from above",
-    "muted earth tones punctuated by vermillion accent",
-    "baroque floral arrangement cascading around figure",
-    "powdered complexion with beauty mark placement",
-    "gilt-edged book and quill suggesting scholarly pursuit",
-    "hunting scene elements with noble hound companion",
-    "celestial globe and scientific instruments on velvet",
-    "theatrical curtain pulled aside revealing subject",
-    "mother of pearl inlay pattern on musical instrument",
-    "elaborate table setting with silver and crystal",
-    "pastoral landscape visible through ornate window",
-    "crown or coronet resting on velvet cushion nearby",
-    "allegorical figure emerging from clouds of gold and rose"
-];
-
-const promptInspirations = [...candyPrompts, ...baroquePrompts, ...whimsicalGlass, ...natureIridescence, ...neonBaroque, ...baroqueRococoCaptions];
+const promptInspirations = [...candyPrompts, ...baroquePrompts];
 
 
 const satireCaptions = [
