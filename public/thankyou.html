@@ -274,28 +274,26 @@ function loadCaptures() {
     const grid = document.getElementById('capturesGrid');
     const noCaptures = document.getElementById('noCaptures');
     
-    // Data format: { "1": { image: "data:...", timestamp: "...", style: "...", prompt: "..." }, "2": {...} }
-    const captures = JSON.parse(localStorage.getItem('baroqueCaptures') || '{}');
-    const slots = Object.keys(captures).sort((a, b) => parseInt(a) - parseInt(b));
+    // Data format: array of captures [{ image: "data:...", timestamp: "...", style: "...", prompt: "..." }, ...]
+    const captures = JSON.parse(localStorage.getItem('baroqueCaptureArray') || '[]');
     
-    if (slots.length === 0) {
+    if (!captures.length) {
         grid.style.display = 'none';
         noCaptures.style.display = 'block';
         return;
     }
     
     grid.innerHTML = '';
-    slots.forEach(slot => {
-        const capture = captures[slot];
-        if (!capture || !capture.image) return;
+    captures.forEach((capture, index) => {
+        if (!capture || !capture.image || capture.isDefault) return;
         
         const item = document.createElement('div');
         item.className = 'capture-item';
         item.innerHTML = `
-            <img src="${capture.image}" alt="Capture ${slot}">
-            <span class="capture-number">EXP_${String(slot).padStart(2, '0')}</span>
+            <img src="${capture.image}" alt="Capture ${index + 1}">
+            <span class="capture-number">EXP_${String(index + 1).padStart(2, '0')}</span>
             <div class="purchase-overlay">
-                <a href="/prints?capture=${slot}" class="buy-btn">Purchase Print</a>
+                <a href="/prints?capture=${index}" class="buy-btn">Purchase Print</a>
             </div>
         `;
         grid.appendChild(item);
